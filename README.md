@@ -16,9 +16,6 @@ __CSE-5A__
   
 * Amann Jha
  (179301011)
- 
-* Abhishek Bhushan
-  (179301011)
 
 
 ## Objective
