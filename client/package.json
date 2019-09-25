@@ -1,0 +1,42 @@
+{
+  "name": "accounting_software",
+  "version": "1.0.0",
+  "description": "Accounting Software",
+  "main": "server.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "jest",
+    "dev": "nodemon server.js",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheKeySpammer/AccountingSoftware.git"
+  },
+  "keywords": [
+    "Team",
+    "11"
+  ],
+  "author": "Team 11",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TheKeySpammer/AccountingSoftware/issues"
+  },
+  "homepage": "https://github.com/TheKeySpammer/AccountingSoftware#readme",
+  "devDependencies": {
+    "fibers": "^4.0.1",
+    "jest": "^24.9.0",
+    "node-sass": "^4.12.0",
+    "sass": "^1.22.12",
+    "sass-loader": "^8.0.0",
+    "webpack": "^4.41.0"
+  },
+  "dependencies": {
+    "axios": "^0.19.0",
+    "express": "^4.17.1",
+    "nodemon": "^1.19.2",
+    "passport": "^0.4.0"
+  }
+}
