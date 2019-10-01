@@ -8,6 +8,8 @@
   },
   "scripts": {
     "test": "jest",
+    "build-css": "node-sass --include-path scss static/scss/main.scss static/public/css/main.css",
+    "watch":"nodemon -e scss -x \"npm run build-css\"",
     "dev": "nodemon server.js",
     "start": "node server.js"
   },
@@ -26,7 +28,9 @@
   },
   "homepage": "https://github.com/TheKeySpammer/AccountingSoftware#readme",
   "devDependencies": {
+    "bulma": "^0.7.5",
     "fibers": "^4.0.1",
+    "font-awesome": "^4.7.0",
     "jest": "^24.9.0",
     "node-sass": "^4.12.0",
     "sass": "^1.22.12",

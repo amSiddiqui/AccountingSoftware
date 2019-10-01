@@ -1,0 +1,55 @@
+@import "theme";
+@import "mixins";
+body{
+    background-color: rgb(63, 62, 62);
+}
+.container{
+    height: 100vh;
+}
+.card{
+    @include centre();
+    height: 30rem;
+    width: 500px;
+    top: 50%;
+}
+
+.user-input{
+    margin-top: 5rem;
+    & span{
+        position: relative;
+        margin-bottom: 2rem;
+        display: flex;
+    }
+    & label{
+        position: absolute;
+        top:0.4rem;
+        left:0.6rem;
+        color: #e2e1e1
+    }
+    & input, label{
+        transition: all 0.2s;
+        touch-action: manipulation;
+    }
+    & input:placeholder-shown + label{
+        cursor: text;
+        max-width: 66.66%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transform-origin: left bottom;
+        transform: translate(-0.6rem, -1.8rem);
+        color: rgb(24, 24, 24);
+    }
+    & ::-webkit-input-placeholder {
+        opacity: 0;
+        transition: inherit;
+      }
+    & input:focus::-webkit-input-placeholder {
+        opacity: 1;
+      }
+     & input:not(:placeholder-shown) + label,
+      input:focus + label {
+        transform: translate(0, 0) scale(1);
+        cursor: pointer;
+      }
+}

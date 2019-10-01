@@ -1,0 +1,48 @@
+body {
+  background-color: #3f3e3e; }
+
+.container {
+  height: 100vh; }
+
+.card {
+  left: 50%;
+  transform: translateX(-50%);
+  top: 50%;
+  transform: translateY(-50%);
+  transform: translate(-50%, -50%);
+  height: 30rem;
+  width: 500px;
+  top: 50%; }
+
+.user-input {
+  margin-top: 5rem; }
+  .user-input span {
+    position: relative;
+    margin-bottom: 2rem;
+    display: flex; }
+  .user-input label {
+    position: absolute;
+    top: 0.4rem;
+    left: 0.6rem;
+    color: #e2e1e1; }
+  .user-input input, .user-input label {
+    transition: all 0.2s;
+    touch-action: manipulation; }
+  .user-input input:placeholder-shown + label {
+    cursor: text;
+    max-width: 66.66%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transform-origin: left bottom;
+    transform: translate(-0.6rem, -1.8rem);
+    color: #181818; }
+  .user-input ::-webkit-input-placeholder {
+    opacity: 0;
+    transition: inherit; }
+  .user-input input:focus::-webkit-input-placeholder {
+    opacity: 1; }
+  .user-input input:not(:placeholder-shown) + label,
+  .user-input input:focus + label {
+    transform: translate(0, 0) scale(1);
+    cursor: pointer; }

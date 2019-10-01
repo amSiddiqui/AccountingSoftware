@@ -1,0 +1,15 @@
+@mixin centreX {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+@mixin centreY {
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+@mixin centre {
+    @include centreX();
+    @include centreY();
+    transform: translate(-50%,-50%);
+}
