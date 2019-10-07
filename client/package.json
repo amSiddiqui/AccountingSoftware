@@ -9,7 +9,7 @@
   "scripts": {
     "test": "jest",
     "build-css": "node-sass --include-path scss static/scss/main.scss static/public/css/main.css",
-    "watch":"nodemon -e scss -x \"npm run build-css\"",
+    "watch": "nodemon -e scss -x \"npm run build-css\"",
     "dev": "nodemon server.js",
     "start": "node server.js"
   },
@@ -39,8 +39,11 @@
   },
   "dependencies": {
     "axios": "^0.19.0",
+    "cookie-parser": "^1.4.4",
     "express": "^4.17.1",
+    "http-errors": "^1.7.3",
     "nodemon": "^1.19.2",
-    "passport": "^0.4.0"
+    "passport": "^0.4.0",
+    "path": "^0.12.7"
   }
 }
