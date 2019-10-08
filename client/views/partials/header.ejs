@@ -54,20 +54,39 @@
                 <div class="navbar-item has-dropdown is-hoverable">
                     <a class="navbar-link is-arrowless">
                         <span class="has-text-weight-bold is-size-4" id="username"><%= user.username %></span>
-                        <span class="subtitle">(<%=user.company%>)</span>
+                        <span class="subtitle has-text-black">(<%=user.company%>)</span>
                     </a>
 
                     <div class="navbar-dropdown">
                         <a class="navbar-item">
-                            Edit Details
+                            <span class="icon is-medium is-left">
+                                <i class="fas fa-building"></i>
+                            </span>
+                            <strong>
+                               Company Porfile
+                            </strong>
                         </a>
+                        <hr class="navbar-divider">
+                        
                         <a class="navbar-item">
-                            Add user
+                            <span class="icon is-medium is-left">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <strong>
+                                My Profile
+                            </strong>
                         </a>
+                        <hr class="navbar-divider">
+                        
                         <a class="navbar-item has-text-danger">
-                            Logout
+                            <span class="icon is-medium is-left">
+                                <i class="fas fa-power-off"></i>
+                            </span>
+                            <strong>
+                                Logout
+                            </strong>
                         </a>
-
+                        
                     </div>
                 </div>
                 <% }else{ %>
