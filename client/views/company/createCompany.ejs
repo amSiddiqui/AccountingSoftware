@@ -1,0 +1,128 @@
+<% include ../partials/header %>
+
+<h1 class="is-size-2 form-heading">Company Profile: </h1>
+<form action="" method="POST">
+    <label class="label">Company Name: </label>
+    <div class="field">
+        <input type="text" class="input" name="name" placeholder="Company Name">
+    </div>
+    <label class="label">Company Phone: </label>
+    <div class="field has-addons">
+        <p class="control">
+            <span class="select">
+                <select name="countryCode" id="countryCode">
+                    <% countryCode.forEach((code) => { %>
+                    <option value="<%= code %>"><%= code %></option>
+                    <% }) %>
+                </select>
+            </span>
+        </p>
+        <p class="control">
+            <input type="text" class="input" name="phone" maxlength="10">
+        </p>
+    </div>
+    <label class="label">Company Email: </label>
+    <div class="field">
+        <input type="email" class="input" name="email" placeholder="Company email">
+    </div>
+    <label class="label">Address: </label>
+    <div class="field">
+        <input type="text" class="input" name="address1" placeholder="Address Line 1">
+    </div>
+    <div class="field is-horizontal">
+        <div class="field-body">
+            <div class="field">
+                <input type="text" class="input" name="city" placeholder="City">
+            </div>
+            <div class="field">
+                <input type="text" class="input" name="state" placeholder="State">
+            </div>
+        </div>
+    </div>
+    <div class="field is-horizontal">
+        <div class="field-body">
+            <div class="field">
+                <input type="text" class="input" name="city" placeholder="Country">
+            </div>
+            <div class="field">
+                <input type="number" class="input" name="state" placeholder="Pin Code">
+            </div>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column">
+            <label class="label">Currency: </label>
+            <div class="field">
+                <div class="control">
+                    <div class="select">
+                        <select name="currency" id="currency">
+                            <% currency.forEach(curr => { %>
+                            <option value="<%= curr %>"><%= curr %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <label class="label">Date Format: </label>
+            <div class="field">
+                <div class="control">
+                    <div class="select">
+                        <select name="datefmt" id="datefmt">
+                            <% dateFormat.forEach(fmt => { %>
+                            <option value="<%= fmt %>"><%= fmt %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <label class="label">Tax Rate: </label>
+            <div class="field">
+                <input type="number" class="input" placeholder="rate" name="taxrate">
+            </div>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column">
+            <label class="label">Team: </label>
+            <div>
+                <label class="checkbox" disabled>
+                    <input type="checkbox" name="headAcc" checked disabled>
+                    Head Accountant
+                </label>
+
+            </div>
+            <div>
+                <label class="checkbox">
+                    <input type="checkbox" name="clientAcc">
+                    Client Accountant
+                </label>
+
+            </div>
+            <div>
+                <label class="checkbox">
+                    <input type="checkbox" name="expenseAcc">
+                    Expense Accountant
+                </label>
+
+            </div>
+            <div>
+                <label class="checkbox">
+                    <input type="checkbox" name="generalAcc">
+                    General Accountant
+                </label>
+
+            </div>
+        </div>
+        <div class="column has-text-right">
+            <button type="submit" class="button is-primary is-size-3">Continue <span><i
+                        class="fas fa-arrow-right"></i></span></button>
+        </div>
+    </div>
+
+</form>
+
+<% include ../partials/footer %>

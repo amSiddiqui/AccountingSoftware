@@ -9,3 +9,50 @@ nav.navbar {
 #username + .subtitle {
     margin-left: 10px;
 }
+
+.form-heading {
+    margin-bottom: 15px;
+}
+
+input.input, .select select {
+    background-color: rgb(250, 250, 250);
+    border-radius: 10px 10px 0px 10px;
+    height: 40px;
+    box-shadow: 3px 3px 10px 0px #eee;
+    border: none;
+    border: 1px solid rgba(155, 155, 155, 0.486);
+}
+
+
+.select, .select select {
+    width: 100%;
+}
+
+#countryCode {
+    height: 40px;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+button.button {
+    border-radius: 20px 20px 0 20px;
+    margin-top: 15px;
+}
+
+button.button span {
+    margin-left: 10%;
+}
+
+label.checkbox {
+    margin-bottom: 10px;
+    font-weight: 500;
+    font-size: 1.3em;    
+}
+
+label.checkbox[disabled] {
+    cursor: pointer;
+}
