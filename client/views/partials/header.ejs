@@ -6,12 +6,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Accounting Software</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
-    <link rel="stylesheet" href="stylesheets/style.css">
-    <link rel="stylesheet" href="stylesheets/custom_style.css">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/custom_style.css">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 </head>
 
 <body>
+    <nav class="navbar is-info" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="https://bulma.io">
+                <h1 class="is-size-3 is-uppercase has-text-black has-text-weight-bold is-family-sans-serif"
+                    id="companyLogo">Accountings</h1>
+            </a>
+
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
+                data-target="navbarBasicExample">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item">
+                    Dahsboard
+                </a>
+                <a class="navbar-item">
+                    Clients
+                </a>
+                <a class="navbar-item">
+                    Expenses
+                </a>
+                <a class="navbar-item">
+                    Invoices
+                </a>
+                <a class="navbar-item">
+                    Inventory
+                </a>
+                <a class="navbar-item">
+                    Reports
+                </a>
+            </div>
+
+            <div class="navbar-end">
+                <% if (user){ %>
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link is-arrowless">
+                        <span class="has-text-weight-bold is-size-4" id="username"><%= user.username %></span>
+                        <span class="subtitle">(<%=user.company%>)</span>
+                    </a>
+
+                    <div class="navbar-dropdown">
+                        <a class="navbar-item">
+                            Edit Details
+                        </a>
+                        <a class="navbar-item">
+                            Add user
+                        </a>
+                        <a class="navbar-item has-text-danger">
+                            Logout
+                        </a>
+
+                    </div>
+                </div>
+                <% }else{ %>
+                <div class="navbar-item">
+                    <a href="/login" class="button is-info">Login</a>
+                </div>
+                <div class="navbar-item">
+                    <a href="/signup" class="button ">SignUp</a>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </nav>
     <section class="section">
         <div class="container">
-            

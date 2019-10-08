@@ -1,0 +1,11 @@
+html {
+    overflow: auto;
+}
+
+nav.navbar {
+    padding: 0 10%;
+}
+
+#username + .subtitle {
+    margin-left: 10px;
+}

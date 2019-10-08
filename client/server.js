@@ -1,8 +1,9 @@
 const express =  require('express');
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
 const path = require('path');
 
 const indexRouter = require("./routes/index");
+const companyRouter = require('./routes/company');
 
 const app = express();
 const PORT = 3000;
@@ -15,8 +16,16 @@ app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'static/public')));
 
-app.use('/', indexRouter);
+app.use((req, res, next) => {
+    res.locals.user = {
+        username: "theKeySpammer",
+        company: "team 11"
+    };
+    next();
+});
 
+app.use('/', indexRouter);
+app.use('/company', companyRouter);
 
 if (!process.env.PORT && !process.env.IP) {
     app.listen(PORT, () => {

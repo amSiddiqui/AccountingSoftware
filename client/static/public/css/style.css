@@ -1,0 +1,9 @@
+html {
+  overflow: auto; }
+
+nav.navbar {
+  background-color: #AEECEF;
+  padding: 0 10%; }
+
+#companyLogo {
+  color: white; }
