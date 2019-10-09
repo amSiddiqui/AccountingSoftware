@@ -1,0 +1,33 @@
+<% include ./partials/header %>
+
+<div class="columns is-vcentered">
+    <div class="column">
+        <h1 class="is-size-1 is-pulled-left">Dashboard</h1>
+    </div>
+    <div class="column">
+        <div class="dropdown is-right is-hoverable is-pulled-right">
+            <div class="dropdown-trigger">
+                <button class="button is-size-3 is-success is-rounded" aria-haspopup="true"
+                    aria-controls="createDropMenu">
+                    <span>Create...</span>
+                    <span class="icon is-small">
+                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                    </span>
+                </button>
+            </div>
+            <div class="dropdown-menu" id="createDropMenu" role="menu">
+                <div class="dropdown-content">
+                    <a href="#" class="dropdown-item">Item 1</a>
+                    <a href="#" class="dropdown-item">Item 2</a>
+                    <a href="#" class="dropdown-item">Item 3</a>
+                    <a href="#" class="dropdown-item">Item 4</a>
+                    <a href="#" class="dropdown-item">Item 5</a>
+                    <a href="#" class="dropdown-item">Item 6</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr>
+
+<% include ./partials/footer %>

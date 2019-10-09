@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "jest",
-    "build-css": "node-sass --include-path scss static/scss/main.scss static/public/css/main.css",
+    "build-css": "node-sass --include-path scss static/scss/main.scss static/public/stylesheets/main.css",
     "watch": "nodemon -e scss -x \"npm run build-css\"",
     "dev": "nodemon server.js",
     "start": "node server.js"

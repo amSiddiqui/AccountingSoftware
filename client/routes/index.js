@@ -15,4 +15,8 @@ router.get('/signup', (req, res, next) => {
     res.render('signup');
 });
 
+router.get('/dashboard', (req, res, next) => {
+    res.render('dashboard');
+});
+
 module.exports = router;

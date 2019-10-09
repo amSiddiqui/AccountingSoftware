@@ -38,14 +38,11 @@ input[type=number]::-webkit-outer-spin-button {
   margin: 0; 
 }
 
-button.button {
+button.button[type=submit] {
     border-radius: 20px 20px 0 20px;
     margin-top: 15px;
 }
 
-button.button span {
-    margin-left: 10%;
-}
 
 .pretty {
     margin-bottom: 20px;
