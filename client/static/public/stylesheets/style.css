@@ -47,12 +47,11 @@ button.button span {
     margin-left: 10%;
 }
 
-label.checkbox {
-    margin-bottom: 10px;
-    font-weight: 500;
-    font-size: 1.3em;    
+.pretty {
+    margin-bottom: 20px;
 }
 
-label.checkbox[disabled] {
-    cursor: pointer;
+.pretty .state label {
+    font-weight: 500;
+    font-size: 18px;
 }

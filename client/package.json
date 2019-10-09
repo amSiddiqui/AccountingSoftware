@@ -45,6 +45,7 @@
     "http-errors": "^1.7.3",
     "nodemon": "^1.19.2",
     "passport": "^0.4.0",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "pretty-checkbox": "^3.0.3"
   }
 }
