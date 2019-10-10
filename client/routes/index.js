@@ -19,4 +19,8 @@ router.get('/dashboard', (req, res, next) => {
     res.render('dashboard');
 });
 
+router.get('/client', (req, res, next) => {
+    res.render('client');
+});
+
 module.exports = router;
