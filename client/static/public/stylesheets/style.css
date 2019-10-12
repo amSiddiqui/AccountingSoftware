@@ -51,3 +51,25 @@ button.button[type=submit] {
 .pretty .state label {
     font-weight: 500;
 }
+
+#quote {
+    padding: 50px;
+    text-align: center;
+}
+
+#quote p {
+    font-weight: 100;
+    font-size: 22px;
+    font-style: italic;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.graph_card {
+    height: 200px;
+    background-color: grey;
+}
+
+.profit_card {
+    height: 500px;
+    background-color: grey;
+}

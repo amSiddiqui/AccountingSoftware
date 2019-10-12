@@ -16,7 +16,10 @@ router.get('/signup', (req, res, next) => {
 });
 
 router.get('/dashboard', (req, res, next) => {
-    res.render('dashboard');
+    res.render('dashboard', {
+        quote: {quote: 'You miss 100 percent of the shots you don’t take.', author: 'Wayne Gretzky'},
+        
+    });
 });
 
 module.exports = router;
