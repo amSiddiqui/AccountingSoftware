@@ -66,10 +66,28 @@ button.button[type=submit] {
 
 .graph_card {
     height: 200px;
-    background-color: grey;
+    background-color: gray;
 }
 
 .profit_card {
     height: 500px;
-    background-color: grey;
+    background-color: gray;
+}
+
+.is-scrollable tbody {
+    display:block;
+    height:500px;
+    overflow:auto;
+    overflow-x: hidden;
+}
+
+.is-scrollable thead, tbody tr,tfoot {
+    display:table;
+    width:100%;
+    table-layout:fixed;
+}
+
+::-webkit-scrollbar {
+    width: 0px;  
+    background: transparent;  
 }
