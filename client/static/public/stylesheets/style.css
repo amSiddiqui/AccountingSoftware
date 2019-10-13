@@ -91,3 +91,8 @@ button.button[type=submit] {
     width: 0px;  
     background: transparent;  
 }
+
+input.search{
+    box-shadow:none;
+    height: 45px;
+}
