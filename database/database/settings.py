@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'Application.apps.ApplicationConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -116,6 +117,13 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+DATE_FORMAT=[
+
+    '%d/%m/%Y',
+    '%m/%d/%Y',
+    '%Y/%m/%d',
+]
 
 
 # Static files (CSS, JavaScript, Images)

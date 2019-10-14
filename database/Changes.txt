@@ -1,0 +1,11 @@
+By Abhishek:
+
+1)Setup mysql in the project.
+2)User and Company tables structure setup in models.py
+3)Added app name under INSTALLED_APPS in setting.py
+4)Setup DATE_FORMAT to three diff patterns inside setting.py
+5)After all this applied migration
+	i)py manage.py makemigrations Application
+	ii)py manage.py migrate
+
+By Ninaad:
