@@ -12,10 +12,22 @@ router.get('/accountant/create', (req, res, next) => {
 });
 
 router.get('/accountant/edit', (req, res, next) => {
+    const psuedoAccountant = {
+        accountantType: 'Head',
+        firstName: 'Leviathan',
+        lastName: 'Tidehunter',
+        countryCode: '+65',
+        phone: '2975107492',
+        email: 'leviathan@hunter.gg',
+        address1: 'Monterey Bay Aquarium, 886 Cannery Row',
+        city: 'Monterey',
+        state: 'California',
+        country: 'USA',
+        pincode: '93940',
+    };
     res.render('company/accountant/edit', {
-        accountant: 'Head',
+        accountant: psuedoAccountant,
         countryCode: ['+91', '+88', '+65'],
-        email: "gt_ams@yahoo.in"
     });
 });
 
@@ -28,7 +40,7 @@ router.get('/create', (req, res, next) => {
 });
 
 router.get('/edit', (req, res, next) => {
-    pseudoCompany = {
+    const pseudoCompany = {
         name: 'Pineapple',
         countryCode: '+88',
         phone: '8528606977',
