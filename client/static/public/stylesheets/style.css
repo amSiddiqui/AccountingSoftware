@@ -66,10 +66,18 @@ button.button[type=submit] {
 
 .graph_card {
     height: 200px;
-    background-color: grey;
+    background-color: #bbb;
+    margin-bottom: 50px;
 }
 
 .profit_card {
     height: 500px;
-    background-color: grey;
+    background-color: #bbb;
+    margin-bottom: 50px;
+}
+
+.revenue_card {
+    height: 200px;
+    background-color: #bbb;
+    margin-bottom: 50px;
 }
