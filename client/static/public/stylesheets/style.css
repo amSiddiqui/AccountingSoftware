@@ -32,10 +32,10 @@ input.input, .select select {
     height: 40px;
 }
 
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-  -webkit-appearance: none; 
-  margin: 0; 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 button.button[type=submit] {
@@ -96,11 +96,20 @@ button.button[type=submit] {
 }
 
 ::-webkit-scrollbar {
-    width: 0px;  
-    background: transparent;  
+    width: 0px;
+    background: transparent;
 }
 
 input.search{
     box-shadow:none;
     height: 45px;
+}
+
+nav.level{
+  padding-bottom:30px;
+}
+
+div .tabs{
+  padding-bottom: 50px;
+  padding-top: 50px;
 }
