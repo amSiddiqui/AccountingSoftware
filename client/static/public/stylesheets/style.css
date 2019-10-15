@@ -81,3 +81,26 @@ button.button[type=submit] {
     background-color: #bbb;
     margin-bottom: 50px;
 }
+
+.is-scrollable tbody {
+    display:block;
+    height:500px;
+    overflow:auto;
+    overflow-x: hidden;
+}
+
+.is-scrollable thead, tbody tr,tfoot {
+    display:table;
+    width:100%;
+    table-layout:fixed;
+}
+
+::-webkit-scrollbar {
+    width: 0px;  
+    background: transparent;  
+}
+
+input.search{
+    box-shadow:none;
+    height: 45px;
+}
