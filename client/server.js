@@ -4,6 +4,7 @@ const path = require('path');
 
 const indexRouter = require("./routes/index");
 const companyRouter = require('./routes/company');
+const clientRouter = require('./routes/client');
 
 const app = express();
 const PORT = 3000;
@@ -26,6 +27,8 @@ app.use((req, res, next) => {
 
 app.use('/', indexRouter);
 app.use('/company', companyRouter);
+app.use('/client', clientRouter);
+
 
 if (!process.env.PORT && !process.env.IP) {
     app.listen(PORT, () => {

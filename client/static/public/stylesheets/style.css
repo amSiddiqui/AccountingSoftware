@@ -82,6 +82,20 @@ button.button[type=submit] {
     margin-bottom: 50px;
 }
 
+.form-submit-buttons {
+    margin-top: 1rem;
+}
+
+
+.form-submit-buttons button[type="submit"] {
+    margin-top: 0;
+}
+
+.form-submit-buttons .column a {
+    margin-left: 2.3rem;
+    border-radius: 20px 20px 0 20px;
+}
+
 .is-scrollable tbody {
     display:block;
     height:500px;
