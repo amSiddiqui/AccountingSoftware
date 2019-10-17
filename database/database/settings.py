@@ -19,11 +19,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/dev/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '(q!1syh^h275osp)vv(6-y706ya(496-d0c3(9qxj8r29f-5bn'
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+#False if not in os.environ
+DEBUG=True
+
+# SECURITY WARNING: keep the secret key used in production secret!
+# Raises django's ImproperlyConfigured exception if SECRET_KEY not in os.environ
+SECRET_KEY='(q!1syh^h275osp)vv(6-y706ya(496-d0c3(9qxj8r29f-5bn'
+#SECRET_KEY = os.environ['SECRET_KEY']
+
 
 ALLOWED_HOSTS = []
 
@@ -79,7 +83,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'accounts',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': '#*ABHI1998',
         'HOST': 'localhost',
         'PORT': 3306,
     }

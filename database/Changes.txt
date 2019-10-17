@@ -7,5 +7,6 @@ By Abhishek:
 5)After all this applied migration
 	i)py manage.py makemigrations Application
 	ii)py manage.py migrate
+6)Added utility tables-Country,Currency,PhoneCode
 
 By Ninaad:

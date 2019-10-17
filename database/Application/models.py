@@ -31,3 +31,21 @@ class User(models.Model):
 	def __str__(self):
 		return (self.User_Id+','+self.Fname+','+self.Lname+', ('+self.Address_Line+','+self.City+','+
 			   self.State+') ,'+self.Email+','+self.Phone+','+self.Auth_Level)
+
+
+class Country(models.Model):
+	Id=models.AutoField(primary_key=True)
+	Country_Code=models.CharField(max_length=10)
+	Country_Name=models.CharField(max_length=50)
+
+class Currency(models.Model):
+	Id=models.AutoField(primary_key=True)
+	Code=models.CharField(max_length=10)
+	Name=models.CharField(max_length=50)
+
+#In mysql client use 'alter table application_phonecode AUTO_INCREMENT=1;' to have starting value as 1
+class PhoneCode(models.Model):
+	Id=models.AutoField(primary_key=True)
+	Country_Name=models.CharField(max_length=50)
+	ISO_Code=models.CharField(max_length=10)
+	ISD_Code=models.CharField(max_length=10)
