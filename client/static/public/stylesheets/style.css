@@ -32,10 +32,10 @@ input.input, .select select {
     height: 40px;
 }
 
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-  -webkit-appearance: none; 
-  margin: 0; 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 button.button[type=submit] {
@@ -66,12 +66,34 @@ button.button[type=submit] {
 
 .graph_card {
     height: 200px;
-    background-color: gray;
+    background-color: #bbb;
+    margin-bottom: 50px;
 }
 
 .profit_card {
     height: 500px;
-    background-color: gray;
+    background-color: #bbb;
+    margin-bottom: 50px;
+}
+
+.revenue_card {
+    height: 200px;
+    background-color: #bbb;
+    margin-bottom: 50px;
+}
+
+.form-submit-buttons {
+    margin-top: 1rem;
+}
+
+
+.form-submit-buttons button[type="submit"] {
+    margin-top: 0;
+}
+
+.form-submit-buttons .column a {
+    margin-left: 2.3rem;
+    border-radius: 20px 20px 0 20px;
 }
 
 .is-scrollable tbody {
@@ -88,11 +110,20 @@ button.button[type=submit] {
 }
 
 ::-webkit-scrollbar {
-    width: 0px;  
-    background: transparent;  
+    width: 0px;
+    background: transparent;
 }
 
 input.search{
     box-shadow:none;
     height: 45px;
+}
+
+nav.level{
+  padding-bottom:30px;
+}
+
+div .tabs{
+  padding-bottom: 50px;
+  padding-top: 50px;
 }

@@ -1,7 +1,7 @@
-<% include ../../partials/creation_header %>
+<% include ../partials/header %>
 
-<h1 class="is-size-2 form-heading"><%= accountant %> Accountant Profile: </h1>
-<form action="" method="POST">
+<h1 class="is-size-2 form-heading">Create Client: </h1>
+<form action="" method="post">
     <label class="label">Name: </label>
     <div class="field is-horizontal">
         <div class="field-body">
@@ -35,7 +35,7 @@
     </div>
     <label class="label">Email: </label>
     <div class="field">
-        <input type="email" class="input" name="email" value="<%=email%>" placeholder="email">
+        <input type="email" class="input" name="email"placeholder="email">
     </div>
     <label class="label">Address: </label>
     <div class="field">
@@ -61,7 +61,18 @@
             </div>
         </div>
     </div>
-    <button type="submit" class="button is-primary is-large"> <span> Continue </span><span class="icon is-small"><i class="fas fa-arrow-right"></i></span></button>
+    <label class="label">Late Fee Rate: </label>
+    <div class="field">
+        <input type="number" class="input" name="lateFeeRate" placeholder="Rate per day">
+    </div>
+    <div class="columns is-vcentered form-submit-buttons">
+        <div class="column is-1">
+            <button type="submit" class="button is-success is-large"> <span> Save </span><span class="icon is-small"><i class="fas fa-check"></i></span></button>
+        </div>
+        <div class="column is-1">
+            <a class="button is-large is-danger" href="/client"> <span> Cancle </span><span class="icon is-small"><i class="fas fa-times"></i></span></a>
+        </div>
+    </div>
 </form>
 
-<% include ../../partials/footer %>
+<% include ../partials/footer %>
