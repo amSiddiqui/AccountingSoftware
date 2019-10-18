@@ -12,5 +12,6 @@ By Abhishek:
 By Ninaad:
 
 1)Created models for Account,Vendor,Client tables.
-2)Had to divide client into client and client_account since one client can have many accounts so to remove multivariabiliy and also since the account table is shared by both client and vendor.
+2)Had to divide client into client and client_account since one client can have many accounts 
+  so to remove multivariabiliy and also since the account table is shared by both client and vendor.
 3)Applied migrations to them.

@@ -26,6 +26,8 @@ class Company(models.Model):
 	Company_Name=models.CharField(max_length=50)
 	Address_Line=models.TextField()
 	City=models.CharField(max_length=30)
+	#The Pin_Code field is added after creation of table thus need to set a default value
+	Pin_Code=models.PositiveSmallIntegerField(default="")
 	State=models.CharField(max_length=30)
 	Email=models.EmailField()
 	Phone=models.PositiveSmallIntegerField()
@@ -43,8 +45,12 @@ class User(models.Model):
 	Lname=models.CharField(max_length=50)
 	Address_Line=models.TextField()
 	City=models.CharField(max_length=30)
+	#The Pin_Code field is added after creation of table thus need to set a default value
+	Pin_Code=models.PositiveSmallIntegerField(default="")
 	State=models.CharField(max_length=30)
 	Email=models.EmailField()
+	#The Password field is added after creation of table thus need to set a default value
+	Password=models.CharField(max_length=100,default="")
 	Phone=models.PositiveSmallIntegerField()
 	Auth_Level=models.PositiveSmallIntegerField()
 	Comp_Id = models.ForeignKey(Company, on_delete=models.CASCADE)
@@ -61,8 +67,10 @@ class Client(models.Model):
 	Lname=models.CharField(max_length=50)
 	Address_Line=models.TextField()
 	City=models.CharField(max_length=30)
-	State=models.CharField(max_length=30)
 	Pin_Code=models.PositiveSmallIntegerField()
+	State=models.CharField(max_length=30)
+	#The Late_Fee_Rate field is added after creation of table thus need to set a default value
+	Late_Fee_Rate=models.FloatField(default=0)
 	Email=models.EmailField()
 	Phone=models.PositiveIntegerField()
 
@@ -76,8 +84,8 @@ class Vendor(models.Model):
 	Vendor_Category=models.CharField(max_length=10)
 	Address_Line=models.TextField()
 	City=models.CharField(max_length=30)
-	State=models.CharField(max_length=30)
 	Pin_Code=models.PositiveSmallIntegerField()
+	State=models.CharField(max_length=30)
 	Email=models.EmailField()
 	Phone=models.PositiveIntegerField()
 
