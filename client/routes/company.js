@@ -60,7 +60,7 @@ router.get('/edit', (req, res, next) => {
         company: pseudoCompany,
         countryCode: ['+91', '+88', '+65'],
         currency: ['$ (USD)', '€ (EUR)', '£ (GBP)', '₹ (INR)'],
-        dateFormat: ['dd/mm/yyy', 'mm/dd/yyyy', 'yyyy/mm/dd']
+        dateFormat: ['dd/mm/yyyy', 'mm/dd/yyyy', 'yyyy/mm/dd']
     });
 });
 

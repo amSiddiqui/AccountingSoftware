@@ -11,6 +11,15 @@ https://docs.djangoproject.com/en/dev/ref/settings/
 """
 
 import os
+import environ
+
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
+
+# reading .env file
+environ.Env.read_env()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -19,11 +28,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/dev/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '(q!1syh^h275osp)vv(6-y706ya(496-d0c3(9qxj8r29f-5bn'
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG=env.bool('DEBUG')
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY=env.str('SECRET_KEY')
+
 
 ALLOWED_HOSTS = []
 
@@ -77,14 +87,13 @@ WSGI_APPLICATION = 'database.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'accounts',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': 3306,
+        'NAME': env.str('DBNAME'),
+        'USER': env.str('DBUSER'),
+        'PASSWORD': env.str('DBPASS'),
+        'HOST': env.str('HOST'),
+        'PORT': env.int('PORT'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-password-validators

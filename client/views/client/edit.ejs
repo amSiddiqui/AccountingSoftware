@@ -1,0 +1,84 @@
+<% include ../partials/header %>
+
+<h1 class="is-size-2 form-heading">Edit Client: </h1>
+<form action="" method="post">
+    <label class="label">Name: </label>
+    <div class="field is-horizontal">
+        <div class="field-body">
+            <div class="field">
+                <p class="control is-expanded">
+                    <input type="text" class="input" name="firstName" value="<%=client.firstName%>" placeholder="First Name">
+                </p>
+            </div>
+            <div class="field">
+                <p class="control is-expanded">
+                    <input type="text" class="input" name="lastName" value="<%=client.lastName%>" placeholder="Last Name">
+                </p>
+            </div>
+
+        </div>
+    </div>
+    <label class="label">Phone: </label>
+    <div class="field has-addons">
+        <p class="control">
+            <span class="select">
+                <select name="countryCode" id="countryCode">
+                    <% countryCode.forEach((code) => { %>
+                        <% if (code == client.countryCode) { %>
+                            <option value="<%= code %>" selected><%= code %></option>
+                        <% }else{ %>
+                            <option value="<%= code %>"><%= code %></option>
+                        <% } %>
+                    <% }) %>
+                </select>
+            </span>
+        </p>
+        <p class="control">
+            <input type="text" class="input" name="phone" value="<%=client.phone%>" maxlength="10">
+        </p>
+    </div>
+    <label class="label">Email: </label>
+    <div class="field">
+        <input type="email" class="input" name="email" value="<%=client.email%>" placeholder="email">
+    </div>
+    <label class="label">Address: </label>
+    <div class="field">
+        <input type="text" class="input" name="address1" value="<%= client.address1 %>" placeholder="Address Line 1">
+    </div>
+    <div class="field is-horizontal">
+        <div class="field-body">
+            <div class="field">
+                <input type="text" class="input" name="city" value="<%= client.city %>" placeholder="City">
+            </div>
+            <div class="field">
+                <input type="text" class="input" name="state" value="<%= client.state %>" placeholder="State">
+            </div>
+        </div>
+    </div>
+    <div class="field is-horizontal">
+        <div class="field-body">
+            <div class="field">
+                <input type="text" class="input" name="country" value="<%= client.country %>" placeholder="Country">
+            </div>
+            <div class="field">
+                <input type="number" class="input" name="pincode" value="<%= client.pincode %>" placeholder="Pin Code">
+            </div>
+        </div>
+    </div>
+    <label class="label">Late Fee Rate: </label>
+    <div class="field">
+        <input type="number" class="input" name="lateFeeRate" value="<%=client.lateFeeRate%>" placeholder="Rate per day">
+    </div> 
+    
+
+    <div class="columns is-vcentered form-submit-buttons">
+        <div class="column is-1">
+            <button type="submit" class="button is-success is-large"> <span> Save </span><span class="icon is-small"><i class="fas fa-check"></i></span></button>
+        </div>
+        <div class="column is-1">
+            <a class="button is-large is-danger" href="/client"> <span> Cancle </span><span class="icon is-small"><i class="fas fa-times"></i></span></a>
+        </div>
+    </div>
+</form>
+
+<% include ../partials/footer %>

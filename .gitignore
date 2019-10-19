@@ -2,3 +2,5 @@ client/node_modules
 package-lock.json
 .env
 .vscode
+*.pyc
+*~
