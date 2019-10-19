@@ -1,5 +1,6 @@
 from django.db import models
-
+#from django_mysql.models import EnumField
+from enum import Enum
 class Company(models.Model):
 	Company_Id=models.AutoField(primary_key=True)
 	Company_Name=models.CharField(max_length=50)
@@ -41,9 +42,10 @@ class Client(models.Model):
 	Pin_Code=models.PositiveIntegerField()
 	Email=models.EmailField()
 	Phone=models.PositiveIntegerField()
+	Late_Fee_Rate=models.FloatField(default=0)
 
 	def __str__(self):
-		return(self.Client_Id+','+self.Fname+','+self.Lname+','+self.Address_Line+','+self.City+','+self.State+','+self.Pin_Code+','+self.Email+','+self.Phone)
+		return(self.Client_Id+','+self.Fname+','+self.Lname+','+self.Address_Line+','+self.City+','+self.State+','+self.Pin_Code+','+self.Email+','+self.Phone+','+self.Late_Fee_Rate)
 
 
 	
@@ -89,3 +91,20 @@ class Client_Account(models.Model):
     Client_Id=models.ForeignKey(Client, on_delete=models.CASCADE)
     Account_Id=models.ForeignKey(Account, on_delete=models.CASCADE)
 		
+class Quotes(models.Model):
+    id=models.AutoField(primary_key=True)
+    AFName=models.CharField(max_length=20)
+    ALName=models.CharField(max_length=20)
+    Quote=models.TextField()
+    def __str__(self):
+        return(self.id+','+self.AFName+','+self.ALName+','+self.Quote)
+class choice(Enum):
+    inter='dd:mm:yyyy'
+    us='mm:dd:yyyy'
+    jap='yyyy:mm:dd'
+
+class Date_Formats(models.Model):		
+    Id=models.AutoField(primary_key=True)
+    Types=models.CharField(max_length=10,choices=[(tag,tag.value) for tag in choice])
+    def __str(self):
+	    return(self.Id+','+self.Types)
