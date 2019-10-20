@@ -1,0 +1,23 @@
+<% include ../partials/header %>
+
+<div class="columns">
+    <div class="column">
+        <a href="/client">
+            <div class="level is-pulled-left">
+                <div class="level-item has-text-right"><span class="icon"><i class="fas fa-angle-left"></i></span></div>
+                <div class="level-item has-text-left">Clients</div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<div class="columns">
+    <div class="column is-4">
+        <div class="level">
+            <div class="level-item"> <h1 class="is-size-3"><%=client.firstName%> <%=client.lastName%></h1></div>
+            <div class="level-item"><span class="icon"><i class="fas fa-cog"></i></span></div>
+        </div>
+    </div>
+</div>
+
+<% include ../partials/footer %>
