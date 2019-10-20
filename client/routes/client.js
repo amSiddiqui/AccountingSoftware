@@ -17,7 +17,7 @@ const pseudoClient = {
 };
 
 router.get('/', (req, res, next) => {
-    res.render('client');
+    res.render('client/client');
 });
 
 
