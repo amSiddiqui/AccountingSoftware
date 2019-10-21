@@ -2,13 +2,13 @@
 
 <div class="columns is-vcentered">
     <div class="column">
-        <h1 class="is-size-1 is-pulled-left">Client</h1>
+        <h1 class="is-size-1 is-pulled-left">Expense</h1>
     </div>
      <div class="column">
         <div class="dropdown is-right is-hoverable is-pulled-right">
             <div class="dropdown-trigger">
                 <button class="button is-size-3 is-success is-rounded">
-                    <span>New Client</span>
+                    <span>Add Expense</span>
                     <span class="icon is-small">
                         <i class="fa fa-plus" aria-hidden="true"></i>
                     </span>
@@ -18,37 +18,9 @@
     </div>
 </div>
 <hr>
-<div class="tabs is-fullwidth is-large">
-  <ul>
-    <li class="tab">
-      <a>
-        <div class="column has-text-centered">
-          <h1 class = "is-size-1">Rs 0</h1>
-          <span>Overdue</span>
-        </div>
-      </a>
-    </li>
-    <li class="tab">
-      <a>
-        <div class="column has-text-centered">
-          <h2 class = "is-size-1">Rs 0</h2>
-          <span>Outstanding</span>
-        </div>
-      </a>
-    </li>
-    <li class="tab">
-      <a>
-        <div class="column has-text-centered">
-          <h2 class = "is-size-1">Rs 0</h2>
-          <span>Draft</span>
-        </div>
-      </a>
-    </li>
-  </ul>
-</div>
 
 <div class="is-size-2">
-  <p>Recent Activities</p>
+  <p>Recent Updates</p>
 </div>
 
 <hr>
@@ -58,7 +30,7 @@
     <div class="tile is-parent">
       <article class="tile is-child box has-background-white add">
         <div class="has-text-centered">
-          <a href="#" class= "title is-size-2 add"><i class="fas fa-plus fa-fw"></i>Add Client</a>
+          <a href="#" class= "title is-size-2 add"><i class="fas fa-plus fa-fw"></i>Add Expense</a>
         </div>
       </article>
 
@@ -68,15 +40,19 @@
     <div class="tile is-parent">
       <a class = "tile" href="#">
         <article class="tile is-child box has-background-white">
-          <!-- <div class="column has-background-success dash">
-          </div> -->
+
           <hr class="tile-design">
           <div class="level">
             <div class=" column level-left">
                 <p class = "title is-2">Name</p>
                 <p class = "content is-6"><i class="fas fa-envelope-open-text fa-fw"></i>email</p>
                 <p class = "content is-6"><i class="fas fa-mobile-alt fa-fw"></i>phone number</p>
+                <p class = "content is-6"><i class="fas fa-euro-sign fa-fw"></i>Expense Type</p>
             </div>
+          </div>
+          <hr>
+          <div class="level-right">
+            <h2 class = "is-size-2">Rs 40.0K</h2>
           </div>
 
         </article>
@@ -86,34 +62,26 @@
     <div class="tile is-parent">
       <a class = "tile" href="#">
         <article class="tile is-child box has-background-white">
+
           <hr class="tile-design">
           <div class="level">
             <div class=" column level-left">
                 <p class = "title is-2">Name</p>
                 <p class = "content is-6"><i class="fas fa-envelope-open-text fa-fw"></i>email</p>
                 <p class = "content is-6"><i class="fas fa-mobile-alt fa-fw"></i>phone number</p>
+                <p class = "content is-6"><i class="fas fa-euro-sign fa-fw"></i>Expense Type</p>
             </div>
           </div>
-
-        </article>
-      </a>
-
-    </div><div class="tile is-parent">
-      <a class = "tile" href="#">
-        <article class="tile is-child box has-background-white">
-          <hr class="tile-design">
-          <div class="level">
-            <div class=" column level-left">
-                <p class = "title is-2">Name</p>
-                <p class = "content is-6"><i class="fas fa-envelope-open-text fa-fw"></i>email</p>
-                <p class = "content is-6"><i class="fas fa-mobile-alt fa-fw"></i>phone number</p>
-            </div>
+          <hr>
+          <div class="level-right">
+            <h2 class = "is-size-2">Rs 40.0K</h2>
           </div>
 
         </article>
       </a>
 
     </div>
+
   </div>
 </div>
 
@@ -122,22 +90,22 @@
     <div class="level-left">
       <div class="level-item">
         <p class="subtitle is-3">
-          <strong>All Clients</strong>
+          <strong>All Expenses</strong>
         </p>
       </div>
     </div>
     <div class="level-right">
     	<div class="level-item">
         <div class="field has-addons">
-  		  <div class="control">
-  		    <input class="search input is-large is-rounded" type="text" placeholder="Find a Client">
+    		  <div class="control">
+    		    <input class="search input is-large is-rounded" type="text" placeholder="Search">
 
-  		  </div>
-  		  <div class="control">
-  		    <a class="button is-info is-medium is-rounded">
-  		       Search
-  		    </a>
-  		  </div>
+    		  </div>
+    		  <div class="control">
+    		    <a class="button is-info is-medium is-rounded">
+    		       Search
+    		    </a>
+    		  </div>
   		</div>
       </div>
     </div>
@@ -160,10 +128,11 @@
                 </div>
             </div>
 				</th>
-				<th>Organisation</th>
-				<th>Address</th>
+				<th>Vendor</th>
+				<th>Date</th>
 				<th>Contact Number</th>
-				<th class = "num">Total Outstanding</th>
+				<th>Expense Type</th>
+				<th class = "num">Amount</th>
 			</tr>
 	</thead>
 	<tbody class="records">
@@ -182,8 +151,9 @@
           </td>
           <label for="id">
             <td>ABC</td>
-            <td>2/A Cross Lane</td>
+            <td>10/20/2019</td>
             <td>9713741939</td>
+            <td>Educational</td>
             <td>Rs 20000 INR</td>
           </label>
 		</tr>
@@ -202,11 +172,13 @@
           </td>
           <label for="id">
             <td>ABC</td>
-            <td>2/A Cross Lane</td>
+            <td>10/20/2019</td>
             <td>9713741939</td>
+            <td>Educational</td>
             <td>Rs 20000 INR</td>
           </label>
 		</tr>
+
 	</tbody>
 
 	<tfoot class="is-size-6">
@@ -214,7 +186,7 @@
 		<th></th>
 		<th></th>
 		<th></th>
-		<th>Total Outstanding: Rs 20000 INR</th>
+		<th>Total: Rs 20000 INR</th>
 	</tfoot>
 </table>
 </div>
