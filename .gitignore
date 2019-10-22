@@ -2,5 +2,6 @@ client/node_modules
 package-lock.json
 .env
 .vscode
-*/migrations/*
-!*/migrations/__init__.py
+migrations/
+*~
+*.pyc
