@@ -139,10 +139,10 @@ article.add{
   border-style: dashed;
   border-width: thin;
 }
-a.addClient{
+a.add{
   color: #23d160;
 }
-a.addClient:hover{
+a.add:hover{
   color: #209cee;
 }
 .hover-effect{

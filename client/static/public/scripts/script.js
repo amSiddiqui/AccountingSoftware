@@ -22,10 +22,13 @@ $(document).ready(function(){
   $("article.has-background-white").hover(function(){
     $(this).addClass("has-background-white-bis");
     $(this).removeClass("has-background-white");
-
+    $(this).children('hr.tile-design').css('border','5px solid #209cee');
+    $(this).children('hr.tile-design').css('background-color','#209cee');
     }, function(){
       $(this).removeClass("has-background-white-bis");
       $(this).addClass("has-background-white");
+      $(this).children('hr.tile-design').css('border','5px solid #23d160');
+      $(this).children('hr.tile-design').css('background-color','#23d160');
   });
 });
 
