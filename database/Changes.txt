@@ -8,6 +8,7 @@ By Abhishek:
 	i)py manage.py makemigrations Application
 	ii)py manage.py migrate
 6)Added utility tables-Country,Currency,PhoneCode
+7)Made changes in models.py
 
 By Ninaad:
 

@@ -154,3 +154,13 @@ hr.tile-design{
   border: 5px solid #23d160;
   background-color: #23d160;
 }
+
+.name-card {
+    height: 200px;
+    background-color: #bbb;
+}
+
+.outstanding-revenue-client {
+    height: 300px;
+    background-color: #bbb;
+}
