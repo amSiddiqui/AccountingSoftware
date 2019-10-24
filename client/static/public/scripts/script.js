@@ -36,3 +36,9 @@ $('li.tab').click(function(e){
   $('li.tab').removeClass("is-active");
   $(this).addClass("is-active");
 });
+
+$('a.box').hover(function(){
+  $(this).children('div.box').addClass("has-background-white-bis");
+}, function(){
+  $(this).children('div.box').removeClass("has-background-white-bis");
+});
