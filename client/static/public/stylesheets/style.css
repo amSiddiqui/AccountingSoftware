@@ -155,12 +155,12 @@ hr.tile-design{
   background-color: #23d160;
 }
 
-.name-card {
-    height: 200px;
-    background-color: #bbb;
+#progress-bar-helper-text {
+    margin-bottom: 2px;
 }
 
-.outstanding-revenue-client {
-    height: 300px;
-    background-color: #bbb;
+.card.name-card {
+    border: 1px solid #bbb;
+    border-radius: 10px;
+    box-shadow: 5px 10px 10px rgba(220, 220, 220, 1);
 }
