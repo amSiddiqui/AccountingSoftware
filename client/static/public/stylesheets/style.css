@@ -164,3 +164,21 @@ hr.tile-design{
     border-radius: 10px;
     box-shadow: 5px 10px 10px rgba(220, 220, 220, 1);
 }
+.outstanding-revenue-client {
+    height: 300px;
+    background-color: #bbb;
+}
+
+
+a.box:hover div.box{
+
+  border:1px solid #209cee;
+}
+a.box:hover{
+  border:1px solid #209cee;
+}
+a.box:hover hr{
+    border: 0;
+    height: 2px;
+    background-image: linear-gradient(to right, rgba(32, 156, 238, 0.75), rgba(32, 156, 238, 0.5), rgba(32, 156, 238, 0.25));
+}

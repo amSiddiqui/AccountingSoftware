@@ -6,6 +6,7 @@ const indexRouter = require("./routes/index");
 const companyRouter = require('./routes/company');
 const clientRouter = require('./routes/client');
 const vendorRouter = require('./routes/vendor');
+const reportRouter = require('./routes/report');
 
 const app = express();
 const PORT = 3000;
@@ -30,6 +31,7 @@ app.use('/', indexRouter);
 app.use('/company', companyRouter);
 app.use('/client', clientRouter);
 app.use('/vendor', vendorRouter);
+app.use('/report', reportRouter);
 
 
 if (!process.env.PORT && !process.env.IP) {
