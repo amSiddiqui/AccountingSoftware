@@ -8,6 +8,7 @@ const clientRouter = require('./routes/client');
 const vendorRouter = require('./routes/vendor');
 const reportRouter = require('./routes/report');
 const expenseRouter = require('./routes/expense');
+const invoiceRouter = require('./routes/invoice');
 
 const app = express();
 const PORT = 3000;
@@ -34,6 +35,7 @@ app.use('/client', clientRouter);
 app.use('/vendor', vendorRouter);
 app.use('/report', reportRouter);
 app.use('/expense', expenseRouter);
+app.use('/invoice', invoiceRouter);
 
 if (!process.env.PORT && !process.env.IP) {
     app.listen(PORT, () => {
