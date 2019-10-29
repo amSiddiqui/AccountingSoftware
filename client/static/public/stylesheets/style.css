@@ -14,7 +14,7 @@ nav.navbar {
     margin-bottom: 15px;
 }
 
-input.input, .select select {
+input.input, .select select, .datetimepicker-dummy-wrapper, textarea.textarea {
     background-color: rgb(250, 250, 250);
     border-radius: 10px 10px 0px 10px;
     height: 40px;
@@ -182,6 +182,7 @@ a.box:hover hr{
     height: 2px;
     background-image: linear-gradient(to right, rgba(32, 156, 238, 0.75), rgba(32, 156, 238, 0.5), rgba(32, 156, 238, 0.25));
 }
+<<<<<<< HEAD
 th.report-header{
   background-color: #209cee;
   color: white;
@@ -189,3 +190,17 @@ th.report-header{
 tbody.report-body{
   height : 100px;
 }
+=======
+
+#add-category-modal .modal-content {
+    margin-top: -20%;
+}
+
+#add-category-modal-content {
+    padding: 50px;
+    background-color: white;
+    border: 1px solid white;
+    border-radius: 20px;
+    margin: auto;
+}
+>>>>>>> fb4cbeff813275bff278bf6d2965d67da88a23e5
