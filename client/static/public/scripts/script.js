@@ -42,3 +42,36 @@ $('a.box').hover(function(){
 }, function(){
   $(this).children('div.box').removeClass("has-background-white-bis");
 });
+
+// Clickable modal
+
+function openModal() {
+  $('#add-category-modal').addClass('is-active');
+}
+
+function closeModal() {
+  if ($('#add-category-modal').hasClass('is-active')) {
+    $('#add-category-modal').removeClass('is-active');
+  }
+}
+
+$('.modal-background').click(function (event) { 
+  closeModal();
+});
+
+// Add Category script
+
+function addCategory() {
+  var value = $('#add-category-modal-content .field input:text').val();
+  closeModal();
+  $('#category-selection .control .select select').append(`<option value="${value}"> 
+  ${value} 
+</option>`);
+}
+
+// Initialize all input of type date
+var calendars = bulmaCalendar.attach('[type="date"]', {
+  type: 'date',
+  dateFormat: 'MM/DD/YYYY',
+  showHeader: false,
+});

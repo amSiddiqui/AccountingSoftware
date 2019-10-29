@@ -14,7 +14,7 @@ nav.navbar {
     margin-bottom: 15px;
 }
 
-input.input, .select select {
+input.input, .select select, .datetimepicker-dummy-wrapper, textarea.textarea {
     background-color: rgb(250, 250, 250);
     border-radius: 10px 10px 0px 10px;
     height: 40px;
@@ -181,4 +181,16 @@ a.box:hover hr{
     border: 0;
     height: 2px;
     background-image: linear-gradient(to right, rgba(32, 156, 238, 0.75), rgba(32, 156, 238, 0.5), rgba(32, 156, 238, 0.25));
+}
+
+#add-category-modal .modal-content {
+    margin-top: -20%;
+}
+
+#add-category-modal-content {
+    padding: 50px;
+    background-color: white;
+    border: 1px solid white;
+    border-radius: 20px;
+    margin: auto;
 }
