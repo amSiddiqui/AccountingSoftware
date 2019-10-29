@@ -182,15 +182,7 @@ a.box:hover hr{
     height: 2px;
     background-image: linear-gradient(to right, rgba(32, 156, 238, 0.75), rgba(32, 156, 238, 0.5), rgba(32, 156, 238, 0.25));
 }
-<<<<<<< HEAD
-th.report-header{
-  background-color: #209cee;
-  color: white;
-}
-tbody.report-body{
-  height : 100px;
-}
-=======
+
 
 #add-category-modal .modal-content {
     margin-top: -20%;
@@ -203,4 +195,11 @@ tbody.report-body{
     border-radius: 20px;
     margin: auto;
 }
->>>>>>> fb4cbeff813275bff278bf6d2965d67da88a23e5
+
+th.report-header{
+  background-color: #209cee;
+  color: white;
+}
+tbody.report-body{
+  height : 100px;
+}
