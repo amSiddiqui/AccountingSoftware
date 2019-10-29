@@ -20,6 +20,8 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'static/public')));
+app.use(express.static(path.join(__dirname, 'node_modules/bulma-calendar/dist')));
+
 
 app.use((req, res, next) => {
     res.locals.user = {
