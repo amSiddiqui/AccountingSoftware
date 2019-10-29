@@ -182,3 +182,10 @@ a.box:hover hr{
     height: 2px;
     background-image: linear-gradient(to right, rgba(32, 156, 238, 0.75), rgba(32, 156, 238, 0.5), rgba(32, 156, 238, 0.25));
 }
+th.report-header{
+  background-color: #209cee;
+  color: white;
+}
+tbody.report-body{
+  height : 100px;
+}
