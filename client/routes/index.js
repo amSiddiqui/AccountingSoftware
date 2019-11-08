@@ -27,7 +27,7 @@ router.get('/', (req, res, next) => {
 // Login Routes
 
 router.get('/login', (req, res) => {
-    util.authCheck(res,(user)=>{
+    util.authCheck(req,(user)=>{
         if(user){
             res.redirect('/dashboard');
         }else{

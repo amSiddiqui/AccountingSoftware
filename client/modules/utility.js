@@ -22,7 +22,11 @@ module.exports = {
             if( currOpt['next'] ){
                 next();
             }
-            const user = res.cookie['user'];
+            if( typeof(req.cookies) == 'object' ) {
+                res.redirect(`${currOpt['failedRedirect']}`);
+                next();
+            }
+            const user = req.cookies['user'];
             // console.log(req.)
             if(typeof(user) == 'object' && typeof(user.token) == 'string' && typeof(user.profile) == 'object'){
                 if( currOpt['successRedirect'] ){
@@ -49,8 +53,12 @@ module.exports = {
         }
         return true;
     },
-    authCheck: (res, callback)=>{
-        const user = res.cookie['user'];
+    authCheck: (req, callback)=>{
+        if( typeof(req.cookies) == 'object' ) {
+            callback(null);
+            return;
+        }
+        const user = req.cookies['user'];
         if(typeof(user) == 'object' && typeof(user.token) == 'string' && typeof(user.profile) == 'object'){
             callback(user);
         }else{
