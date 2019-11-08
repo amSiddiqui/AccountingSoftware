@@ -1,6 +1,16 @@
 const express = require("express");
-
 const router = express.Router();
+
+const Authentication = require('../modules/auth');
+const auth = new Authentication(router);
+const util = require('../modules/utility');
+auth.conn();
+
+const cookieOpt = {
+    maxAge: 24 * 60 * 60,
+    httpOnly: true,
+};
+
 const axios = require('axios');
 
 // TODO: Remove this route
@@ -11,44 +21,66 @@ router.get('/error', (req, res, next) => {
 });
 
 router.get('/', (req, res, next) => {
-    // TODO: Add middleware to redirect to dashboard if logged in else redirect to login
     res.redirect('/login');
 });
 
 // Login Routes
-router.get('/login', (req, res, next) => {
-    res.render('login');
-});
 
-router.post('/login', (req, res, next) => {
-    // TODO: Add a middleware to see if already logged in
-    var email = req.body.email;
-    var password = req.body.password;
-    var payload = {
-        accessToken: accessToken,
-        email: email,
-        password: password
-    };
-    axios.post(dburl+'auth/login', payload)
-    .then(response => {
-
-    })
-    .catch(error => {
-        console.error(error);
-        res.render('error', {
-            message: 'Database not responding try again later'
-        });
+router.get('/login', (req, res) => {
+    util.authCheck(res,(user)=>{
+        if(user){
+            res.redirect('/dashboard');
+        }else{
+            res.render('login');
+        }
     });
 });
 
 
-router.get('/signup', (req, res, next) => {
-    // TODO: Add a middleware to check if already logged in. If logged in then then redirect to dashboard
-    res.render('signup');
+router.post('/login',(req,res)=>{
+    const user = {
+        username: req.body.email,
+        password: req.body.password
+    };
+    if( typeof(user.username) == 'string' && typeof(user.password) == 'string'){
+        auth.login(user).then(result=>{
+            if( typeof(result) == 'object' && typeof(result.profile) == 'object'){
+                res.cookie('user',result, cookieOpt);
+                // req.app.locals.user = {
+                //     username: result.profile.firstName+' '+result.profile.lastName,
+                //     company: result.profile.company
+                // };
+                res.redirect('/dashboard');
+            }else{
+                res.status(401);
+            }
+        })
+        .catch(err=>{
+            console.log('auth/login: '+err);
+            // Database side error
+        });
+    }else{
+        res.status(400);
+        res.send( 'error', 'Invalid username and password');
+    }
+    // Invalid Username and password
+    
 });
 
-router.post('/signup', (req, res, next) => {
-    // TODO: Add a middleware to check if already logged in. If logged in then redirect to dashboard
+
+
+
+router.get('/signup', (req, res, next) => {
+    util.authCheck(req,(user)=>{
+        if(user){
+            res.redirect('/dashboard');
+        }else{
+            res.render('signup');
+        }
+    });
+});
+
+router.post('/signup', util.validateUser({}), (req, res) => {
     var email = req.body.email;
     var password = req.body.password;
     var payload = {
@@ -81,12 +113,12 @@ router.post('/signup', (req, res, next) => {
     });
 });
 
-router.get('/dashboard', (req, res, next) => {
+
+router.get('/dashboard', util.validateUser({}), (req, res) => {
     res.render('dashboard', {
         quote: {quote: 'You miss 100 percent of the shots you don’t take.', author: 'Wayne Gretzky'},
         
     });
 });
-
 
 module.exports = router;

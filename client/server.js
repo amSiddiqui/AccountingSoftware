@@ -1,6 +1,7 @@
 const express =  require('express');
 const cookieParser = require('cookie-parser');
 const path = require('path');
+const clientConfig = require('./config/config').clientConfig;
 
 const indexRouter = require("./routes/index");
 const companyRouter = require('./routes/company');
@@ -11,7 +12,8 @@ const expenseRouter = require('./routes/expense');
 const invoiceRouter = require('./routes/invoice');
 require('dotenv').config();
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT ? process.env.PORT : clientConfig.port;
+const IP = process.env.IP ? process.env.IP : clientConfig.IP;
 
 
 
@@ -25,7 +27,6 @@ app.use(express.static(path.join(__dirname, 'static/public')));
 
 // Global variables
 global.dburl = process.env.DBURL;
-global.accessToken = 'an access token';
 global.tempProfile = null;
 
 app.use((req, res, next) => {
@@ -44,12 +45,7 @@ app.use('/report', reportRouter);
 app.use('/expense', expenseRouter);
 app.use('/invoice', invoiceRouter);
 
-if (!process.env.PORT && !process.env.IP) {
-    app.listen(PORT, () => {
-        console.log("Application listening at port "+PORT);
-    });
-}else{
-    app.listen(process.env.PORT, process.env.IP, () => {
-        console.log("Application listening at port "+process.env.PORT);
-    });
-}
+app.listen(PORT, IP, () => {
+    console.log("Application listening at port "+ PORT);
+    console.log(`http://${IP}:${PORT}`);
+});
