@@ -9,9 +9,11 @@ const vendorRouter = require('./routes/vendor');
 const reportRouter = require('./routes/report');
 const expenseRouter = require('./routes/expense');
 const invoiceRouter = require('./routes/invoice');
-
+require('dotenv').config();
 const app = express();
 const PORT = 3000;
+
+
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -20,8 +22,11 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'static/public')));
-app.use(express.static(path.join(__dirname, 'node_modules/bulma-calendar/dist')));
 
+// Global variables
+global.dburl = process.env.DBURL;
+global.accessToken = 'an access token';
+global.tempProfile = null;
 
 app.use((req, res, next) => {
     res.locals.user = {

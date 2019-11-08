@@ -20,7 +20,7 @@
                     <div class="box has-background-white formContainer">
                         <h1 class="title has-text-weight-bold is-1  has-text-centered">Sign Up</h1>
                         <div class="formDetails">
-                            <form action="" method="POST">
+                            <form action="/signup" method="POST">
                                 <div class="field">
                                     <label class="label">Email</label>
                                     <div class="control has-icons-left">
@@ -29,6 +29,9 @@
                                             <i class="fas fa-envelope"></i>
                                         </span>
                                     </div>
+                                    <% if (typeof userExists !== 'undefined' && userExists) { %>
+                                        <p class="help has-text-danger">Email already exists</p>
+                                    <% }%>
                                 </div>
                                 <div class="field">
                                     <label class="label">Password</label>
