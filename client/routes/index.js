@@ -39,7 +39,10 @@ router.get('/signup', (req, res) => {
 });
 
 router.get('/dashboard', util.validateUser({}), (req, res) => {
-    res.render('dashboard');
+    res.render('dashboard', {
+        quote: {quote: 'You miss 100 percent of the shots you don’t take.', author: 'Wayne Gretzky'},
+        
+    });
 });
 
 router.post('/login',(req,res)=>{

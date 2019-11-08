@@ -1,0 +1,18 @@
+By Abhishek:
+
+1)Setup mysql in the project.
+2)User and Company tables structure setup in models.py
+3)Added app name under INSTALLED_APPS in setting.py
+4)Setup DATE_FORMAT to three diff patterns inside setting.py
+5)After all this applied migration
+	i)py manage.py makemigrations Application
+	ii)py manage.py migrate
+6)Added utility tables-Country,Currency,PhoneCode
+7)Made changes in models.py
+
+By Ninaad:
+
+1)Created models for Account,Vendor,Client tables.
+2)Had to divide client into client and client_account since one client can have many accounts 
+  so to remove multivariabiliy and also since the account table is shared by both client and vendor.
+3)Applied migrations to them.

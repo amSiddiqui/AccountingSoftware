@@ -1,0 +1,619 @@
+<% include ../partials/header %>
+<div class="buttons">
+  <a href="/report" class="button is-success is-light"><i class="fas fa-chevron-left fa-fw"></i> Go Back</a>
+
+</div>
+<div class="columns is-vcentered">
+  <div class="column">
+    <h1 class="is-size-1 is-pulled-left"><%= type%></h1>
+  </div>
+  <div class="column">
+    <div class="dropdown is-right is-hoverable is-pulled-right">
+      <div class="dropdown-trigger">
+        <button class="button is-size-4 is-success is-rounded">
+          <span>Send</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+
+<div class = "tile is-ancestor ">
+  <div class="tile is-parent is-15">
+      <div class="tile is-child box">
+        <h1 class = "is-size-1 has-text-success"><%= type%></h1>
+        <h2 class = "is-size-4 has-text-grey-light">Company name</h2>
+        <h2 class = "is-size-4 has-text-grey-light">From Date to Date</h2>
+        <hr>
+
+        <div class="table-container">
+          <table class = "table is-scrollable is-fullwidth is-hoverable is-striped">
+
+  <!-- ---------------------------------------ITEM SOLD--------------------------------------------------- -->
+            <% if(type === "ITEM SOLD"){ %>
+              <thead>
+                <th class = "report-header has-text-white">Summary</th>
+              </thead>
+              <tbody class = "report-body">
+                <tr>
+                  <th>Total Units</th>
+                  <td><span class = "is-pulled-right">1</span></td>
+                </tr>
+
+                <tr>
+                  <th>Total Sales Amount</th>
+                  <td><span class = "is-pulled-right">$250000.00</span></td>
+                </tr>
+
+              </tbody>
+              <thead>
+                <th class="report-header has-text-white"><%= pseudoItem.itemType %></th>
+              </thead>
+              <thead>
+                <tr>
+                  <th>Client Name</th>
+                  <th>InvoiceID</th>
+                  <th>Invoice Date</th>
+                  <th>Per Unit Cost</th>
+                  <th>Quantity</th>
+                  <th>Discount</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <td><%= pseudoItem.clientName%></td>
+                <td><%= pseudoItem.invoiceID%></td>
+                <td><%= pseudoItem.invoiceDate%></td>
+                <td><%= pseudoItem.unitCost%></td>
+                <td><%= pseudoItem.quantity%></td>
+                <td><%= pseudoItem.discount%></td>
+                <td><%= pseudoItem.total%></td>
+              </tbody>
+              <tfoot>
+
+              </tfoot>
+            <%}%>
+
+<%# --------------------------------------------------INVOICE DETAILS-------------------------------------------- %>
+
+            <% if(type === "INVOICE DETAIL"){ %>
+              <thead>
+                <th class = "report-header has-text-white">All Client</th>
+              </thead>
+              <thead>
+                <th>Summary</th>
+              </thead>
+              <tbody class = "report-body">
+                <tr>
+                  <td>Total Invoiced</td>
+                  <td><span class ="is-pulled-right">$ 250000.00</span></td>
+                </tr>
+
+                <tr>
+                  <td>Total Paid</td>
+                  <td><span class ="is-pulled-right">$ 0.00</span></td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Amount Due</th>
+                  <td ><span class ="is-pulled-right">$ 250000.00</span></td>
+                </tr>
+              </tfoot>
+              <thead>
+                <th class = "report-header has-text-white"><%= pseudoItem.clientName%></th>
+              </thead>
+              <thead>
+                <th>Summary</th>
+              </thead>
+              <tbody class = "report-body">
+                <tr>
+                  <td>Total Invoiced</td>
+                  <td ><span class ="is-pulled-right">$ 250000.00</span></td>
+                </tr>
+
+                <tr>
+                  <td>Total Paid</td>
+                  <td ><span class ="is-pulled-right">$ 0.00</span></td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Amount Due</th>
+                  <td ><span class ="is-pulled-right">$ 250000.00</span></td>
+                </tr>
+              </tfoot>
+
+              <thead>
+                <tr>
+                  <th>Invoice #: <a href="#"><%= pseudoItem.invoiceID %></a></th>
+                  <th><span class = "is-pulled-right">Issued On: Date </span></th>
+                </tr>
+              </thead>
+              <thead>
+                <tr>
+                  <th>Description</th>
+                  <th>Amount</th>
+                  <th>Quantity</th>
+                  <th>Tax</th>
+                  <th>Line Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <td><%= pseudoItem.itemType%></td>
+                <td><%= pseudoItem.unitCost%></td>
+                <td><%= pseudoItem.quantity%></td>
+                <td><%= pseudoItem.tax%></td>
+                <td><%= pseudoItem.total%></td>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <th>Total Amount:</th>
+                  <td><%= pseudoItem.total%></td>
+                </tr>
+
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <th>Total Paid:</th>
+                  <td><%= pseudoItem.paid%></td>
+                </tr>
+
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <th>Amount Due:</th>
+                  <td><%= pseudoItem.due%></td>
+                </tr>
+              </tfoot>
+            <%}%>
+
+<%# --------------------------------------------EXPENSE REPORT----------------------------------------------- %>
+
+            <% if(type === "EXPENSE REPORT"){ %>
+              <thead>
+                <th class="report-header has-text-white">Summary</th>
+              </thead>
+              <tbody class="report-body">
+                <th>Total Expense:</th>
+                <td class = "is-pulled-right"><%= pseudoExpense.total%></td>
+              </tbody>
+              <thead>
+                <th class="report-header has-text-white"><%= pseudoExpense.expenseType%></th>
+              </thead>
+              <thead>
+                <th>Vendor</th>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Tax</th>
+                <th>Discount</th>
+                <th>Total</th>
+              </thead>
+              <tbody>
+                <td><%= pseudoExpense.vendorName%></td>
+                <td><%= pseudoExpense.date%></td>
+                <td><%= pseudoExpense.description%></td>
+                <td><%= pseudoExpense.tax%></td>
+                <td><%= pseudoExpense.discount%></td>
+                <td><%= pseudoExpense.total%></td>
+              </tbody>
+              <tfoot>
+                <th>Total Expense:</th>
+                <td class="is-pulled-right">$50000.00</td>
+              </tfoot>
+            <%}%>
+<%# -------------------------------------------CLIENT REPORT------------------------------------------------------ %>
+            <% if(type === "CLIENT REPORT"){ %>
+              <thead class = "">
+                <th class= "report-header has-text-white">Client</th>
+                <th class="report-header has-text-white"><span class ="is-pulled-right">Total</span></th>
+              </thead>
+              <tbody>
+                <td> <%= pseudoItem.clientName%></td>
+                <td><span class="is-pulled-right"><%= pseudoItem.total%></span></td>
+              </tbody>
+              <tfoot>
+                  <th>Total</th>
+                  <td><span class="is-pulled-right">$ 250000.00</span></td>
+              </tfoot>
+            <%}%>
+<%# --------------------------------------------PAYMENT PENDING----------------------------------------------- %>
+            <% if(type === "PAYMENT PENDING"){ %>
+              <thead>
+                <tr>
+                  <th class = "report-header has-text-white">All Clients</th>
+                  <th class = "report-header has-text-white"></th>
+                </tr>
+                <tr>
+                  <th>Total Amount Pending:</th>
+                  <th><span class="is-pulled-right"><%= pseudoItem.due%></span></th>
+                </tr>
+              </thead>
+              <thead>
+                <tr>
+                  <th class = "report-header has-text-white">Payment</th>
+                </tr>
+              </thead>
+              <thead>
+                <th>Date</th>
+                <th>Client</th>
+                <th>Description</th>
+                <th>Invoice</th>
+                <th>Amount</th>
+              </thead>
+              <tbody>
+                <td><%= pseudoItem.invoiceDate%></td>
+                <td><a href="#"><%= pseudoItem.clientName%></a></td>
+                <td><%= pseudoItem.description%></td>
+                <td><a href="#"><%= pseudoItem.invoiceID%></a></td>
+                <td><%= pseudoItem.due%></td>
+              </tbody>
+
+            <%}%>
+<%# ---------------------------------------------PAYMENT RECEIVED------------------------------------------------------ %>
+            <% if(type === "PAYMENT RECEIVED"){ %>
+              <thead>
+                <tr>
+                  <th class = "report-header has-text-white">All Clients</th>
+                  <th class = "report-header has-text-white"></th>
+                </tr>
+                <tr>
+                  <th>Total Amount Collected:</th>
+                  <th><span class="is-pulled-right"><%= pseudoItem.paid%></span></th>
+                </tr>
+              </thead>
+              <thead>
+                <tr>
+                  <th class = "report-header has-text-white">Payment</th>
+                </tr>
+              </thead>
+              <thead>
+                <th>Date</th>
+                <th>Client</th>
+                <th>Description</th>
+                <th>Invoice</th>
+                <th>Amount</th>
+              </thead>
+              <tbody>
+                <td><%= pseudoItem.paidDate%></td>
+                <td><a href="#"><%= pseudoItem.clientName%></a></td>
+                <td><%= pseudoItem.description%></td>
+                <td><a href="#"><%= pseudoItem.invoiceID%></a></td>
+                <td><%= pseudoItem.paid%></td>
+              </tbody>
+
+            <%}%>
+<%# --------------------------------------------------PROFIT AND LOSS----------------------------------------------------- %>
+            <% if(type === "PROFIT LOSS"){ %>
+              <thead>
+                <th  class="report-header has-text-white">Billed Income</th>
+              </thead>
+              <tbody class="report-body">
+                <tr>
+                  <th>Sales</th>
+                  <td><span class="is-pulled-right"><%= pseudoProfitLoss.sales%></span></td>
+                </tr>
+                <tr>
+                  <th>Cost of Goods</th>
+                  <td><span class="is-pulled-right"><%= pseudoProfitLoss.cost%></span></td>
+                </tr>
+              </tbody>
+              <thead>
+                <th class="report-header has-text-white">Expenses</th>
+              </thead>
+              <tbody class="report-body">
+                <th><%= pseudoProfitLoss.expenseType%></th>
+                <td><span class="is-pulled-right"><%= pseudoProfitLoss.expenseTotal%></span></td>
+              </tbody>
+              <tfoot>
+                <th>Net Profit/Loss</th>
+                <td><span class="is-pulled-right"><%= pseudoProfitLoss.profit%></span></td>
+              </tfoot>
+            <%}%>
+
+<%# -----------------------------------------------TRIAL BALANCE-------------------------------------------------- %>
+
+            <% if(type === "TRIAL BALANCE"){ %>
+              <thead>
+                <th class = "report-header has-text-white">Summary</th>
+              </thead>
+              <thead>
+                <th colspan="2">Category</th>
+                <th>Debit</th>
+                <th>Credit</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="2">
+                    <p class="is-size-4"><a href="/report/general-ledger">Cash</a></p>
+                  </td>
+                  <td>$0.00</td>
+                  <td>$150000.00</td>
+                </tr>
+
+                <tr>
+                  <td colspan="2">
+                    <p class="is-size-4"><a href="/report/general-ledger">Account Receivable</a></p>
+                  </td>
+                  <td>$150000.00</td>
+                  <td>$0.00</td>
+                </tr>
+
+                <tr>
+                  <td colspan="2">
+                    <p class="is-size-4"><a href="/report/general-ledger">Revenue</a></p>
+                  </td>
+                  <td>$0.00</td>
+                  <td>$250000.00</td>
+                </tr>
+
+                <tr>
+                  <td colspan="2">
+                    <p class="is-size-4"><a href="/report/general-ledger">Education</a></p>
+                  </td>
+                  <td>$250000.00</td>
+                  <td>$0.00</td>
+                </tr>
+
+                <tr>
+                  <td colspan="2">
+                    <p class="is-size-4"><a href="/report/general-ledger">Tax</a></p>
+                  </td>
+                  <td>$0.00</td>
+                  <td>$0.00</td>
+                </tr>
+
+              </tbody>
+              <tfoot>
+                <th colspan="2">Total</th>
+                <th>$400000.00</th>
+                <th>$400000.00</th>
+              </tfoot>
+            <%}%>
+
+<%# ----------------------------------BALANCE SHEET------------------------------------------------------------ %>
+
+            <% if(type === "BALANCE SHEET"){ %>
+              <thead>
+                <th class="report-header has-text-white">Assets</th>
+              </thead>
+              <tbody class = "report-body">
+                <tr>
+                  <td>Cash</td>
+                  <td><span class="is-pulled-right"><%= pseudoItem.paid%></span></td>
+                </tr>
+                <tr>
+                  <td>Receivable</td>
+                  <td><span class="is-pulled-right"><%= pseudoItem.due%></span></td>
+                </tr>
+                </tbody>
+                <tfoot>
+                  <th>Total Assets:</th>
+                  <th><span class="is-pulled-right">$ 250000.00</span></th>
+                </tfoot>
+
+              <thead>
+                <th class="report-header has-text-white">Equity</th>
+              </thead>
+              <tbody class = "report-body">
+                <tr>
+                  <td>Income</td>
+                  <td><span class="is-pulled-right"><%= pseudoItem.total%></span></td>
+                </tr>
+                </tbody>
+                <tfoot>
+                  <th>Total Equity:</th>
+                  <th><span class="is-pulled-right">$ 250000.00</span></th>
+                </tfoot>
+              <thead>
+                <th class="report-header has-text-white">Liability</th>
+              </thead>
+              <tbody class = "report-body">
+                <tr>
+                  <td>Loan</td>
+                  <td><span class="is-pulled-right">$0.00</span></td>
+                </tr>
+                </tbody>
+                <tfoot>
+                  <th>Total Liability:</th>
+                  <th><span class="is-pulled-right">$0.00</span></th>
+                </tfoot>
+
+
+            <%}%>
+<%# ----------------------------------GENERAL LEDGER------------------------------------------------------------ %>
+            <% if(type === "GENERAL LEDGER"){ %>
+              <thead>
+                <th class = "report-header has-text-white">Cash</th>
+              </thead>
+              <thead>
+                <th>Transaction/Reference</th>
+                <th>Date/Client/Note</th>
+                <th>Debit</th>
+                <th>Credit</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <p class = "is-size-4 "><a href="#">Expense</a></p>
+                    <p class="has-text-grey-light">Expense</p>
+                  </td>
+                  <td>
+                    <p><%= pseudoExpense.date%></p>
+                    <p>--</p>
+                    <p class = "has-text-grey-light"><%= pseudoExpense.description%></p>
+                  </td>
+                  <td><%= %></td>
+                  <td><%= pseudoExpense.total%></td>
+                </tr>
+                <tr>
+                  <td>
+                    <p class = "is-size-4 "><a href="#">Payment</a></p>
+                    <p class="has-text-grey-light">Invoice <%= pseudoItem.invoiceID%></p>
+                  </td>
+                  <td>
+                    <p><%= pseudoItem.invoiceDate%></p>
+                    <p><%=pseudoItem.clientName%></p>
+                    <p class = "has-text-grey-light"><%= pseudoItem.description%></p>
+                  </td>
+                  <td><%= pseudoItem.paid%></td>
+                  <td><%= %></td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <th colspan="2">Net Movement:</th>
+                <th></th>
+                <th>$150000.00</th>
+              </tfoot>
+
+              <thead>
+                <th class = "report-header has-text-white">Account Receivable</th>
+              </thead>
+              <thead>
+                <th>Transaction/Reference</th>
+                <th>Date/Client/Note</th>
+                <th>Debit</th>
+                <th>Credit</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <p class = "is-size-4 "><a href="#">Invoice</a></p>
+                    <p class="has-text-grey-light">Invoice <%= pseudoItem.invoiceID%></p>
+                  </td>
+                  <td>
+                    <p><%= pseudoItem.invoiceDate%></p>
+                    <p><%= pseudoItem.clientName%></p>
+                    <p class = "has-text-grey-light"><%= pseudoItem.description%></p>
+                  </td>
+                  <td><%= pseudoItem.total%></td>
+                  <td><%= %></td>
+                </tr>
+                <tr>
+                  <td>
+                    <p class = "is-size-4 "><a href="#">Payment</a></p>
+                    <p class="has-text-grey-light">Invoice <%= pseudoItem.invoiceID%></p>
+                  </td>
+                  <td>
+                    <p><%= pseudoItem.paidDate%></p>
+                    <p><%=pseudoItem.clientName%></p>
+                    <p class = "has-text-grey-light"><%= pseudoItem.description%></p>
+                  </td>
+                  <td><%= %></td>
+                  <td><%= pseudoItem.paid%></td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <th colspan="2">Net Movement:</th>
+                <th>$150000.00</th>
+                <th></th>
+              </tfoot>
+              <thead>
+                <th class = "report-header has-text-white">Revenue</th>
+              </thead>
+              <thead>
+                <th>Transaction/Reference</th>
+                <th>Date/Client/Type</th>
+                <th>Debit</th>
+                <th>Credit</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <p class = "is-size-4 "><a href="#">Invoice</a></p>
+                    <p class="has-text-grey-light">Invoice <%= pseudoItem.invoiceID%></p>
+                  </td>
+                  <td>
+                    <p><%= pseudoItem.invoiceDate%></p>
+                    <p><%= pseudoItem.clientName%></p>
+                    <p class = "has-text-grey-light"><%= pseudoItem.itemType%></p>
+                  </td>
+                  <td><%= %></td>
+                  <td><%= pseudoItem.total%></td>
+                </tr>
+
+              </tbody>
+              <tfoot>
+                <th colspan="2">Net Movement:</th>
+                <th></th>
+                <th>$250000.00</th>
+              </tfoot>
+
+              <thead>
+                <th class = "report-header has-text-white"><%= pseudoExpense.expenseType%></th>
+              </thead>
+              <thead>
+                <th>Transaction/Reference</th>
+                <th>Date/Client/Note</th>
+                <th>Debit</th>
+                <th>Credit</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <p class = "is-size-4 "><a href="#">Expense</a></p>
+                    <p class="has-text-grey-light">Expense</p>
+                  </td>
+                  <td>
+                    <p><%= pseudoExpense.date%></p>
+                    <p>--</p>
+                    <p class = "has-text-grey-light"><%= pseudoExpense.description%></p>
+                  </td>
+                  <td><%= pseudoExpense.amount%></td>
+                  <td><%= %></td>
+                </tr>
+
+              </tbody>
+              <tfoot>
+                <th colspan="2">Net Movement:</th>
+                <th>$250000.00</th>
+                <th></th>
+              </tfoot>
+
+              <thead>
+                <th class = "report-header has-text-white">Tax</th>
+              </thead>
+              <thead>
+                <th>Transaction/Reference</th>
+                <th>Date/Client/Note</th>
+                <th>Debit</th>
+                <th>Credit</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <p class = "is-size-4 "><a href="#">Expense</a></p>
+                    <p class="has-text-grey-light">Expense</p>
+                  </td>
+                  <td>
+                    <p><%= pseudoExpense.date%></p>
+                    <p>--</p>
+                    <p class = "has-text-grey-light">--</p>
+                  </td>
+                  <td>$<%= pseudoExpense.tax%></td>
+                  <td><%= %></td>
+                </tr>
+
+              </tbody>
+              <tfoot>
+                <th colspan="2">Net Movement:</th>
+                <th></th>
+                <th></th>
+              </tfoot>
+            <%}%>
+
+
+          </table>
+        </div>
+
+
+      </div>
+  </div>
+</div>
+<% include ../partials/footer %>

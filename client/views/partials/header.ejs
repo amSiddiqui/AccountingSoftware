@@ -5,10 +5,20 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Accounting Software</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+    <link href="/css/bulma-calendar.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/stylesheets/style.css">
     <link rel="stylesheet" href="/stylesheets/custom_style.css">
+
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous">
+    </script>
+    <script src="/js/bulma-calendar.min.js"></script>
+
 </head>
 
 <body>
@@ -16,7 +26,7 @@
         <div class="navbar-brand">
             <a class="navbar-item" href="/">
                 <h1 class="is-size-3 is-uppercase has-text-black has-text-weight-bold is-family-sans-serif"
-                    id="companyLogo">Accountings</h1>
+                    id="companyLogo"><i class="fa fa-address-book " aria-hidden="true"></i> Accountings</h1>
             </a>
 
             <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
@@ -30,23 +40,26 @@
         <div id="navbarBasicExample" class="navbar-menu">
             <div class="navbar-start">
                 <a href="/dashboard" class="navbar-item">
-                    Dahsboard
+                    <i class="far fa-chart-bar fa-fw"></i>
+                    Dashboard
                 </a>
-                <a class="navbar-item">
+                <a href="/client" class="navbar-item">
+                  <i class="fas fa-users fa-fw"></i>
                     Clients
                 </a>
-                <a class="navbar-item">
-                    Expenses
+                <a href = "/expense" class="navbar-item">
+                  <i class="fas fa-dollar-sign fa-fw"></i>
+                     Expenses
                 </a>
                 <a class="navbar-item">
+                  <i class="fas fa-file-invoice fa-fw"></i>
                     Invoices
                 </a>
                 <a class="navbar-item">
-                    Inventory
+                  <i class="fas fa-box-open fa-fw"></i>
+                     Inventory
                 </a>
-                <a class="navbar-item">
-                    Reports
-                </a>
+                <a href = "/report" class="navbar-item"><i class="fas fa-file-import fa-fw"></i> Reports</a>
             </div>
 
             <div class="navbar-end">
@@ -67,7 +80,7 @@
                             </strong>
                         </a>
                         <hr class="navbar-divider">
-                        
+
                         <a class="navbar-item">
                             <span class="icon is-medium is-left">
                                 <i class="fas fa-user"></i>
@@ -77,7 +90,7 @@
                             </strong>
                         </a>
                         <hr class="navbar-divider">
-                        
+
                         <a class="navbar-item has-text-danger">
                             <span class="icon is-medium is-left">
                                 <i class="fas fa-power-off"></i>
@@ -86,7 +99,7 @@
                                 Logout
                             </strong>
                         </a>
-                        
+
                     </div>
                 </div>
                 <% }else{ %>

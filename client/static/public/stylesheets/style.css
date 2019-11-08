@@ -14,7 +14,7 @@ nav.navbar {
     margin-bottom: 15px;
 }
 
-input.input, .select select {
+input.input, .select select, .datetimepicker-dummy-wrapper, textarea.textarea {
     background-color: rgb(250, 250, 250);
     border-radius: 10px 10px 0px 10px;
     height: 40px;
@@ -32,10 +32,10 @@ input.input, .select select {
     height: 40px;
 }
 
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-  -webkit-appearance: none; 
-  margin: 0; 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 button.button[type=submit] {
@@ -50,4 +50,156 @@ button.button[type=submit] {
 
 .pretty .state label {
     font-weight: 500;
+}
+
+#quote {
+    padding: 50px;
+    text-align: center;
+}
+
+#quote p {
+    font-weight: 100;
+    font-size: 22px;
+    font-style: italic;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.graph_card {
+    height: 200px;
+    background-color: #bbb;
+    margin-bottom: 50px;
+}
+
+.profit_card {
+    height: 500px;
+    background-color: #bbb;
+    margin-bottom: 50px;
+}
+
+.revenue_card {
+    height: 200px;
+    background-color: #bbb;
+    margin-bottom: 50px;
+}
+
+.form-submit-buttons {
+    margin-top: 1rem;
+}
+
+
+.form-submit-buttons button[type="submit"] {
+    margin-top: 0;
+}
+
+.form-submit-buttons .column a {
+    margin-left: 2.3rem;
+    border-radius: 20px 20px 0 20px;
+}
+
+.is-scrollable tbody {
+    display:block;
+    height:500px;
+    overflow:auto;
+    overflow-x: hidden;
+}
+
+.is-scrollable thead, tbody tr,tfoot {
+    display:table;
+    width:100%;
+    table-layout:fixed;
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}
+
+input.search{
+    box-shadow:none;
+    height: 45px;
+}
+
+nav.level{
+  padding-bottom:30px;
+  padding-top:30px;
+}
+
+div .tabs{
+  padding-bottom: 50px;
+  padding-top: 50px;
+}
+div .dash{
+    padding-top: 0px;
+    margin-bottom: 20px;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+article.add{
+  border-style: dashed;
+  border-width: thin;
+}
+a.add{
+  color: #23d160;
+}
+a.add:hover{
+  color: #209cee;
+}
+.hover-effect{
+  background: #209cee;
+  color:#ffffff;
+}
+hr.tile-design{
+  margin: 0px;
+  border: 5px solid #23d160;
+  background-color: #23d160;
+}
+
+#progress-bar-helper-text {
+    margin-bottom: 2px;
+}
+
+.card.name-card {
+    border: 1px solid #bbb;
+    border-radius: 10px;
+    box-shadow: 5px 10px 10px rgba(220, 220, 220, 1);
+}
+.outstanding-revenue-client {
+    height: 300px;
+    background-color: #bbb;
+}
+
+
+a.box:hover div.box{
+
+  border:1px solid #209cee;
+}
+a.box:hover{
+  border:1px solid #209cee;
+}
+a.box:hover hr{
+    border: 0;
+    height: 2px;
+    background-image: linear-gradient(to right, rgba(32, 156, 238, 0.75), rgba(32, 156, 238, 0.5), rgba(32, 156, 238, 0.25));
+}
+
+
+#add-category-modal .modal-content {
+    margin-top: -20%;
+}
+
+#add-category-modal-content {
+    padding: 50px;
+    background-color: white;
+    border: 1px solid white;
+    border-radius: 20px;
+    margin: auto;
+}
+
+th.report-header{
+  background-color: #209cee;
+  color: white;
+}
+tbody.report-body{
+  height : 100px;
 }

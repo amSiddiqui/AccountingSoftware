@@ -1,0 +1,97 @@
+<% include ../partials/header %>
+
+<h1 class="is-size-2 form-heading">New Expense: </h1>
+<form action="" method="post">
+    <label for="category-selection" class="label">Catergory</label>
+    <div class="columns is-vcentered">
+        <div class="column is-4">
+            <div class="field" id="category-selection">
+                <div class="control">
+                    <div class="select">
+                        <select name="category">
+                            <option value=""></option>
+                            <% categories.forEach(function(category) { %>
+                            <option value="<%=category%>"><%=category%></option>
+                            <% }); %>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <button type="button" class="button is-primary is-rounded" onclick="openModal()">
+                <span class="icon"><i class="fas fa-plus"></i></span>
+                <span>Add Category</span>
+            </button>
+            <div class="modal" id="add-category-modal">
+                <div class="modal-background"></div>
+                <div class="modal-content">
+                    <div class="columns">
+                        <div class="column" id="add-category-modal-content">
+                            <label class="label">Add Category</label>
+                            <div class="field">
+                                <input type="text" class="input">
+                            </div>
+                            <div class="columns is-vcentered">
+                                <div class="column is-2">
+                                    <button type="button" class="button is-primary is-rounded" onclick="addCategory()">Add</button>
+                                </div>
+                                <div class="column">
+                                    <button type="button" class="button is-danger is-rounded" onclick="closeModal()">Cancle</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="modal-close is-large" aria-label="close"></button>
+            </div>
+        </div>
+    </div>
+    <label class="label">Date: </label>
+    <div class="field">
+        <input type="date" name="date" id="datepicker-expense">
+    </div>
+    <label class="label">Vendor</label>
+    <div class="columns is-vcentered">
+        <div class="column is-4">
+            <div class="field" id="vendor-selection">
+                <div class="control">
+                    <div class="select">
+                        <select name="vendor">
+                            <option value=""></option>
+                            <% vendors.forEach(function(vendor) { %>
+                            <option value="<%=vendor%>"><%=vendor%></option>
+                            <% }); %>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <a href="/vendor/create" class="button is-primary is-rounded">
+                <span class="icon"><i class="fas fa-plus"></i></span>
+                <span>Add Vendor</span>
+            </a>
+        </div>
+    </div>
+    <label class="label">Description: </label>
+    <div class="field">
+        <textarea class="textarea" name="description" placeholder="description"></textarea>
+    </div>
+    <label class="label">Subtotal: </label>
+    <div class="field">
+        <input type="number" class="input" name="subtotal">
+    </div>
+    <div class="columns is-vcentered form-submit-buttons">
+        <div class="column is-1">
+            <button type="submit" class="button is-success is-large"> <span> Save </span><span class="icon is-small"><i
+                        class="fas fa-check"></i></span></button>
+        </div>
+        <div class="column is-1">
+            <a class="button is-large is-danger" href="/client"> <span> Cancel </span><span class="icon is-small"><i
+                        class="fas fa-times"></i></span></a>
+        </div>
+    </div>
+</form>
+
+<% include ../partials/footer %>

@@ -5,6 +5,11 @@ const clientConfig = require('./config/config').clientConfig;
 
 const indexRouter = require("./routes/index");
 const companyRouter = require('./routes/company');
+const clientRouter = require('./routes/client');
+const vendorRouter = require('./routes/vendor');
+const reportRouter = require('./routes/report');
+const expenseRouter = require('./routes/expense');
+const invoiceRouter = require('./routes/invoice');
 
 const app = express();
 const PORT = process.env.PORT ? process.env.PORT : clientConfig.port;
@@ -17,6 +22,8 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'static/public')));
+app.use(express.static(path.join(__dirname, 'node_modules/bulma-calendar/dist')));
+
 
 app.use((req, res, next) => {
     res.locals.user = {
@@ -28,6 +35,11 @@ app.use((req, res, next) => {
 
 app.use('/', indexRouter);
 app.use('/company', companyRouter);
+app.use('/client', clientRouter);
+app.use('/vendor', vendorRouter);
+app.use('/report', reportRouter);
+app.use('/expense', expenseRouter);
+app.use('/invoice', invoiceRouter);
 
 app.listen(PORT, IP, () => {
     console.log("Application listening at port "+ PORT);

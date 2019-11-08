@@ -1,0 +1,105 @@
+<% include ../partials/creation_header %>
+
+
+<h1 class="is-size-2 form-heading">Company Profile: </h1>
+<form action="" method="POST">
+    <label class="label">Company Name: </label>
+    <div class="field">
+        <input type="text" class="input" name="name" value="<%=company.name%>" placeholder="Company Name">
+    </div>
+    <label class="label">Company Phone: </label>
+    <div class="field has-addons">
+        <p class="control">
+            <span class="select">
+                <select name="countryCode" id="countryCode">
+                    <% countryCode.forEach((code) => { %>
+                    <% if (code == company.countryCode) { %>
+                    <option value="<%= code %>" selected><%= code %></option>
+                    <% }else{ %>
+                    <option value="<%= code %>"><%= code %></option>
+                    <% } %>
+                    <% }) %>
+                </select>
+            </span>
+        </p>
+        <p class="control">
+            <input type="text" class="input" name="phone" value="<%=company.phone%>" maxlength="10">
+        </p>
+    </div>
+    <label class="label">Company Email: </label>
+    <div class="field">
+        <input type="email" class="input" name="email" value="<%=company.email%>" placeholder="Company email">
+    </div>
+    <label class="label">Address: </label>
+    <div class="field">
+        <input type="text" class="input" name="address1" value="<%=company.address1%>" placeholder="Address Line 1">
+    </div>
+    <div class="field is-horizontal">
+        <div class="field-body">
+            <div class="field">
+                <input type="text" class="input" name="city" value="<%=company.city%>" placeholder="City">
+            </div>
+            <div class="field">
+                <input type="text" class="input" name="state" value="<%=company.state%>" placeholder="State">
+            </div>
+        </div>
+    </div>
+    <div class="field is-horizontal">
+        <div class="field-body">
+            <div class="field">
+                <input type="text" class="input" name="country" value="<%=company.country%>" placeholder="Country">
+            </div>
+            <div class="field">
+                <input type="number" class="input" name="pincode" value="<%=company.pincode%>" placeholder="Pin Code">
+            </div>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column">
+            <label class="label">Currency: </label>
+            <div class="field">
+                <div class="control">
+                    <div class="select">
+                        <select name="currency" id="currency">
+                            <% currency.forEach(curr => { %>
+                            <% if (curr == company.currency){ %>
+                            <option value="<%= curr %>" selected><%= curr %></option>
+                            <% }else{ %>
+                            <option value="<%= curr %>"><%= curr %></option>
+                            <%} %>
+                            <% }) %>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <label class="label">Date Format: </label>
+            <div class="field">
+                <div class="control">
+                    <div class="select">
+                        <select name="datefmt" id="datefmt">
+                            <% dateFormat.forEach(fmt => { %>
+                            <% if (fmt == company.datefmt) { %>
+                                <option value="<%= fmt %>" selected><%= fmt %></option>
+                            <% } else { %>
+                                <option value="<%= fmt %>"><%= fmt %></option>
+                            <% } %>
+                            <% }) %>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <label class="label">Tax Rate: </label>
+            <div class="field">
+                <input type="number" class="input" placeholder="rate" value="<%=company.taxrate%>" name="taxrate">
+            </div>
+        </div>
+    </div>
+    <button type="submit" class="button is-success is-size-3"> <span> Save </span><span class="icon is-small"><i
+                class="fas fa-check"></i></span></button>
+</form>
+
+<% include ../partials/footer %>
