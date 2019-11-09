@@ -131,7 +131,7 @@
 	</thead>
 	<tbody class="records">
     <% expense.forEach(function(expense){%>
-      <tr>
+      <tr class="searchableParent">
         <td>
           <div class="pretty p-svg p-curve">
             <input type="checkbox" id = "id"/>
@@ -145,7 +145,7 @@
           </div>
         </td>
         <label for="select-checkbox">
-          <td><%= expense.vendor%></td>
+          <td class="searchable"><%= expense.vendor%></td>
           <td><%= expense.date%></td>
           <td><%= expense.countryCode%> <%= expense.phone%></td>
           <td><%= expense.category%></td>

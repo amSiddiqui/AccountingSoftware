@@ -90,7 +90,6 @@ router.post('/accountant/create', (req, res, next) => {
                         .then(response => {
                             const user = {
                                 username: tempProfile.headAcc.email,
-
                             }
                             res.cookie('user',user,cookieOpt);
                             tempProfile = null;
