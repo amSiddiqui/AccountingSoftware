@@ -1,7 +1,7 @@
 <% include ../../partials/creation_header %>
 
 <h1 class="is-size-2 form-heading"><%= accountant %> Accountant Profile: </h1>
-<form action="" method="POST">
+<form action="/company/accountant/create" method="POST">
     <label class="label">Name: </label>
     <div class="field is-horizontal">
         <div class="field-body">
@@ -35,7 +35,19 @@
     </div>
     <label class="label">Email: </label>
     <div class="field">
-        <input type="email" class="input" name="email" value="<%=email%>" placeholder="email">
+        <% if (email != null) { %>
+            <input type="email" class="input" name="email" value="<%=email%>" placeholder="email">
+        <% }else{ %>
+            <input type="email" class="input" name="email" placeholder="email">
+        <% }%>
+    </div>
+    <label class="label">Password: </label>
+    <div class="field">
+        <% if (password != null) { %>
+            <input type="password" class="input" name="password" value="<%=password%>" placeholder="password">
+        <% }else{ %>
+            <input type="password" class="input" name="password" placeholder="password">
+        <% }%>
     </div>
     <label class="label">Address: </label>
     <div class="field">

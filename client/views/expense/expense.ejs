@@ -7,12 +7,14 @@
      <div class="column">
         <div class="dropdown is-right is-hoverable is-pulled-right">
             <div class="dropdown-trigger">
+              <a href="/expense/create">
                 <button class="button is-size-3 is-success is-rounded">
-                    <span>Add Expense</span>
-                    <span class="icon is-small">
-                        <i class="fa fa-plus" aria-hidden="true"></i>
-                    </span>
+                  <span>Add Expense</span>
+                  <span class="icon is-small">
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                  </span>
                 </button>
+              </a>
             </div>
         </div>
     </div>
@@ -34,81 +36,45 @@
         </div>
       </article>
     </div>
+    <% expense.forEach(function(expense){ %>
+      <div class="tile is-parent">
+        <a class = "tile" href="#">
+          <article class="tile is-child box has-background-white">
 
-    <div class="tile is-parent">
-      <a class = "tile" href="#">
-        <article class="tile is-child box has-background-white">
-
-          <hr class="tile-design">
-          <div class="level">
-            <div class=" column level-left">
-                <p class = "title is-2">Vendor Name</p>
+            <hr class="tile-design">
+            <div class="level">
+              <div class=" column level-left">
+                <p class = "title is-2"><%= expense.vendor%></p>
                 <p class = "content is-6">
                   <div class="columns is-vcentered">
                     <div class="column is-2 has-text-centered"><span class="icon"><i class="fas fa-envelope-open-text fa-fw"></i></span></div>
-                    <div class="column is-3">Description </div>
+                    <div class="column is-3"><%= expense.description%></div>
                   </div>
                 </p>
                 <p class = "content is-6">
                   <div class="columns is-vcentered">
                     <div class="column is-2 has-text-centered"><span class="icon"><i class="fas fa-calendar"></i></span></div>
-                    <div class="column">Date</div>
+                    <div class="column"><%= expense.date%></div>
                   </div>
                 </p>
                 <p class = "content is-6">
                   <div class="columns is-vcentered">
                     <div class="column is-2 has-text-centered"><span class="icon"><i class="fas fa-dollar-sign fa-fw"></i></span></div>
-                    <div class="column">Expense Type </div>
+                    <div class="column"><%= expense.category%></div>
                   </div>
                 </p>
+              </div>
             </div>
-          </div>
-          <hr>
-          <div class="level-right">
-            <h2 class = "is-size-2">Rs 40.0K</h2>
-          </div>
-
-        </article>
-      </a>
-
-    </div>
-    <div class="tile is-parent">
-      <a class = "tile" href="#">
-        <article class="tile is-child box has-background-white">
-
-          <hr class="tile-design">
-          <div class="level">
-            <div class=" column level-left">
-              <p class = "title is-2">Vendor Name</p>
-              <p class = "content is-6">
-                <div class="columns is-vcentered">
-                  <div class="column is-2 has-text-centered"><span class="icon"><i class="fas fa-envelope-open-text fa-fw"></i></span></div>
-                  <div class="column is-3">Description </div>
-                </div>
-              </p>
-              <p class = "content is-6">
-                <div class="columns is-vcentered">
-                  <div class="column is-2 has-text-centered"><span class="icon"><i class="fas fa-calendar"></i></span></div>
-                  <div class="column">Date</div>
-                </div>
-              </p>
-              <p class = "content is-6">
-                <div class="columns is-vcentered">
-                  <div class="column is-2 has-text-centered"><span class="icon"><i class="fas fa-dollar-sign fa-fw"></i></span></div>
-                  <div class="column">Expense Type </div>
-                </div>
-              </p>
+            <hr>
+            <div class="level-right">
+              <h2 class = "is-size-2">Rs <%= expense.subtotal%>K</h2>
             </div>
-          </div>
-          <hr>
-          <div class="level-right">
-            <h2 class = "is-size-2">Rs 40.0K</h2>
-          </div>
 
-        </article>
-      </a>
+          </article>
+        </a>
 
-    </div>
+      </div>
+    <% }); %>
 
   </div>
 </div>
@@ -164,57 +130,35 @@
 			</tr>
 	</thead>
 	<tbody class="records">
-    <tr>
-          <td>
-            <div class="pretty p-svg p-curve">
-                <input type="checkbox" id = "id"/>
-                <div class="state p-success">
-                    <!-- svg path -->
-                    <svg class="svg svg-icon" viewBox="0 0 20 20">
-                        <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z" style="stroke: white;fill:white;"></path>
-                    </svg>
-                    <label for=""></label>
-                </div>
+    <% expense.forEach(function(expense){%>
+      <tr>
+        <td>
+          <div class="pretty p-svg p-curve">
+            <input type="checkbox" id = "id"/>
+            <div class="state p-success">
+              <!-- svg path -->
+              <svg class="svg svg-icon" viewBox="0 0 20 20">
+                <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z" style="stroke: white;fill:white;"></path>
+              </svg>
+              <label for="select-checkbox"></label>
             </div>
-          </td>
-          <label for="id">
-            <td>ABC</td>
-            <td>10/20/2019</td>
-            <td>9713741939</td>
-            <td>Educational</td>
-            <td>Rs 20000 INR</td>
-          </label>
-		</tr>
-    <tr>
-          <td>
-            <div class="pretty p-svg p-curve">
-                <input type="checkbox" id = "id"/>
-                <div class="state p-success">
-                    <!-- svg path -->
-                    <svg class="svg svg-icon" viewBox="0 0 20 20">
-                        <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z" style="stroke: white;fill:white;"></path>
-                    </svg>
-                    <label for=""></label>
-                </div>
-            </div>
-          </td>
-          <label for="id">
-            <td>ABC</td>
-            <td>10/20/2019</td>
-            <td>9713741939</td>
-            <td>Educational</td>
-            <td>Rs 20000 INR</td>
-          </label>
-		</tr>
+          </div>
+        </td>
+        <label for="select-checkbox">
+          <td><%= expense.vendor%></td>
+          <td><%= expense.date%></td>
+          <td><%= expense.countryCode%> <%= expense.phone%></td>
+          <td><%= expense.category%></td>
+          <td>Rs <%= expense.subtotal%>K</td>
+        </label>
+      </tr>
+    <%});%>
 
 	</tbody>
 
 	<tfoot class="is-size-6">
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th>Total: Rs 20000 INR</th>
+
+		<th><span class= "is-pulled-right">Total: Rs 22400</span></th>
 	</tfoot>
 </table>
 </div>

@@ -1,7 +1,7 @@
 <% include ../partials/header %>
 
 <h1 class="is-size-2 form-heading">New Expense: </h1>
-<form action="" method="post">
+<form action="/expense" method="post">
     <label for="category-selection" class="label">Catergory</label>
     <div class="columns is-vcentered">
         <div class="column is-4">
@@ -74,6 +74,21 @@
             </a>
         </div>
     </div>
+    <label class="label">Phone: </label>
+    <div class="field has-addons">
+        <p class="control">
+            <span class="select">
+                <select name="countryCode" id="countryCode">
+                    <% countryCode.forEach((code) => { %>
+                        <option value="<%= code %>"><%= code %></option>
+                    <% }) %>
+                </select>
+            </span>
+        </p>
+        <p class="control">
+            <input type="text" class="input" name="phone" maxlength="10">
+        </p>
+    </div>
     <label class="label">Description: </label>
     <div class="field">
         <textarea class="textarea" name="description" placeholder="description"></textarea>
@@ -88,7 +103,7 @@
                         class="fas fa-check"></i></span></button>
         </div>
         <div class="column is-1">
-            <a class="button is-large is-danger" href="/client"> <span> Cancel </span><span class="icon is-small"><i
+            <a class="button is-large is-danger" href="/expense"> <span> Cancel </span><span class="icon is-small"><i
                         class="fas fa-times"></i></span></a>
         </div>
     </div>

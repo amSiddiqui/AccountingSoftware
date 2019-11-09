@@ -36,9 +36,12 @@ const data = {
 
   pseudoExpense : [
     {
+        id: '654321',
+        countryCode: '+91',
         category: 'Education',
-        date: '2018-01-22',
+        date: '01/22/2018',
         vendor: 'TCS',
+        phone: '7823651098',
         description: 'financing education',
         subtotal: 22.4
     },
@@ -146,83 +149,3 @@ const data = {
 }
 
 module.exports = data;
-
-// countryCode = ['+91', '+88', '+65'];
-//
-// //VENDOR
-//
-// const pseudoVendor = {
-//     name: 'SecretShop',
-//     countryCode: '+65',
-//     phone: '2975107492',
-//     email: 'carl@hunter.gg',
-//     address1: 'Monterey Bay Aquarium, 886 Cannery Row',
-//     city: 'Monterey',
-//     state: 'California',
-//     country: 'USA',
-//     pincode: '93940',
-// };
-//
-// //CLIENT
-//
-// const pseudoClient = {
-//     firstName: 'Leviathan',
-//     lastName: 'Tidehunter',
-//     countryCode: '+65',
-//     phone: '2975107492',
-//     email: 'leviathan@hunter.gg',
-//     address1: 'Monterey Bay Aquarium, 886 Cannery Row',
-//     city: 'Monterey',
-//     state: 'California',
-//     country: 'USA',
-//     pincode: '93940',
-//     lateFeeRate: '3.15'
-// };
-//
-//
-// //EXPENSE
-//
-// const pseudoExpense = {
-//     category: 'Education',
-//     date: '2018-01-22',
-//     vendor: 'TCS',
-//     description: 'financing education',
-//     subtotal: 22.4
-// };
-//
-// const vendors = [
-//     'ABC',
-//     'KFC',
-//     'BMW',
-//     'TCS',
-//     'IBM',
-//     'HP',
-//     'HDFC',
-//     'SBI',
-//     'ICICI'
-// ];
-//
-// const categories = [
-//     'Education', 'Food', 'Advertising'
-// ];
-//
-// //INVOICE
-//
-// //REPORT
-//
-//
-// //COMPANY
-//
-// const psuedoAccountant = {
-//     accountantType: 'Head',
-//     firstName: 'Leviathan',
-//     lastName: 'Tidehunter',
-//     countryCode: '+65',
-//     phone: '2975107492',
-//     email: 'leviathan@hunter.gg',
-//     address1: 'Monterey Bay Aquarium, 886 Cannery Row',
-//     city: 'Monterey',
-//     state: 'California',
-//     country: 'USA',
-//     pincode: '93940',
-// };

@@ -31,6 +31,10 @@ app.use(methodOverride("_method"));
 // Global variables
 global.dburl = process.env.DBURL;
 global.tempProfile = null;
+global.accessToken = "accessToken";
+global.dbErrorMsg = "Database not responding try again later";
+
+
 
 app.use((req, res, next) => {
     res.locals.user = {

@@ -63,7 +63,7 @@
             </div>
 
             <div class="navbar-end">
-                <% if (user){ %>
+                <% if (user != undefined){ %>
                 <div class="navbar-item has-dropdown is-hoverable">
                     <a class="navbar-link is-arrowless">
                         <span class="has-text-weight-bold is-size-4" id="username"><%= user.username %></span>
