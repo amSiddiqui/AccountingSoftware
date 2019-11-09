@@ -33,7 +33,7 @@ class Authentication{
                 req.serverKey = {accessToken: res.data.accessToken};
                 next();
             });
-            return res;
+            return this.serverKey;
         }catch(err){
             throw new Error(err.response.data.error);
         }

@@ -4,7 +4,19 @@ const router = express.Router();
 const Authentication = require('../modules/auth');
 const auth = new Authentication(router);
 const util = require('../modules/utility');
-auth.conn();
+const config = require('../config/config');
+
+const configurations = {};
+
+auth.conn().then(serverKey=>{
+    configurations['country']       = config.country(serverKey);
+    configurations['quote']         = config.quote(serverKey);
+    configurations['currency']      = config.currency(serverKey);
+    configurations['phone_code']    = config.phone_code(serverKey);
+    configurations['datefmt']       = config.datefmt(serverKey);
+}).catch(err=>{
+    throw new Error(err);
+};
 
 const cookieOpt = {
     maxAge: 24 * 60 * 60,
@@ -22,10 +34,7 @@ router.get('/', (req, res, next) => {
 
 router.get('/login', (req, res) => {
     util.authCheck(req,(user)=>{
-
-        // FIXME: change it user to redirect to dahsboard 
-
-        if(false){
+        if(user){
             res.redirect('/dashboard');
         }else{
             res.render('login', {
@@ -72,8 +81,7 @@ router.post('/login',(req,res)=>{
 
 router.get('/signup', (req, res, next) => {
     util.authCheck(req,(user)=>{
-        // FIXME: Check user
-        if( false ) {
+        if( user ) {
             res.redirect('/dashboard');
         } else {
             res.render('signup');
