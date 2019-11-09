@@ -24,6 +24,11 @@ input.input, .select select, .datetimepicker-dummy-wrapper, textarea.textarea {
 }
 
 
+input.is-danger-input.input, select.is-danger-input {
+    border: 2px solid red;
+}
+  
+
 .select, .select select {
     width: 100%;
 }

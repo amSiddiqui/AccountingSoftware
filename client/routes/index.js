@@ -21,7 +21,7 @@ router.get('/', (req, res, next) => {
 // Login Routes
 
 router.get('/login', (req, res) => {
-    util.authCheck(res,(user)=>{
+    util.authCheck(req ,(user)=>{
 
         // FIXME: change it user to redirect to dahsboard 
 
@@ -73,9 +73,9 @@ router.post('/login',(req,res)=>{
 router.get('/signup', (req, res, next) => {
     util.authCheck(req,(user)=>{
         // FIXME: Check user
-        if(false){
+        if( false ) {
             res.redirect('/dashboard');
-        }else{
+        } else {
             res.render('signup');
         }
     });

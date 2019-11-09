@@ -54,10 +54,7 @@ module.exports = {
         return true;
     },
     authCheck: (req, callback)=>{
-        if( typeof(req.cookies) == 'object' ) {
-            callback(null);
-            return;
-        }
+        
         const user = req.cookies['user'];
         if(typeof(user) == 'object' && typeof(user.token) == 'string' && typeof(user.profile) == 'object'){
             callback(user);
