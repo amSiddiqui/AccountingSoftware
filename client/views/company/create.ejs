@@ -1,15 +1,18 @@
 <% include ../partials/creation_header %>
 
 <h1 class="is-size-2 form-heading">Company Profile: </h1>
-<form action="" method="POST">
+<form action="/company/create" method="POST">
     <label class="label">Company Name: </label>
     <div class="field">
-        <input type="text" class="input" name="name" placeholder="Company Name">
+        <input type="text" class="input <%=error.nameExists?'is-danger-input':''%>" name="name" placeholder="Company Name">
     </div>
+    <% if (error.nameExists) { %>
+        <p class="is-danger help">Company name already exists</p>
+    <%}%>
     <label class="label">Company Phone: </label>
     <div class="field has-addons">
         <p class="control">
-            <span class="select">
+            <span class="select <%=error.phoneExists?'is-danger-input':''%>">
                 <select name="countryCode" id="countryCode">
                     <% countryCode.forEach((code) => { %>
                     <option value="<%= code %>"><%= code %></option>
@@ -18,13 +21,19 @@
             </span>
         </p>
         <p class="control">
-            <input type="text" class="input" name="phone" maxlength="10">
+            <input type="text" class="input <%=error.phoneExists?'is-danger-input':''%>" name="phone" maxlength="10">
         </p>
     </div>
+    <% if (error.phoneExists) { %>
+        <p class="is-danger help">Phone number already exists</p>
+    <%}%>
     <label class="label">Company Email: </label>
     <div class="field">
-        <input type="email" class="input" name="email" placeholder="Company email">
+        <input type="email" class="input <%=error.emailExists?'is-danger-input':''%>" name="email" placeholder="Company email">
     </div>
+    <% if (error.emailExists) { %>
+        <p class="is-danger help">Email already exists</p>
+    <%}%>
     <label class="label">Address: </label>
     <div class="field">
         <input type="text" class="input" name="address1" placeholder="Address Line 1">

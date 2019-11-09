@@ -20,27 +20,30 @@
                     <div class="box has-background-white formContainer">
                         <h1 class="title has-text-weight-bold is-1  has-text-centered">Sign Up</h1>
                         <div class="formDetails">
-                            <form action="" method="POST">
+                            <form action="/signup" method="POST">
                                 <div class="field">
                                     <label class="label">Email</label>
                                     <div class="control has-icons-left">
-                                        <input type="email" class="input" placeholder="email">
+                                        <input type="email" name="email" class="input" placeholder="email">
                                         <span class="icon is-small is-left">
                                             <i class="fas fa-envelope"></i>
                                         </span>
                                     </div>
+                                    <% if (typeof userExists !== 'undefined' && userExists) { %>
+                                        <p class="help has-text-danger">Email already exists</p>
+                                    <% }%>
                                 </div>
                                 <div class="field">
                                     <label class="label">Password</label>
                                     <div class="control has-icons-left">
-                                        <input type="password" class="input" placeholder="password">
+                                        <input type="password" class="input" name="password" placeholder="password">
                                         <span class="icon is-small is-left">
                                             <i class="fas fa-key"></i>
                                         </span>
                                     </div>
                                 </div>
                                 <div class="centeredButton">
-                                    <input type="submit" class="button is-primary is-medium" value="Get Started">
+                                    <input type="submit" class="button is-primary is-medium" name="button" value="Get Started">
                                 </div>
                             </form>
                             <p class="has-text-centered">Already have an account? <a href="/login">Login</a></p>
