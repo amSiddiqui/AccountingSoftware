@@ -22,14 +22,13 @@ class PhoneCode(models.Model):
 	ISD_Code=models.CharField(max_length=10)
 
 #---------------------------------------------------------
-
 class Company(models.Model):
 	Company_Id=models.AutoField(primary_key=True)
 	Company_Name=models.CharField(max_length=50)
 	Address_Line=models.TextField()
 	City=models.CharField(max_length=30)
 	#The Pin_Code field is added after creation of table thus need to set a default value
-	Pin_Code=models.PositiveSmallIntegerField(default="")
+	Pin_Code=models.PositiveSmallIntegerField(default=0)
 	State=models.CharField(max_length=30)
 	Email=models.EmailField()
 	Phone=models.PositiveSmallIntegerField()
@@ -48,7 +47,7 @@ class User(models.Model):
 	Address_Line=models.TextField()
 	City=models.CharField(max_length=30)
 	#The Pin_Code field is added after creation of table thus need to set a default value
-	Pin_Code=models.PositiveSmallIntegerField(default="")
+	Pin_Code=models.PositiveSmallIntegerField(default=0)
 	State=models.CharField(max_length=30)
 	Email=models.EmailField()
 	#The Password field is added after creation of table thus need to set a default value
@@ -75,11 +74,10 @@ class Client(models.Model):
 	Late_Fee_Rate=models.FloatField(default=0)
 	Email=models.EmailField()
 	Phone=models.PositiveIntegerField()
-	Late_Fee_Rate=models.FloatField(default=0)
 
 	def __str__(self):
-		return(self.Client_Id+','+self.Fname+','+self.Lname+','+self.Address_Line+','+self.City+','+self.State+','+self.Pin_Code+','+self.Email+','+self.Phone+','+self.Late_Fee_Rate)
-
+		return(self.Client_Id+','+self.Fname+','+self.Lname+','+self.Address_Line+','+self.City+','+self.State+','+
+			   self.Pin_Code+','+self.Email+','+self.Phone+','+self.Late_Fee_Rate)
 
 class Vendor(models.Model):
 	Vendor_Id=models.CharField(max_length=20,primary_key=True)
@@ -124,16 +122,17 @@ class Transactions(models.Model):
     Transaction_amt=models.FloatField()
 
     def __str__(self):
-        return(self.Transaction_Id+','+self.Transaction_amt+','+self.Transaction_Date)
-
+    	return(self.Transaction_Id+','+self.Transaction_amt+','+self.Transaction_Date)
 		
 class Quotes(models.Model):
-    id=models.AutoField(primary_key=True)
+    Id=models.AutoField(primary_key=True)
     AFName=models.CharField(max_length=20)
     ALName=models.CharField(max_length=20)
     Quote=models.TextField()
+
     def __str__(self):
-        return(self.id+','+self.AFName+','+self.ALName+','+self.Quote)
+        return(self.Id+','+self.AFName+','+self.ALName+','+self.Quote)
+
 class choice(Enum):
     inter='dd:mm:yyyy'
     us='mm:dd:yyyy'
@@ -142,6 +141,7 @@ class choice(Enum):
 class Date_Formats(models.Model):		
     Id=models.AutoField(primary_key=True)
     Types=models.CharField(max_length=10,choices=[(tag,tag.value) for tag in choice])
-    def __str(self):
+    
+    def __str__(self):
 	    return(self.Id+','+self.Types)
 

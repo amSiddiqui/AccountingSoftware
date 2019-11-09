@@ -2,5 +2,7 @@ client/node_modules
 package-lock.json
 .env
 .vscode
-*.pyc
+migrations/
 *~
+*.pyc
+__pycache__

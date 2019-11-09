@@ -1,0 +1,183 @@
+<% include ../partials/header %>
+
+<div class="columns is-vcentered">
+  <div class="column">
+    <h1 class="is-size-1 is-pulled-left">Client</h1>
+  </div>
+  <div class="column">
+    <div class="dropdown is-right is-hoverable is-pulled-right">
+      <div class="dropdown-trigger">
+        <a href="client/create">
+          <button class="button is-size-4 is-success is-rounded">
+              <span>New Client</span>
+              <span class="icon is-small">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+              </span>
+            </button>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+<div class="tabs is-fullwidth is-large">
+  <ul>
+    <li class="tab">
+      <a>
+        <div class="column has-text-centered">
+          <h1 class="is-size-1">Rs 0</h1>
+          <span>Overdue</span>
+        </div>
+      </a>
+    </li>
+    <li class="tab">
+      <a>
+        <div class="column has-text-centered">
+          <h2 class="is-size-1">Rs 0</h2>
+          <span>Outstanding</span>
+        </div>
+      </a>
+    </li>
+    <li class="tab">
+      <a>
+        <div class="column has-text-centered">
+          <h2 class="is-size-1">Rs 0</h2>
+          <span>Draft</span>
+        </div>
+      </a>
+    </li>
+  </ul>
+</div>
+
+<div class="is-size-2">
+  <p>Recent Activities</p>
+</div>
+
+<hr>
+
+<div class="tile is-ancestor">
+  <div class="tile is-15 is-parent is-fullwidth">
+    <div class="tile is-parent">
+      <article class="tile is-child box has-background-white add">
+        <div class="has-text-centered">
+          <a href="client/create" class="title is-size-2 add"><i class="fas fa-plus fa-fw"></i>Add Client</a>
+        </div>
+      </article>
+
+
+    </div>
+
+
+    <% clients.forEach(function(client){ %>
+      <div class="tile is-parent">
+        <a class="tile" href="client/<%= client.id %>">
+          <article class="tile is-child box has-background-white">
+
+            <hr class="tile-design">
+            <div class="level">
+              <div class=" column level-left">
+                <p class="title is-2"><%= client.firstName%> <%= client.lastName%></p>
+                <p class="content is-6"><i class="fas fa-envelope-open-text fa-fw"></i><%= client.email%></p>
+                <p class="content is-6"><i class="fas fa-mobile-alt fa-fw"></i><%= client.phone%></p>
+              </div>
+            </div>
+
+          </article>
+        </a>
+      </div>
+    <% }); %>
+
+  </div>
+</div>
+
+<div>
+  <nav class="level">
+    <div class="level-left">
+      <div class="level-item">
+        <p class="subtitle is-3">
+          <strong>All Clients</strong>
+        </p>
+      </div>
+    </div>
+    <div class="level-right">
+      <div class="level-item">
+        <div class="field has-addons">
+          <div class="control">
+            <input class="search input is-large is-rounded" type="text" placeholder="Find a Client">
+
+          </div>
+          <div class="control">
+            <a href="#" class="button is-info is-medium is-rounded">
+              Search
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<div class="table-container">
+	<table class="table is-scrollable is-fullwidth is-hoverable is-striped ">
+	<thead class="is-size-5">
+			<tr>
+				<th>
+            <div class="pretty p-svg p-curve">
+                <input type="checkbox" id = "selectAll"/>
+                <div class="state p-success">
+                    <!-- svg path -->
+                    <svg class="svg svg-icon" viewBox="0 0 20 20">
+                        <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z" style="stroke: white;fill:white;"></path>
+                    </svg>
+                    <label for="">Select All</label>
+                </div>
+            </div>
+				</th>
+        <th>ID</th>
+				<th>Name</th>
+				<th>Address</th>
+				<th>Contact Number</th>
+				<th class = "num">Amount</th>
+			</tr>
+	</thead>
+	<tbody class="records">
+    <% clients.forEach(function(client){%>
+      <tr class="searchableParent">
+            <td>
+              <div class="pretty p-svg p-curve">
+                  <input type="checkbox" id = "select-checkbox"/>
+                  <div class="state p-success">
+                      <!-- svg path -->
+                      <svg class="svg svg-icon" viewBox="0 0 20 20">
+                          <path d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z" style="stroke: white;fill:white;"></path>
+                      </svg>
+                      <label for=""></label>
+                  </div>
+              </div>
+            </td>
+            <label for="select-checkbox">
+              <td><%= client.id%></td>
+              <td class="searchable"><p><%= client.firstName%> <%= client.lastName%></p></td>
+              <td>
+                <p><%= client.address1%></p>
+                <p><%= client.city%>,<%= client.state%> - <%= client.pincode%></p>
+              </td>
+              <td><%= client.phone%></td>
+              <td>Rs 20000 INR</td>
+            </label>
+  		</tr>
+    <%});%>
+	</tbody>
+
+	<tfoot class="is-size-6">
+		<th><span class = "is-pulled-right">Total: Rs 20000 INR</span></th>
+	</tfoot>
+</table>
+</div>
+
+
+
+
+
+
+<% include ../partials/footer %>

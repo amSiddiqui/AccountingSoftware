@@ -20,11 +20,11 @@
                     <div class="box has-background-white formContainer">
                         <h1 class="title has-text-weight-bold is-1  has-text-centered">Login</h1>
                         <div class="formDetails">
-                            <form action="" method="POST">
+                            <form action="/login" method="POST">
                                 <div class="field">
                                     <label class="label">Email</label>
                                     <div class="control has-icons-left">
-                                        <input type="email" class="input" placeholder="email">
+                                        <input type="email" class="input <%=error?'is-danger-input':''%>" name="email" placeholder="email">
                                         <span class="icon is-small is-left">
                                             <i class="fas fa-envelope"></i>
                                         </span>
@@ -33,12 +33,15 @@
                                 <div class="field">
                                     <label class="label">Password</label>
                                     <div class="control has-icons-left">
-                                        <input type="password" class="input" placeholder="password">
+                                        <input type="password" class="input <%=error?'is-danger-input':''%>" name="password" placeholder="password">
                                         <span class="icon is-small is-left">
                                             <i class="fas fa-key"></i>
                                         </span>
                                     </div>
                                 </div>
+                                <% if (error) { %>
+                                    <p class="help is-danger">Invalid username or password</p>
+                                <% } %>                                     
                                 <div class="centeredButton">
                                     <input type="submit" class="button is-primary is-medium" value="Login">
                                 </div>
