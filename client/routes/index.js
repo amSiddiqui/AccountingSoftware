@@ -13,12 +13,6 @@ const cookieOpt = {
 
 const axios = require('axios');
 
-// TODO: Remove this route
-router.get('/error', (req, res, next) => {
-    res.render('error', {
-        message: "an error message"
-    });
-});
 
 router.get('/', (req, res, next) => {
     res.redirect('/login');
@@ -28,28 +22,33 @@ router.get('/', (req, res, next) => {
 
 router.get('/login', (req, res) => {
     util.authCheck(res,(user)=>{
-        if(user){
+
+        // FIXME: change it user to redirect to dahsboard 
+
+        if(false){
             res.redirect('/dashboard');
         }else{
-            res.render('login');
+            res.render('login', {
+                error: false
+            });
         }
     });
 });
 
 
 router.post('/login',(req,res)=>{
+    
     const user = {
         username: req.body.email,
         password: req.body.password
     };
+
+
     if( typeof(user.username) == 'string' && typeof(user.password) == 'string'){
         auth.login(user).then(result=>{
             if( typeof(result) == 'object' && typeof(result.profile) == 'object'){
                 res.cookie('user',result, cookieOpt);
-                // req.app.locals.user = {
-                //     username: result.profile.firstName+' '+result.profile.lastName,
-                //     company: result.profile.company
-                // };
+                // TODO: Add user object to local session so that it can be displayed in partials
                 res.redirect('/dashboard');
             }else{
                 res.status(401);
@@ -58,21 +57,23 @@ router.post('/login',(req,res)=>{
         .catch(err=>{
             console.log('auth/login: '+err);
             // Database side error
+            res.render('error', {
+                message: dbErrorMsg
+            });
         });
     }else{
         res.status(400);
-        res.send( 'error', 'Invalid username and password');
+        res.render( 'login', {
+            error: true
+        });
     }
-    // Invalid Username and password
-    
 });
-
-
 
 
 router.get('/signup', (req, res, next) => {
     util.authCheck(req,(user)=>{
-        if(user){
+        // FIXME: Check user
+        if(false){
             res.redirect('/dashboard');
         }else{
             res.render('signup');
@@ -87,7 +88,17 @@ router.post('/signup', util.validateUser({}), (req, res) => {
         accessToken: accessToken,
         email: email
     };
-    axiox.post(dburl + 'auth/exists', payload)
+
+    tempProfile = {
+        headAcc: {
+            email: email,
+            password: password                    
+        }
+    };
+
+    res.redirect('/company/create');
+    
+    axios.post(dburl + 'auth/accountant/exists', payload)
     .then(response => {
         var data = JSON.parse(response.data);
         if (data.exists) {
@@ -108,7 +119,7 @@ router.post('/signup', util.validateUser({}), (req, res) => {
     .catch(error => {
         console.error(error);
         res.render('error', {
-            message: 'Database not responding try again later'
+            message: dbErrorMsg
         });
     });
 });
@@ -117,7 +128,6 @@ router.post('/signup', util.validateUser({}), (req, res) => {
 router.get('/dashboard', util.validateUser({}), (req, res) => {
     res.render('dashboard', {
         quote: {quote: 'You miss 100 percent of the shots you don’t take.', author: 'Wayne Gretzky'},
-        
     });
 });
 

@@ -41,7 +41,7 @@ module.exports = {
             return false;
         }
         let bool = true;
-        for( key in param ){
+        for(var key in param ){
             if( obj.hasOwnProperty(key) ){
                 bool = bool && ( param[key] == typeof(obj[key]) );
                 if( !bool ) return false;
@@ -49,8 +49,11 @@ module.exports = {
         }
         return true;
     },
-    authCheck: (res, callback)=>{
-        const user = res.cookie['user'];
+    authCheck: (req, callback)=>{
+        // const user = req.cookies['user'];
+        const user = {
+            username: "someuser"
+        };
         if(typeof(user) == 'object' && typeof(user.token) == 'string' && typeof(user.profile) == 'object'){
             callback(user);
         }else{

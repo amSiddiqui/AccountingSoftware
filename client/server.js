@@ -28,6 +28,10 @@ app.use(express.static(path.join(__dirname, 'static/public')));
 // Global variables
 global.dburl = process.env.DBURL;
 global.tempProfile = null;
+global.accessToken = "accessToken";
+global.dbErrorMsg = "Database not responding try again later";
+
+
 
 app.use((req, res, next) => {
     res.locals.user = {
