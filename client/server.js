@@ -33,7 +33,10 @@ global.dburl = process.env.DBURL;
 global.tempProfile = null;
 global.accessToken = "accessToken";
 global.dbErrorMsg = "Database not responding try again later";
-
+global.cookieOpt = {
+    maxAge: 24 * 60 * 60,
+    httpOnly: true,
+};
 
 
 app.use((req, res, next) => {
