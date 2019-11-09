@@ -1,8 +1,6 @@
 from django.db import models
-<<<<<<< HEAD
 #from django_mysql.models import EnumField
 from enum import Enum
-=======
 
 #Utility Database:
 #---------------------------------------------------------
@@ -25,7 +23,6 @@ class PhoneCode(models.Model):
 
 #---------------------------------------------------------
 
->>>>>>> 61e1f4d0d4e70a339a9349ab9b23f76b6dafdcd0
 class Company(models.Model):
 	Company_Id=models.AutoField(primary_key=True)
 	Company_Name=models.CharField(max_length=50)
@@ -81,13 +78,8 @@ class Client(models.Model):
 	Late_Fee_Rate=models.FloatField(default=0)
 
 	def __str__(self):
-<<<<<<< HEAD
 		return(self.Client_Id+','+self.Fname+','+self.Lname+','+self.Address_Line+','+self.City+','+self.State+','+self.Pin_Code+','+self.Email+','+self.Phone+','+self.Late_Fee_Rate)
 
-=======
-		return(self.Client_Id+','+self.Fname+','+self.Lname+','+self.Address_Line+','+self.City+','+self.State+','+
-			   self.Pin_Code+','+self.Email+','+self.Phone)
->>>>>>> 61e1f4d0d4e70a339a9349ab9b23f76b6dafdcd0
 
 class Vendor(models.Model):
 	Vendor_Id=models.CharField(max_length=20,primary_key=True)
@@ -132,11 +124,8 @@ class Transactions(models.Model):
     Transaction_amt=models.FloatField()
 
     def __str__(self):
-    	return(self.Transaction_id+','+self.Transaction_amt+','+self.Transaction_Date)
-<<<<<<< HEAD
-class Client_Account(models.Model):
-    Client_Id=models.ForeignKey(Client, on_delete=models.CASCADE)
-    Account_Id=models.ForeignKey(Account, on_delete=models.CASCADE)
+        return(self.Transaction_Id+','+self.Transaction_amt+','+self.Transaction_Date)
+
 		
 class Quotes(models.Model):
     id=models.AutoField(primary_key=True)
@@ -155,6 +144,4 @@ class Date_Formats(models.Model):
     Types=models.CharField(max_length=10,choices=[(tag,tag.value) for tag in choice])
     def __str(self):
 	    return(self.Id+','+self.Types)
-=======
 
->>>>>>> 61e1f4d0d4e70a339a9349ab9b23f76b6dafdcd0
