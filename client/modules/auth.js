@@ -1,4 +1,3 @@
-
 const serverConfig = require('../config/config').serverConfig;
 const axios = require('axios');
 const util = require('./utility');
