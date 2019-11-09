@@ -34,7 +34,7 @@
                 <p class="card-header-title">
                     <%=client.firstName%> <%=client.lastName%>
                 </p>
-                <a href="#" class="card-header-icon">
+                <a href="/client/<%= client.id%>/edit" class="card-header-icon">
                     <span class="icon">
                         <i class="fas fa-edit" aria-hidden="true"></i>
                     </span>
@@ -188,7 +188,7 @@
         </thead>
         <tbody class="records">
             <tr>
-                <th>
+                <td>
                     <div class="pretty p-svg p-curve">
                         <input type="checkbox" id="select-checkbox" />
                         <div class="state p-success">
@@ -201,7 +201,7 @@
                             <label for=""></label>
                         </div>
                     </div>
-                </th>
+                </td>
                 <label for="select-checkbox">
                     <td>
                         <p class="heading is-capitalized"><%=client.firstName%> <%=client.lastName%></p>
@@ -217,12 +217,8 @@
             </tr>
         </tbody>
         <tfoot class="is-size-6">
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th>Total: Rs 20000 INR</th>
-        </tfoot>
+      		<th><span class = "is-pulled-right">Total: Rs 20000 INR</span></th>
+      	</tfoot>
     </table>
 </div>
 

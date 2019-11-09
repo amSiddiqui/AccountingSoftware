@@ -48,7 +48,7 @@ module.exports = {
             return false;
         }
         let bool = true;
-        for( key in param ){
+        for(var key in param ){
             if( obj.hasOwnProperty(key) ){
                 bool = bool && ( param[key] == typeof(obj[key]) );
                 if( !bool ) return false;

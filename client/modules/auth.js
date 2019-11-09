@@ -46,6 +46,8 @@ class Authentication{
             userToken:'123',
             error: null 
         };
+
+        
         if( this.serverKey == null ){
             console.log("Not connected to server");
             return null;
@@ -59,14 +61,14 @@ class Authentication{
                 const userRes = await axios.post(`${this.loginRoute}`, {
                     ...user,
                     ...this.serverKey,
-                })
+                });
                 return userRes.data;
             }else{
                 return {
                     profile:null,
                     userToken:null,
                     error:'invalid user input' 
-                }
+                };
             }
         }catch(err){
             console.log(err.response.data.error);
@@ -89,14 +91,14 @@ class Authentication{
                 const userRes = await axios.post(`${this.signUpRoute}`, {
                     ...user,
                     ...this.serverKey,
-                })
+                });
                 return userRes.data;
             }else{
                 return {
                     profile:null,
                     userToken:null,
                     error:'invalid user input' 
-                }
+                };
             }
         }catch(err){
             console.log(err.response.data.error);
@@ -115,12 +117,12 @@ class Authentication{
                     userToken:user.token,
                     ...this.serverKey,
                     error:null
-                })
+                });
                 return userRes.data;
             }else{
                 return {
                     error:'invalid user input' 
-                }
+                };
             }
         }catch(err){
             console.log(err.response.data.error);
@@ -129,6 +131,6 @@ class Authentication{
             };
         }
     }
-};
+}
 
 module.exports = Authentication;
