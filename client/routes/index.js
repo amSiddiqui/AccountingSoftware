@@ -21,7 +21,7 @@ router.get('/', (req, res, next) => {
 // Login Routes
 
 router.get('/login', (req, res) => {
-    util.authCheck(req ,(user)=>{
+    util.authCheck(req,(user)=>{
 
         // FIXME: change it user to redirect to dahsboard 
 

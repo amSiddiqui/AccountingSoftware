@@ -14,7 +14,7 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT ? process.env.PORT : clientConfig.port;
 const IP = process.env.IP ? process.env.IP : clientConfig.IP;
-
+const methodOverride = require('method-override')
 
 
 app.set('views', path.join(__dirname, 'views'));
@@ -25,12 +25,18 @@ app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'static/public')));
 
+//for PUT and DELETE requests
+app.use(methodOverride("_method"));
+
 // Global variables
 global.dburl = process.env.DBURL;
 global.tempProfile = null;
 global.accessToken = "accessToken";
 global.dbErrorMsg = "Database not responding try again later";
-
+global.cookieOpt = {
+    maxAge: 24 * 60 * 60,
+    httpOnly: true,
+};
 
 
 app.use((req, res, next) => {

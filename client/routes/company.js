@@ -88,6 +88,11 @@ router.post('/accountant/create', (req, res, next) => {
                     };
                     axios.post(dburl, 'signup', payload)
                         .then(response => {
+                            const user = {
+                                username: tempProfile.headAcc.email,
+
+                            }
+                            res.cookie('user',user,cookieOpt);
                             tempProfile = null;
                             res.redirect('/dashboard');
                         })
@@ -178,7 +183,7 @@ router.post('/create', (req, res, next) => {
         accessToken: accessToken
     };
 
-    axios.post(dburl + 'auth/company.exists', payload)
+    axios.post(dburl + 'auth/company/exists', payload)
         .then(response => {
             var data = JSON.parse(response.data);
             if (data.nameExists || data.phoneExists || data.emailExists) {

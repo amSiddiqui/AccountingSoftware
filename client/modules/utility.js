@@ -41,6 +41,9 @@ module.exports = {
     },
 
     validateObj : (obj, param)=>{
+        if( typeof(param) == 'string' ){
+            return typeof(obj) == param;
+        }
         if( typeof(param) != 'object' && typeof(obj) != 'object'){
             return false;
         }
