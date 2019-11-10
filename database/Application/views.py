@@ -3,6 +3,7 @@ from Application.models import User
 from django.http import JsonResponse,HttpResponse
 from django.contrib.auth.hashers import make_password,check_password
 from datetime import datetime
+from django.views.decorators.csrf import csrf_exempt
 
 value={
 
@@ -15,6 +16,7 @@ userToken=None
 status=[200,403,404]
 
 #Create Initial init Request:
+@csrf_exempt
 def init(request):
 
 	if request.method == 'POST':
@@ -29,10 +31,7 @@ def init(request):
 			value['accessToken']=make_password(token)
 
 			data={
-
-				'status'      : status[0],
-				'accessToken' : value['accessToken'],
-				'err'         : 'Connection Successful'
+				'accessToken' : value['accessToken']
 			}
 
 			return JsonResponse(data,safe=False)
@@ -44,18 +43,16 @@ def init(request):
 				value['accessToken']=make_password(token)
 
 				data1={
-
-					'status'      : status[0],
-					'accessToken' : value['accessToken'],
-					'err'         : 'Connection Successful'
+					'accessToken' : value['accessToken']
 				}
 
 				return JsonResponse(data1,safe=False)
 
 			else:
-				return HttpResponse(str(status[2])+" - Invalid Authorisation")
+				return HttpResponse("Invalid Authorisation", status=status[2])
 
 #Create login Request:
+@csrf_exempt
 def login_user(request):
 	if request.method == 'POST':
 		email=request.POST['email']
@@ -63,7 +60,7 @@ def login_user(request):
 		access_token=request.POST['accessToken'] #Is this accessToken encrypted??
 
 		if (access_token != value['accessToken']):
-			return HttpResponse(str(status[2])+" - Invalid Authorisation ")
+			return HttpResponse("Invalid Authorisation ", status=status[2])
 
 		for e,enc_p in User.objects.all().values_list('Email','Password'):
 			if e == email:
@@ -73,22 +70,20 @@ def login_user(request):
 					userToken=make_password(token)
 
 					data={
-
-						'status'   : status[0] ,
 						'profile'  : [val for val in User.objects.filter(email=e).values()],
-						'userToken': userToken,
-						'err'	   : 'Login Successful'
+						'userToken': userToken
 					}
 
 					return JsonResponse(data,safe=False)
 
 				else:
-					return HttpResponse(str(status[1])+" - Invalid Password")
+					return HttpResponse("Invalid Password", status=status[1])
 
 		else:
-			return HttpResponse(str(status[2])+" - User Does Not Exists")
+			return HttpResponse("User Does Not Exists", status=status[2])
 
 #Create logout Request:
+@csrf_exempt
 def logout(request):
 	if request.method == 'POST':
 		access_token=request.POST['accessToken']
@@ -96,10 +91,10 @@ def logout(request):
 		global userToken						#Use global keyword to access global variable
 
 		if ( access_token != value['accessToken'] ):
-			return HttpResponse(str(status[2])+" - Invalid Authorisation ")
+			return HttpResponse(" Invalid Authorisation ", status=status[2])
 
 		elif (userToken is None):
-			return HttpResponse(str(status[1])+ " - User not logged in")
+			return HttpResponse(" User not logged in", status=status[1])
 
 		elif (uToken != userToken):
-			return HttpResponse(str(status[2])+" - Invalid userToken ")
+			return HttpResponse("Invalid userToken ", status=status[2])
