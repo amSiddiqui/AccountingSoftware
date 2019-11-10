@@ -1,5 +1,6 @@
 #from django.shortcuts import render
 from Application.models import User
+from Application.models import Country,Quotes,Currency,PhoneCode,Date_Formats
 from django.http import JsonResponse,HttpResponse
 from django.contrib.auth.hashers import make_password,check_password
 from datetime import datetime
@@ -103,3 +104,99 @@ def logout(request):
 
 		elif (uToken != userToken):
 			return HttpResponse(str(status[2])+" - Invalid userToken ")
+
+def country(request):
+    country_code=list()
+    country_name=list()
+    if request.method== 'POST':
+        atoken=request.POST['accessToken']
+        if atoken==value['accessToken']:
+            for code,c_name in Country.objects.all().values_list('Country_Code','Country_Name'):
+                country_code.append(code)
+                country_name.append(c_name)
+            data={
+				'code':country_code,
+				'country':country_name,
+				'err':'Successful Fetching'
+			}
+            return JsonResponse(data)
+
+    return HttpResponse(" Invalid Authorization ",status=status[2])
+
+
+def quote(request):
+    fn=list()
+    ln=list()
+    quotes=list()
+    if request.method== 'POST':
+        atoken=request.POST['accessToken']
+        if atoken==value['accessToken']:
+            for f,l,q in Quotes.objects.all().values_list('AFName','ALName','Qoute'):
+                fn.append(f)
+                ln.append(l)
+            data={
+				'FName':fn,
+                'LName':ln,
+                'quote':q,
+				'err':'Successful Fetching'
+			}
+            return JsonResponse(data)
+
+    return HttpResponse(" Invalid Authorization ",status=status[2])
+
+
+def currencies(request):
+    currency_code=list()
+    currency_name=list()
+    if request.method== 'POST':
+        atoken=request.POST['accessToken']
+        if atoken==value['accessToken']:
+            for cc,c in Currency.objects.all().values_list('Code','Name'):
+                currency_code.append(cc)
+                currency_name.append(c)
+            data={
+				'code':currency_code,
+				'currency':currency_name,
+				'err':'Successful Fetching'
+			}
+            return JsonResponse(data)
+
+    return HttpResponse(" Invalid Authorization "+status=status[2])
+
+def phones(request):
+    country_name=list()
+    iso=list()
+    isd=list()
+    if request.method== 'POST':
+        atoken=request.POST['accessToken']
+        if atoken==value['accessToken']:
+            for c,i,d in PhoneCode.objects.all().values_list('Country_Name','ISO_Code','ISD_Code'):
+                country_name.append(c)
+                iso.append(i)
+                isd.append(d)
+            data={
+				'Country_Name':country_name,
+				'ISO':iso,
+				'ISD':isd
+			}
+            return JsonResponse(data)
+
+    return HttpResponse(" Invalid Authorization ",status=status[2])
+
+def dates(request):
+    id=list()
+    type=list()
+    if request.method=='POST':
+        atoken=request.POST['accessToken']
+        if atoken==value['accessToken']:
+            for i,t in Date_Formats.objects.all().values_list('Id','Types'):
+                id.append(i)
+                type.append(t)
+            data={
+				'Id':id,
+				'Type':type,
+				'err':'Successful Fetching'
+			}
+            return JsonResponse(data)
+    return HttpResponse(" Invalid Authorization ",status=status[2])
+
