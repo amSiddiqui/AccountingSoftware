@@ -144,11 +144,37 @@ router.post('/create', (req, res, next) => {
 });
 
 // TODO: create a batch delete route /batchDelete
-router.post('/batchDelete', (req, res, next) => {
+router.delete('/batchDelete', (req, res, next) => {
     // Fetch total number of invoices
-    var totalInvocies = 2;
+    util.authCheck(req, user => {
+        if (user) {
+            var totalInvocies = 2;
+            var invoiceIdDeleteion = [];
+            for (let index = 1; index <= totalInvocies; index++) {
+                if (req.body['invoice_'+index] != undefined) {
+                    invoiceIdDeleteion.push(index);
+                }
+            }
+            var payload = {
+                accessToken: accessToken,
+                token: user.token,
+                invoices: invoiceIdDeleteion
+            };
 
-
+            axios.post(dburl+'invoice/delete', payload)
+            .then(response => {
+                res.redirect('/invoice');
+            })
+            .error(err => {
+                res.render(error, {
+                    message: dbErrorMsg
+                });
+            });
+        }
+        else{
+            res.redirect('/dashboard');
+        }
+    });
 });
 
 
@@ -159,7 +185,7 @@ router.get('/:id', (req, res, next) => {
             // Fetch invoice details from the database
             var id = parseInt(req.params.id);
             // TODO: Use axios
-            console.log("Id recieved: ", id);
+
             // TODO: remove
             var invoices = seeds.invoices;
             var invoice;

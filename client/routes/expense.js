@@ -6,9 +6,13 @@ const seeds = require('../seeds');
 
 
 router.get('/', (req, res, next)=> {
-
+    var total = 0;
+    seeds.pseudoExpense.forEach((expense) =>{
+      total += expense.subtotal;
+    });
     res.render('expense/expense',{
       expense: seeds.pseudoExpense,
+      total:total,
     });
 });
 
@@ -36,7 +40,8 @@ router.post('/',(req , res) => {
 });
 
 router.get('/:id/edit', (req, res, next) => {
-    var expense = seeds.pseudoExpense.find(expense => expense.id === req.params.id);
+    var expense = seeds.pseudoExpense.find(expense => expense.id === parseInt(req.params.id));
+
     res.render('expense/edit', {
         categories: seeds.categories,
         vendors: seeds.vendors,

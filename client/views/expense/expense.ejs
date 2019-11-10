@@ -38,7 +38,7 @@
     </div>
     <% expense.forEach(function(expense){ %>
       <div class="tile is-parent">
-        <a class = "tile" href="#">
+        <a class = "tile" href="expense/<%= expense.id%>/edit">
           <article class="tile is-child box has-background-white">
 
             <hr class="tile-design">
@@ -67,7 +67,7 @@
             </div>
             <hr>
             <div class="level-right">
-              <h2 class = "is-size-2">Rs <%= expense.subtotal%>K</h2>
+              <h2 class = "is-size-2"><%= expense.currency[0].substring(0,1) + ' '+expense.subtotal/1000%> K</h2>
             </div>
 
           </article>
@@ -149,7 +149,7 @@
           <td><%= expense.date%></td>
           <td><%= expense.countryCode%> <%= expense.phone%></td>
           <td><%= expense.category%></td>
-          <td>Rs <%= expense.subtotal%>K</td>
+          <td> <%= expense.currency.substring(0,1) +' '+expense.subtotal%></td>
         </label>
       </tr>
     <%});%>
@@ -157,8 +157,11 @@
 	</tbody>
 
 	<tfoot class="is-size-6">
-
-		<th><span class= "is-pulled-right">Total: Rs 22400</span></th>
+    <th><button class="button is-danger is-rounded">Delete</button></th>
+    <th></th>
+    <th></th>
+    <th></th>
+		<th><span class= "is-size-3"><%= expense[0].currency.substring(0,1) + ' ' + total%> </span></th>
 	</tfoot>
 </table>
 </div>

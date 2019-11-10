@@ -13,9 +13,9 @@
 
 <div class="columns is-vcentered">
     <div class="column is-pulled-left">
-        <h1 class="is-size-3"><%=client.firstName%> <%=client.lastName%></h1>
+        <h1 class="is-size-3"><%=client.firstName + ' '+ client.lastName%></h1>
     </div>
-    <div class="cloumn is-pulled-right">
+    <div class="column is-pulled-right">
         <a href="/invoice" class="button is-rounded  is-success is-size-4">
             <span> New Invoice</span>
             <span class="icon is-small">
@@ -69,9 +69,9 @@
                             </span>
                         </div>
                         <div class="column">
-                            <%=client.address1%> <br>
-                            <%=client.city%>, <%=client.state%> <br>
-                            <%=client.country%>, (<%=client.pincode%>) <br>
+                            <%=client.address.address1%> <br>
+                            <%=client.address.city%>, <%=client.address.state%> <br>
+                            <%=client.address.country%>, (<%=client.address.pincode%>) <br>
                         </div>
                     </div>
                 </div>
@@ -110,7 +110,7 @@
                             10k
                         </div>
                     </div>
-                    <progress class="progress is-primary" value="15" max="100">15%</progress>
+                    <progress class="progress is-primary" value="<%= (totalDue/10000)*100 %>" max="100"><%= (totalDue/10000)*100 %>%</progress>
                     <hr>
                     <div class="columns is-vcentered">
                         <div class="column has-text-left is-3">
@@ -183,41 +183,53 @@
                 <th>Client/Invoice Number</th>
                 <th>Description</th>
                 <th>Issued Date/Due Time</th>
+                <th>Due Amount</th>
                 <th class="num">Amount/Status</th>
             </tr>
         </thead>
+
         <tbody class="records">
+          <% invoice.forEach(function(invoice){ %>
+
             <tr>
+              <td>
+                <div class="pretty p-svg p-curve">
+                  <input type="checkbox" id="select-checkbox" />
+                  <div class="state p-success">
+                    <!-- svg path -->
+                    <svg class="svg svg-icon" viewBox="0 0 20 20">
+                      <path
+                      d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"
+                      style="stroke: white;fill:white;"></path>
+                    </svg>
+                    <label for=""></label>
+                  </div>
+                </div>
+              </td>
+              <label for="select-checkbox">
                 <td>
-                    <div class="pretty p-svg p-curve">
-                        <input type="checkbox" id="select-checkbox" />
-                        <div class="state p-success">
-                            <!-- svg path -->
-                            <svg class="svg svg-icon" viewBox="0 0 20 20">
-                                <path
-                                    d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"
-                                    style="stroke: white;fill:white;"></path>
-                            </svg>
-                            <label for=""></label>
-                        </div>
-                    </div>
+                  <p class="heading is-capitalized"><%=client.firstName%> <%= client.lastName%></p>
+                  <p class="title is-5"><%= invoice.id%></p>
                 </td>
-                <label for="select-checkbox">
-                    <td>
-                        <p class="heading is-capitalized"><%=client.firstName%> <%=client.lastName%></p>
-                        <p class="title is-5">12983127</p>
-                    </td>
-                    <td>Some description goes here</td>
-                    <td>
-                        <p class="heading is-capitalized">12/12/2019</p>
-                        <p class="title is-5">4 days</p>
-                    </td>
-                    <td>Rs 20000 INR</td>
-                </label>
+                <td>Some description goes here</td>
+                <td>
+                  <p class="heading is-capitalized"><%= invoice.date%></p>
+                  <p class="title is-5">4 days</p>
+                </td>
+                <td>
+                  <%= client.currency.substring(0,1) + ' ' + invoice.balanceDue%>
+                </td>
+                <td><%= client.currency.substring(0,1) + ' ' + invoice.total%></td>
+              </label>
             </tr>
+          <%})%>
         </tbody>
         <tfoot class="is-size-6">
-      		<th><span class = "is-pulled-right">Total: Rs 20000 INR</span></th>
+          <th><button class="button is-danger is-rounded">Delete</button></th>
+          <th></th>
+          <th></th>
+          <th></th>
+      		<th><span class = "is-size-3">Total: <%= client.currency.substring(0,1)  + ' ' + total%>  </span></th>
       	</tfoot>
     </table>
 </div>

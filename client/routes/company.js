@@ -83,7 +83,7 @@ router.post('/accountant/create', (req, res, next) => {
                     // Everything completed
                     // make axios request to save everything
                     var payload = {
-                        profile: tempProfile,
+                        company: tempProfile,
                         accessToken: accessToken
                     };
                     axios.post(dburl, 'signup', payload)
