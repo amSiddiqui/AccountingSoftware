@@ -1,0 +1,3 @@
+insert into Application_user values (0, "Amit","Singh","address","lucknow",22602,"UP","test@g.com","pass",1234,0,0)
+insert into Application_company values (0,"Singhs","address","lucknow",22602,"UP","test@g.com",1234, TO_DATE('17/12/2015', 'DD/MM/YYYY'), 123,0 )
+insert into Application_currency values (0,'1234','rupee')
