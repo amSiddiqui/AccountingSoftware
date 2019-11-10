@@ -142,7 +142,7 @@
 	</thead>
 	<tbody class="records">
     <% clients.forEach(function(client){%>
-      <tr>
+      <tr class="searchableParent">
             <td>
               <div class="pretty p-svg p-curve">
                   <input type="checkbox" id = "select-checkbox"/>
@@ -157,7 +157,7 @@
             </td>
             <label for="select-checkbox">
               <td><%= client.id%></td>
-              <td><p><%= client.firstName%> <%= client.lastName%></p></td>
+              <td class="searchable"><p><%= client.firstName%> <%= client.lastName%></p></td>
               <td>
                 <p><%= client.address1%></p>
                 <p><%= client.city%>,<%= client.state%> - <%= client.pincode%></p>

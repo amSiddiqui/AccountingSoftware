@@ -5,6 +5,19 @@ const Authentication = require('../modules/auth');
 const auth = new Authentication(router);
 const util = require('../modules/utility');
 const seed = require('../seeds');
+const config = requirWe('../config/config');
+
+const configurations = {};
+
+auth.conn().then(serverKey=>{
+    configurations['country']       = config.country(serverKey);
+    configurations['quote']         = config.quote(serverKey);
+    configurations['currency']      = config.currency(serverKey);
+    configurations['phone_code']    = config.phone_code(serverKey);
+    configurations['datefmt']       = config.datefmt(serverKey);
+}).catch(err=>{
+    throw new Error(err);
+});
 
 auth.conn();
 

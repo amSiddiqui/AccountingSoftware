@@ -129,8 +129,7 @@ router.post('/accountant/create', (req, res, next) => {
         });
 });
 
-router.get('/accountant/edit', (req, res, next) => {
-    // TODO: add middleware to check if the user is logged in
+router.get('/accountant/edit', util.validateUser({}), (req, res) => {
     res.render('company/accountant/edit', {
         accountant: seeds.psuedoAccountant,
         countryCode: seeds.countryCode,
@@ -158,9 +157,7 @@ router.get('/create', (req, res, next) => {
 });
 
 
-router.post('/create', (req, res, next) => {
-    // TODO: Add middleware to check if user already logged in, if he is then cannot create new company
-
+router.post('/create', util.validateUser({}) ,(req, res, next) => {
     var company = {
         name: req.body.name,
         countryCode: req.body.countryCode,
@@ -227,8 +224,7 @@ router.post('/create', (req, res, next) => {
         });
 });
 
-router.get('/edit', (req, res, next) => {
-    // TODO: add middleware to see if user is logged in 
+router.get('/edit', util.validateUser({}), (req, res, next) => {
     res.render('company/edit', {
         company: seeds.pseudoCompany,
         countryCode: seeds.countryCode,
