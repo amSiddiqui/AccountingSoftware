@@ -25,7 +25,7 @@
     <li class="tab">
       <a>
         <div class="column has-text-centered">
-          <h1 class="is-size-1">Rs 0</h1>
+          <h1 class="is-size-1"><%= currency.substring(0,1) + ' ' + totalOutstanding%></h1>
           <span>Overdue</span>
         </div>
       </a>
@@ -33,7 +33,7 @@
     <li class="tab">
       <a>
         <div class="column has-text-centered">
-          <h2 class="is-size-1">Rs 0</h2>
+          <h2 class="is-size-1"><%= currency.substring(0,1) + ' ' + totalOutstanding%></h2>
           <span>Outstanding</span>
         </div>
       </a>
@@ -41,7 +41,7 @@
     <li class="tab">
       <a>
         <div class="column has-text-centered">
-          <h2 class="is-size-1">Rs 0</h2>
+          <h2 class="is-size-1"><%= currency.substring(0,1) + ' ' + totalOutstanding%></h2>
           <span>Draft</span>
         </div>
       </a>
@@ -70,13 +70,13 @@
 
     <% clients.forEach(function(client){ %>
       <div class="tile is-parent">
-        <a class="tile" href="client/<%= client.id %>">
+        <a class="tile" href="client/<%=client.id %>">
           <article class="tile is-child box has-background-white">
 
             <hr class="tile-design">
             <div class="level">
               <div class=" column level-left">
-                <p class="title is-2"><%= client.firstName%> <%= client.lastName%></p>
+                <p class="title is-3"><%=client.firstName.substring(0,1)+ '. ' + client.lastName%></p>
                 <p class="content is-6"><i class="fas fa-envelope-open-text fa-fw"></i><%= client.email%></p>
                 <p class="content is-6"><i class="fas fa-mobile-alt fa-fw"></i><%= client.phone%></p>
               </div>
@@ -137,7 +137,8 @@
 				<th>Name</th>
 				<th>Address</th>
 				<th>Contact Number</th>
-				<th class = "num">Amount</th>
+				<th>Amount Due</th>
+				<th class = "num">Total Amount</th>
 			</tr>
 	</thead>
 	<tbody class="records">
@@ -159,18 +160,31 @@
               <td><%= client.id%></td>
               <td class="searchable"><p><%= client.firstName%> <%= client.lastName%></p></td>
               <td>
-                <p><%= client.address1%></p>
-                <p><%= client.city%>,<%= client.state%> - <%= client.pincode%></p>
+                <p><%= client.address.address1%></p>
+                <p><%= client.address.city%>,<%= client.address.state%> - <%= client.address.pincode%></p>
               </td>
               <td><%= client.phone%></td>
-              <td>Rs 20000 INR</td>
+              <td>
+                <%= client.currency.substring(0,1) + client.amountDue%>
+              </td>
+              <td>
+                <%= client.currency.substring(0,1) + client.total%>
+                <span class="is-pulled-right">
+                  <a href="client/<%= client.id %>" class="button is-success is-small is-rounded">Open</a>
+                </span>
+              </td>
             </label>
   		</tr>
     <%});%>
 	</tbody>
 
 	<tfoot class="is-size-6">
-		<th><span class = "is-pulled-right">Total: Rs 20000 INR</span></th>
+    <th><button class="button is-danger is-rounded">Delete</button></th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+		<th><span class = "is-size-3">Total : <%= currency.substring(0,1) + ' ' + total%></span></th>
 	</tfoot>
 </table>
 </div>
