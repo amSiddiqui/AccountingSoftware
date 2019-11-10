@@ -5,25 +5,24 @@
     <h1 class="is-size-1 is-pulled-left">Invoices</h1>
   </div>
   <div class="column">
-    <div class="dropdown is-right is-hoverable is-pulled-right">
-      <div class="dropdown-trigger">
-        <button class="button is-size-4 is-success is-rounded">
-          <span>New Invoice</span>
-          <span class="icon is-small">
-            <i class="fa fa-plus" aria-hidden="true"></i>
-          </span>
-        </button>
-      </div>
+    <div class="is-pulled-right">
+      <a onclick="openModal()" class="button is-size-4 is-success is-rounded">
+        <span>New Invoice</span>
+        <span class="icon is-small">
+          <i class="fa fa-plus" aria-hidden="true"></i>
+        </span>
+      </a>
     </div>
   </div>
 </div>
+
 <hr>
 <div class="tabs is-fullwidth is-large">
   <ul>
     <li class="tab">
       <a>
         <div class="column has-text-centered">
-          <h1 class="is-size-1">Rs 0</h1>
+          <h1 class="is-size-1"><%=currency%> <%=invoiceData.totalOverdue%></h1>
           <span>Overdue</span>
         </div>
       </a>
@@ -31,7 +30,7 @@
     <li class="tab">
       <a>
         <div class="column has-text-centered">
-          <h2 class="is-size-1">Rs 0</h2>
+          <h2 class="is-size-1"><%=currency%> <%=invoiceData.totalOutstanding%></h2>
           <span>Total Outstanding</span>
         </div>
       </a>
@@ -39,7 +38,7 @@
     <li class="tab">
       <a>
         <div class="column has-text-centered">
-          <h2 class="is-size-1">Rs 0</h2>
+          <h2 class="is-size-1"><%=currency%> <%=invoiceData.totalInDraft%></h2>
           <span>in draft</span>
         </div>
       </a>
@@ -58,63 +57,47 @@
     <div class="tile is-parent">
       <article class="tile is-child box has-background-white add">
         <div class="has-text-centered">
-          <a href="#" class="title is-size-2 add"><i class="fas fa-plus fa-fw"></i> Invoice</a>
+          <a onclick="openModal()" class="title is-size-2 add"><i class="fas fa-plus fa-fw"></i> Invoice</a>
         </div>
       </article>
-
-
     </div>
-
+    <% latestInvoices.forEach( function(invoice) { %>
     <div class="tile is-parent">
-      <a class="tile" href="#">
+      <a class="tile" href="/invoice/<%=invoice.id%>">
         <article class="tile is-child box has-background-white">
           <!-- <div class="column has-background-success dash">
-          </div> -->
+            </div> -->
           <hr class="tile-design">
           <div class="level">
             <div class=" column level-left">
-              <p class="title is-2">Name</p>
-              <p class="content is-6"><i class="fas fa-envelope-open-text fa-fw"></i>email</p>
-              <p class="content is-6"><i class="fas fa-mobile-alt fa-fw"></i>phone number</p>
+              <p class="title is-2">
+                <%=invoice.client.firstName.substring(0,1)+'. '+invoice.client.lastName%>
+              </p>
+              <p class="content is-6">
+                <div class="columns is-vcentered">
+                  <div class="column is-4">
+                    Date
+                  </div>
+                  <div class="column">
+                    <strong><%=invoice.date%></strong>
+                  </div>
+                </div>
+              </p>
+              <p class="content is-6">
+                <div class="columns is-vcentered">
+                  <div class="column is-4">
+                    Amount Due:
+                  </div>
+                  <div class="column">
+                    <strong><%=currency%> <%=invoice.amountDue%></strong>
+                  </div>
+              </p>
             </div>
           </div>
-
         </article>
       </a>
-
     </div>
-    <div class="tile is-parent">
-      <a class="tile" href="#">
-        <article class="tile is-child box has-background-white">
-          <hr class="tile-design">
-          <div class="level">
-            <div class=" column level-left">
-              <p class="title is-2">Name</p>
-              <p class="content is-6"><i class="fas fa-envelope-open-text fa-fw"></i>email</p>
-              <p class="content is-6"><i class="fas fa-mobile-alt fa-fw"></i>phone number</p>
-            </div>
-          </div>
-
-        </article>
-      </a>
-
-    </div>
-    <div class="tile is-parent">
-      <a class="tile" href="#">
-        <article class="tile is-child box has-background-white">
-          <hr class="tile-design">
-          <div class="level">
-            <div class=" column level-left">
-              <p class="title is-2">Name</p>
-              <p class="content is-6"><i class="fas fa-envelope-open-text fa-fw"></i>email</p>
-              <p class="content is-6"><i class="fas fa-mobile-alt fa-fw"></i>phone number</p>
-            </div>
-          </div>
-
-        </article>
-      </a>
-
-    </div>
+    <% }) %>
   </div>
 </div>
 
@@ -144,4 +127,127 @@
     </div>
   </nav>
 </div>
+
+<form action="/invoice/batchDelete" method="post">
+  <div class="table-container">
+    <table class="table is-scrollable is-fullwidth is-hoverable is-striped ">
+      <thead class="is-size-5">
+        <tr>
+          <th>
+            <div class="pretty p-svg p-curve">
+              <input type="checkbox" name="allInvoice" id="selectAll" />
+              <div class="state p-success">
+                <!-- svg path -->
+                <svg class="svg svg-icon" viewBox="0 0 20 20">
+                  <path
+                    d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"
+                    style="stroke: white;fill:white;"></path>
+                </svg>
+                <label for="">Select All</label>
+              </div>
+            </div>
+          </th>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Date</th>
+          <th>Amount Due</th>
+          <th class="num">Total Amount</th>
+        </tr>
+      </thead>
+      <tbody class="records">
+        <% invoices.forEach(function(invoice){%>
+        <tr>
+          <td>
+            <div class="pretty p-svg p-curve">
+              <input type="checkbox" name="invoice_<%=invoice.id%>" id="select-checkbox" />
+              <div class="state p-success">
+                <!-- svg path -->
+                <svg class="svg svg-icon" viewBox="0 0 20 20">
+                  <path
+                    d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"
+                    style="stroke: white;fill:white;"></path>
+                </svg>
+                <label for=""></label>
+              </div>
+            </div>
+          </td>
+          <label for="select-checkbox">
+            <td><%= invoice.id%></td>
+            <td>
+              <p><%= invoice.client.firstName+' '+invoice.client.lastName%></p>
+            </td>
+            <td>
+              <p><%=invoice.date%></p>
+            </td>
+            <td><%=currency%> <%=invoice.amountDue%></td>
+            <td>
+              <%=currency%> <span class="invoiceAmount"><%=invoice.total%></span>
+              <span class="is-pulled-right">
+                <a href="/invoice/<%=invoice.id%>" class="button is-success is-small is-rounded">Open</a>
+              </span>
+            </td>
+          </label>
+        </tr>
+        <%});%>
+      </tbody>
+
+      <tfoot class="is-size-6">
+        <th><button class="button is-danger is-rounded">Delete</button></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th><span class="is-size-5">Total: <%=currency%> <span id="totalInvoiceAmount"></span></span></th>
+      </tfoot>
+    </table>
+  </div>
+</form>
+
+
+<!-- Modal to choose client to create invoice -->
+<div class="modal" id="add-category-modal">
+    <div class="modal-background"></div>
+    <div class="modal-content">
+      <div class="columns">
+        <div class="column" id="add-category-modal-content">
+          <form action="/invoice/proceed" method="post">
+            <label class="label">Choose client</label>
+            <div class="field">
+              <div class="control">
+                <div class="select is-primary">
+                  <select name="client">
+                    <% clients.forEach(function(client) { %>
+                      <option value="<%=client.id%>"><%=client.firstName+' '+client.lastName%></option>
+                    <% }) %>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <button class="button is-rounded is-success is-pulled-right">Proceed</button>
+            <a href="/client/create" class="button is-rounded is-primary">Create new Client</a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button class="modal-close is-large" aria-label="close"></button>
+  
+
+<script>
+
+  // Totalling invoice
+  function updateInvoiceTotal() {
+    var invoiceAmounts = document.querySelectorAll(".invoiceAmount");
+    var total = 0;
+    invoiceAmounts.forEach(function (amount) {
+      total += parseInt(amount.textContent);
+    });
+    document.getElementById("totalInvoiceAmount").textContent = total;
+  }
+
+  updateInvoiceTotal();
+
+
+</script>
+
 <% include ../partials/footer %>

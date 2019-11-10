@@ -59,7 +59,7 @@ module.exports = {
     authCheck: (req, callback)=>{
         
         const user = req.cookies['user'];
-        if(typeof(user) == 'object' && typeof(user.token) == 'string' && typeof(user.profile) == 'object'){
+        if(typeof(user) == 'object' && typeof(user.token) == 'string' && typeof(user.company) == 'object'){
             callback(user);
         }else{
             callback(null);

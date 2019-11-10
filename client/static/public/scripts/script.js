@@ -53,6 +53,7 @@ function closeModal() {
   if ($('#add-category-modal').hasClass('is-active')) {
     $('#add-category-modal').removeClass('is-active');
   }
+  
 }
 
 $('.modal-background').click(function (event) { 
@@ -75,3 +76,4 @@ var calendars = bulmaCalendar.attach('[type="date"]', {
   dateFormat: 'MM/DD/YYYY',
   showHeader: false,
 });
+

@@ -17,17 +17,51 @@ const data = {
   //CLIENT
   pseudoClient:[
     {
-      id:'123456',
-      firstName: 'Leviathan',
+      id:1,
+      firstName: 'Leviathan1',
       lastName: 'Tidehunter',
       countryCode: '+65',
       phone: '2975107492',
       email: 'leviathan@hunter.gg',
-      address1: 'Monterey Bay Aquarium, 886 Cannery Row',
-      city: 'Monterey',
-      state: 'California',
-      country: 'USA',
-      pincode: '93940',
+      address: {
+        address1: 'Monterey Bay Aquarium, 886 Cannery Row',
+        city: 'Monterey',
+        state: 'California',
+        country: 'USA',
+        pincode: '93940',  
+      },
+      lateFeeRate: '3.15'
+    },
+    {
+      id: 2,
+      firstName: 'Leviathan2',
+      lastName: 'Tidehunter',
+      countryCode: '+65',
+      phone: '2975107492',
+      email: 'leviathan@hunter.gg',
+      address: {
+        address1: 'Monterey Bay Aquarium, 886 Cannery Row',
+        city: 'Monterey',
+        state: 'California',
+        country: 'USA',
+        pincode: '93940',  
+      },
+      lateFeeRate: '3.15'
+    },
+    {
+      id: 3,
+      firstName: 'Leviathan3',
+      lastName: 'Tidehunter',
+      countryCode: '+65',
+      phone: '2975107492',
+      email: 'leviathan@hunter.gg',
+      address: {
+        address1: 'Monterey Bay Aquarium, 886 Cannery Row',
+        city: 'Monterey',
+        state: 'California',
+        country: 'USA',
+        pincode: '93940',  
+      },
       lateFeeRate: '3.15'
     },
 
@@ -81,7 +115,6 @@ const data = {
  currency: ['$ (USD)', '€ (EUR)', '£ (GBP)', '₹ (INR)'],
  dateFormat: ['dd/mm/yyy', 'mm/dd/yyyy', 'yyyy/mm/dd'],
  pseudoCompany : [
-
    {
      name: 'Pineapple',
      countryCode: '+88',
@@ -98,9 +131,94 @@ const data = {
    },
  ],
  //INVOICE
- categories : [
-     'Education', 'Food', 'Advertising'
- ],
+ 
+  invoiceGenData : {
+    totalOutstanding: 20000,
+    totalInDraft: 2500,
+    totalOverdue: 2000,
+  },
+
+  invoices: [{
+    client: {
+      id:1,
+      firstName: 'Leviathan1',
+      lastName: 'Tidehunter',
+      countryCode: '+65',
+      phone: '2975107492',
+      email: 'leviathan@hunter.gg',
+      address: {
+        address1: 'Monterey Bay Aquarium, 886 Cannery Row',
+        city: 'Monterey',
+        state: 'California',
+        country: 'USA',
+        pincode: '93940',  
+      },
+      lateFeeRate: '3.15'
+    },
+    id: 1,
+    date: '22/11/2019',
+    amountDue: 200,
+    items: [
+      {
+        item: 'toothbrush',
+        description: 'used for cleaning teeth',
+        rate: 50,
+        quantity: 3,
+        price: 150 
+      },
+      {
+        item: 'toothpaste',
+        description: 'used for cleaning teeth',
+        rate: 60,
+        quantity: 2,
+        price: 120 
+      }
+    ],
+    total: 270,
+    amountPaid: 50,
+    balanceDue: 220,
+    notes: 'shopping done on 22nd of november'
+  }, {
+    client: {
+      id:1,
+      firstName: 'Leviathan1',
+      lastName: 'Tidehunter',
+      countryCode: '+65',
+      phone: '2975107492',
+      email: 'leviathan@hunter.gg',
+      address: {
+        address1: 'Monterey Bay Aquarium, 886 Cannery Row',
+        city: 'Monterey',
+        state: 'California',
+        country: 'USA',
+        pincode: '93940',  
+      },
+      lateFeeRate: '3.15'
+    },
+    id: 2,
+    date: '21/10/2019',
+    amountDue: 100,
+    items: [
+      {
+        item: 'toothbrush',
+        description: 'used for cleaning teeth',
+        rate: 50,
+        quantity: 3,
+        price: 150 
+      },
+      {
+        item: 'toothpaste',
+        description: 'used for cleaning teeth',
+        rate: 60,
+        quantity: 2,
+        price: 120 
+      }
+    ],
+    total: 270,
+    amountPaid: 50,
+    balanceDue: 220,
+    notes: 'shopping done on 22nd of november'
+  }],
 
  //REPORT
  pseudoItem :  [
@@ -146,6 +264,28 @@ const data = {
    },
  ],
 
-}
+ pseudoUser: {
+   name: "L. Tidehunter",
+   email: "contact@tide.dd",
+   company :
+    {
+      name: 'Pineapple',
+      countryCode: '+88',
+      phone: '8528606977',
+      email: 'contact@pineapple.co',
+      address: {
+        address1: '196 Temple Drive',
+        city: 'Dublin',
+        state: 'RI',
+        country: 'Ireland',
+        pincode: '226013',
+      },
+      currency: '£ (GBP)',
+      datefmt: 'mm/dd/yyyy',
+      taxrate: '3.14'
+    },
+    token: 'atoken'
+ },
+};
 
 module.exports = data;

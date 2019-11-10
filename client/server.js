@@ -14,7 +14,7 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT ? process.env.PORT : clientConfig.port;
 const IP = process.env.IP ? process.env.IP : clientConfig.IP;
-const methodOverride = require('method-override')
+const methodOverride = require('method-override');
 
 
 app.set('views', path.join(__dirname, 'views'));
@@ -34,16 +34,13 @@ global.tempProfile = null;
 global.accessToken = "accessToken";
 global.dbErrorMsg = "Database not responding try again later";
 global.cookieOpt = {
-    maxAge: 24 * 60 * 60,
+    maxAge: 24 * 60 * 60 * 1000,
     httpOnly: true,
 };
 
 
 app.use((req, res, next) => {
-    res.locals.user = {
-        username: "theKeySpammer",
-        company: "team 11"
-    };
+    res.locals.user = req.cookies.user;
     next();
 });
 
