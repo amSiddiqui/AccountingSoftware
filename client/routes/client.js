@@ -2,7 +2,11 @@ const express = require("express");
 const router = express.Router();
 const util = require('../modules/utility');
 const seeds = require('../seeds');
+const bodyParser = require('body-parser');
+const app = express();
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 
 
@@ -48,7 +52,7 @@ router.post('/', (req, res) => {
   util.authCheck(req , (user) =>{
     if(user){
       //TODO :create auto-generate ID
-      var clientId=4;
+      var clientID=4;
       var params = {
         id: clientID,
         firstName: req.body.firstName,
@@ -70,7 +74,7 @@ router.post('/', (req, res) => {
         currency: '£ (GBP)',
       }
 
-      id++;
+      clientID++;
       seeds.pseudoClient.push(params);
       res.redirect('/client');
     }
@@ -99,7 +103,7 @@ router.get('/:id/edit/', (req, res, next) => {
 });
 
 router.put('/:id',(req,res) => {
-  util.authCheck(req , user => {
+  util.authCheck(req ,( user )=> {
     if(user){
 
       for(var i in seeds.pseudoClient){
@@ -151,6 +155,28 @@ router.get('/:id', (req, res, next) => {
       res.redirect('/dashboard');
     }
   })
+})
+
+router.delete('/delete',(req,res,next) =>{
+  util.authCheck(req ,(user) =>{
+    if(user){
+      var ids = []
+      var ids = req.body.row;
+      for(var i in ids){
+        for(var j in seeds.pseudoClient){
+          if(ids[i] == seeds.pseudoClient[j].id){
+            seeds.pseudoClient.splice(j,1);
+            break;
+          }
+        }
+      }
+
+      res.redirect('/client');
+    }
+    else{
+      res.redirect('/dashboard');
+    }
+  });
 });
 
 
