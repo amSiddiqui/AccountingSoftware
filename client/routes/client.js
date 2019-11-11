@@ -48,6 +48,7 @@ router.get('/create', (req, res, next) => {
     }
   })
 });
+
 router.post('/', (req, res) => {
   util.authCheck(req , (user) =>{
     if(user){
