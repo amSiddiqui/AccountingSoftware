@@ -52,7 +52,7 @@ router.get('/create', (req, res, next) => {
 router.post('/', (req, res) => {
   util.authCheck(req , (user) =>{
     if(user){
-      //TODO :create auto-generate ID
+      //TODO: create auto-generate ID
       var clientID=4;
       var params = {
         id: clientID,
@@ -108,7 +108,7 @@ router.put('/:id',(req,res) => {
     if(user){
 
       for(var i in seeds.pseudoClient){
-        if(seeds.pseudoClient[i].id === req.params.id){
+        if(seeds.pseudoClient[i].id == req.params.id){
           seeds.pseudoClient[i].firstName = req.body.firstName;
           seeds.pseudoClient[i].lastName= req.body.lastName;
           seeds.pseudoClient[i].countryCode= req.body.countryCode;
