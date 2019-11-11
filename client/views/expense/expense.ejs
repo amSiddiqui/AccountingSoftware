@@ -67,7 +67,11 @@
             </div>
             <hr>
             <div class="level-right">
-              <h2 class = "is-size-2"><%= currency.substring(0,1) + ' '+expense.subtotal/1000%> K</h2>
+              <% if(expense.subtotal > 1000){%>
+                <h2 class = "is-size-2"><%= currency.substring(0,1) + ' '+expense.subtotal/1000%> K</h2>
+              <%}  else{ %>
+                <h2 class = "is-size-2"><%= currency.substring(0,1) + ' '+ expense.subtotal%></h2>
+                <% } %>
             </div>
 
           </article>

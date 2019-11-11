@@ -4,6 +4,11 @@ const router = express.Router();
 const util = require('../modules/utility');
 
 const seeds = require('../seeds');
+const bodyParser = require('body-parser');
+const app = express();
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 router.get('/', (req, res, next) => {
     util.authCheck(req, (user) => {
@@ -144,37 +149,59 @@ router.post('/create', (req, res, next) => {
 });
 
 // TODO: create a batch delete route /batchDelete
-router.delete('/batchDelete', (req, res, next) => {
-    // Fetch total number of invoices
-    util.authCheck(req, user => {
-        if (user) {
-            var totalInvocies = 2;
-            var invoiceIdDeleteion = [];
-            for (let index = 1; index <= totalInvocies; index++) {
-                if (req.body['invoice_'+index] != undefined) {
-                    invoiceIdDeleteion.push(index);
-                }
-            }
-            var payload = {
-                accessToken: accessToken,
-                token: user.token,
-                invoices: invoiceIdDeleteion
-            };
+// router.delete('/batchDelete', (req, res, next) => {
+//     // Fetch total number of invoices
+//     util.authCheck(req, user => {
+//         if (user) {
+//             var totalInvocies = 2;
+//             var invoiceIdDeleteion = [];
+//             for (let index = 1; index <= totalInvocies; index++) {
+//                 if (req.body['invoice_'+index] != undefined) {
+//                     invoiceIdDeleteion.push(index);
+//                 }
+//             }
+//             var payload = {
+//                 accessToken: accessToken,
+//                 token: user.token,
+//                 invoices: invoiceIdDeleteion
+//             };
+//
+//             axios.post(dburl+'invoice/delete', payload)
+//             .then(response => {
+//                 res.redirect('/invoice');
+//             })
+//             .error(err => {
+//                 res.render(error, {
+//                     message: dbErrorMsg
+//                 });
+//             });
+//         }
+//         else{
+//             res.redirect('/dashboard');
+//         }
+//     });
+// });
 
-            axios.post(dburl+'invoice/delete', payload)
-            .then(response => {
-                res.redirect('/invoice');
-            })
-            .error(err => {
-                res.render(error, {
-                    message: dbErrorMsg
-                });
-            });
+router.delete('/delete',(req,res,next) =>{
+  util.authCheck(req ,(user) =>{
+    if(user){
+      var ids = []
+      ids = req.body.row;
+      for(var i in ids){
+        for(var j in seeds.invoices){
+          if(ids[i] == seeds.invoices[j].id){
+            seeds.invoices.splice(j,1);
+            break;
+          }
         }
-        else{
-            res.redirect('/dashboard');
-        }
-    });
+      }
+
+      res.redirect('/invoice');
+    }
+    else{
+      res.redirect('/dashboard');
+    }
+  });
 });
 
 
