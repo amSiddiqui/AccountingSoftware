@@ -33,6 +33,11 @@ urlpatterns = [
     path('category/create/', views.category_create),
     path('category/', views.category_fetch),
 
+    #Expense Routes
+    path('expense/create/', views.expense_create),
+    path('expense/latest/', views.expense_latest),
+    path('expense/<int:expense_id>', views.expense_fetch),
+    path('expense/<int:expense_id>/update', views.expense_update),
 
     
     path('report/outstandingRevenue/',views.outstandingRevenue),

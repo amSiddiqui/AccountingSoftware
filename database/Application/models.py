@@ -101,6 +101,14 @@ class Vendor(models.Model):
 		return(str(self.Vendor_Id)+','+self.Vendor_Name+','+self.Vendor_Category+','+self.Address_Line+','+
 			   self.City+','+self.State+','+ str(self.Pin_Code) +','+self.Email+','+ str(self.Phone) ) 
 
+class Expense(models.Model):
+	Expense_Id=models.AutoField(primaryKey=True)
+	Category=models.ForeignKey(Category)
+	Date=models.DateField()
+	Vendor_Id=models.ForeignKey(Vendor)
+	Description=models.TextField()
+	Amount=models.FloatField()
+
 class Account(models.Model):
 	Account_Id=models.AutoField(primary_key=True)
 	Tax=models.FloatField()
@@ -168,5 +176,4 @@ class Item(models.Model):
 
 
 class Category(models.Model):
-	Cat_Id = models.AutoField(primary_key=True)
-	Type = models.TextField()
+	Type = models.TextField(primaryKey=True)

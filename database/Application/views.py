@@ -514,6 +514,12 @@ def category_fetch(request):
 	return JsonResponse(res, safe=True)
 
 
+# Expense Routes
+# @csrf_exempt
+# @post('accessToken', 'token', 'expense')
+# def expense_create(request):
+# 	exp = request.POST['expense']
+# 	expense = Expense(Category=Category.objects.get(pk=exp['category']), Date=get_iso_date(request.POST['datefmt'], ))
 
 
 @csrf_exempt
@@ -554,3 +560,4 @@ def overdue(request):
 		if curr_date - inv['Date']
 			res['revenue'] += inv['Balance_Due']
 	return JsonResponse(res,safe=True)
+
