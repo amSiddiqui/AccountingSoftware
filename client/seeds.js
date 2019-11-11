@@ -88,7 +88,6 @@ const data = {
         phone: '7823651098',
         description: 'financing education',
         subtotal: 22400,
-        currency: '₹ (INR)',
     },
   ],
   vendors : [

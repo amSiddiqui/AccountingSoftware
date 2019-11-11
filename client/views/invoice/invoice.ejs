@@ -159,7 +159,7 @@
         <tr>
           <td>
             <div class="pretty p-svg p-curve">
-              <input type="checkbox" name="invoice_<%=invoice.id%>" id="select-checkbox" />
+              <input type="checkbox" name="invoice_<%=invoice.id%>" id="select-checkbox" value = "<%= invoice.id%>"/>
               <div class="state p-success">
                 <!-- svg path -->
                 <svg class="svg svg-icon" viewBox="0 0 20 20">
@@ -192,12 +192,12 @@
       </tbody>
 
       <tfoot class="is-size-6">
-        <th><button class="button is-danger is-rounded">Delete</button></th>
+        <th><button class="button is-danger is-rounded" id="deleteButton">Delete</button></th>
         <th></th>
         <th></th>
         <th></th>
         <th></th>
-        <th><span class="is-size-5">Total: <%=currency%> <span id="totalInvoiceAmount"></span></span></th>
+        <th><span class="is-size-3">Total: <%=currency%> <span id="totalInvoiceAmount"></span></span></th>
       </tfoot>
     </table>
   </div>
@@ -231,7 +231,7 @@
     </div>
   </div>
   <button class="modal-close is-large" aria-label="close"></button>
-  
+
 
 <script>
 
