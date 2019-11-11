@@ -10,9 +10,9 @@
 		<header>
 			<h1>Invoice</h1>
 			<address contenteditable>
-				<p><%=client.firstName%> <%=client.lastName%></p>
-				<p><%=client.address.address1%> <%=client.address.city%><br><%=client.address.state%>, <%=client.address.country%> <%=client.address.pincode%></p>
-				<p><%=client.countryCode%> <%=client.phone%></p>
+				<p><%=invoice.client.firstName%> <%=invoice.client.lastName%></p>
+				<p><%=invoice.client.address.address1%> <%=invoice.client.address.city%><br><%=invoice.client.address.state%>, <%=invoice.client.address.country%> <%=invoice.client.address.pincode%></p>
+				<p><%=invoice.client.countryCode%> <%=invoice.client.phone%></p>
 			</address>
 			<span><img alt="" src="/company_logo.png"><input type="file" accept="image/*"></span>
 		</header>
@@ -24,15 +24,15 @@
 			<table class="meta">
 				<tr>
 					<th><span contenteditable>Invoice #</span></th>
-					<td><span contenteditable id="invoiceNumber"><%=invoiceNumber%></span></td>
+					<td><span contenteditable id="invoiceNumber"><%=invoice.id%></span></td>
 				</tr>
 				<tr>
 					<th><span contenteditable>Date</span></th>
-					<td><span contenteditable id="date"><%=date%></span></td>
+					<td><span contenteditable id="date"><%=invoice.date%></span></td>
 				</tr>
 				<tr>
 					<th><span contenteditable>Amount Due</span></th>
-					<td><span id="prefix" contenteditable><%=currency%></span><span id="amountDue">000.00</span></td>
+					<td><span id="prefix" contenteditable><%=currency%></span><span id="amountDue"><%=invoice.amountDue%></span></td>
 				</tr>
 			</table>
 			<table class="inventory">
@@ -46,35 +46,39 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<td><a class="cut">-</a><span contenteditable id="item1"></span></td>
-						<td><span contenteditable id="description1"></span></td>
-						<td><span data-prefix><%=currency%></span><span contenteditable id="rate1">000.00</span></td>
-						<td><span contenteditable id="quantity1">0</span></td>
-						<td><span data-prefix><%=currency%></span><span id="price1">000.00</span></td>
-					</tr>
+					<%var i = 0%>
+					<% invoice.items.forEach(function(item) { %>
+						<tr>
+							<td><a class="cut">-</a><span contenteditable id="item<%=i%>"><%=item.item%></span></td>
+							<td><span contenteditable id="description<%=i%>"><%=item.description%></span></td>
+							<td><span data-prefix><%=currency%></span><span contenteditable id="rate<%=i%>"><%=item.rate%></span></td>
+							<td><span contenteditable id="quantity<%=i%>"><%=item.quantity%></span></td>
+							<td><span data-prefix><%=currency%></span><span id="price<%=i++%>"><%=item.price%></span></td>
+						</tr>
+					<% }) %>
+					
 				</tbody>
 			</table>
 			<a class="add">+</a>
 			<table class="balance">
 				<tr>
 					<th><span contenteditable>Total</span></th>
-					<td><span data-prefix></span></span><span id="total">000.00</span></td>
+					<td><span data-prefix></span></span><span id="total"><%=invoice.total%></span></td>
 				</tr>
 				<tr>
 					<th><span contenteditable >Amount Paid</span></th>
-					<td><span data-prefix><%=currency%></span><span contenteditable id="amountPaid">000.00</span></td>
+					<td><span data-prefix><%=currency%></span><span contenteditable id="amountPaid"><%=invoice.amountPaid%></span></td>
 				</tr>
 				<tr>
 					<th><span contenteditable>Balance Due</span></th>
-					<td><span data-prefix><%=currency%></span><span id="balanceDue">000.00</span></td>
+					<td><span data-prefix><%=currency%></span><span id="balanceDue"><%=invoice.balanceDue%></span></td>
 				</tr>
 			</table>
 		</article>
 		<aside>
 			<h1><span contenteditable>Additional Notes</span></h1>
 			<div contenteditable>
-				<p id="notes">Write addition note here</p>
+				<p id="notes"><%=invoice.notes%></p>
 			</div>
 		</aside>
 		<div id="buttons">
@@ -85,7 +89,7 @@
 		<div class="hidden">
 			<form action="/invoice/create" method="post" id="hiddenForm">
 				<input type="text" name="numRows" value="1">
-				<input type="text" name="clientId" value="<%=client.id%>">
+				<input type="text" name="clientId" value="<%=invoice.client.id%>">
 				<input type="text" name="invoiceNumber">
 				<input type="text" name="date">
 				<input type="text" name="amountDue">
@@ -145,8 +149,6 @@
 			window.print();
 			document.querySelector('#buttons').style.display = "block";
 		}
-
-
 	</script>
 
 </html>

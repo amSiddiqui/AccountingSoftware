@@ -103,8 +103,8 @@ button.button[type=submit] {
 
 .is-scrollable tbody {
     display:block;
-    height:500px;
     overflow:auto;
+    height: 500px;
     overflow-x: hidden;
 }
 
@@ -200,6 +200,20 @@ a.box:hover hr{
     border-radius: 20px;
     margin: auto;
 }
+
+#choose-client-modal .modal-content {
+    margin-top: -20%;
+}
+
+#choose-client-modal-content {
+    padding: 50px;
+    background-color: white;
+    border: 1px solid white;
+    border-radius: 20px;
+    margin: auto;
+}
+
+
 
 th.report-header{
   background-color: #209cee;

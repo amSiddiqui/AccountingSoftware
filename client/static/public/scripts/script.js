@@ -24,20 +24,20 @@ $(document).ready(function() {
     });
 });
 
-// search 
+// search
 $(document).ready( () => {
-	
+
 	const searchable = $('.searchable');
 	const searchableParent = $('.searchableParent');
 	const searchInput = $('.search');
 	const orginalRet = getWordsForSearch(searchableParent, searchable);
 	const words = orginalRet.words;
 	const wordsMap = orginalRet.wordsMap;
-	
+
 	const searchList = new Search(words);
 	searchInput.on('keyup input propertychange paste change', function(e){
 		let valueChanged = false;
-		
+
 		if (e.type=='propertychange') {
 			valueChanged = ( e.originalEvent.propertyName == 'value' );
 		} else {
@@ -45,7 +45,7 @@ $(document).ready( () => {
 		}
 
 		if( valueChanged ){
-			
+
 			const input = $(this).val().trim().toLowerCase();
 			const list = searchList.get(input);
 			for( let word of words ){
@@ -105,9 +105,10 @@ function closeModal() {
   if ($('#add-category-modal').hasClass('is-active')) {
     $('#add-category-modal').removeClass('is-active');
   }
+
 }
 
-$('.modal-background').click(function (event) { 
+$('.modal-background').click(function (event) {
   closeModal();
 });
 
@@ -116,8 +117,8 @@ $('.modal-background').click(function (event) {
 function addCategory() {
   var value = $('#add-category-modal-content .field input:text').val();
   closeModal();
-  $('#category-selection .control .select select').append(`<option value="${value}"> 
-  ${value} 
+  $('#category-selection .control .select select').append(`<option value="${value}">
+  ${value}
 </option>`);
 }
 
@@ -150,7 +151,7 @@ class Node {
 	  this.children = {};
 	  this.isleaf = false;
 	}
-  
+
 	getChildren(char) {
 	  if (validateObj(char, "string") && char.length == 1) {
 		if (this.children.hasOwnProperty(char)) {
@@ -162,11 +163,11 @@ class Node {
 		throw new Error("Invalid Argument");
 	  }
 	}
-  
+
 	getChildrenArray() {
 	  return this.children;
 	}
-  
+
 	setChildren(char, node) {
 	  if (
 		validateObj(char, "string") &&
@@ -178,7 +179,7 @@ class Node {
 		throw new Error("Invalid Argument");
 	  }
 	}
-  
+
 	setLeaf(lf) {
 	  if (validateObj(lf, "boolean")) {
 		this.isleaf = lf;
@@ -186,7 +187,7 @@ class Node {
 		throw new Error("Invalid Argument");
 	  }
 	}
-  
+
 	getLeaf() {
 	  return this.isleaf;
 	}
@@ -200,7 +201,7 @@ class Search {
 		throw new Error("list must be of type Array");
 	  }
 	}
-  
+
 	setNode(word) {
 	  if (!validateObj(word, "string")) {
 		throw new Error("list must contain Strings");
@@ -216,7 +217,7 @@ class Search {
 	  }
 	  tempNode.setLeaf(true);
 	}
-  
+
 	getHelper(word, pred, node) {
 	  if (node.getLeaf()) {
 		pred.push(word);
@@ -228,7 +229,7 @@ class Search {
 		}
 	  }
 	}
-  
+
 	get(word) {
 	  if (validateObj(word, "string")) {
 		let tempNode = this.node;
@@ -250,7 +251,7 @@ class Search {
 		return new Error("Word is not type of String");
 	  }
 	}
-  
+
 	push(words) {
 	  if (words instanceof Array) {
 		if (words.length != 0) {
@@ -264,5 +265,19 @@ class Search {
 		throw new Error("Invalid type of Argument");
 	  }
 	}
-	
+
 }
+
+//Make delete button visible only when input checkboxes are checked
+$('document').ready(function(){
+	$('#deleteButton').hide();
+	$('input[type="checkbox"]').click(function(){
+
+		if($('#select-checkbox:checked').length >= 1)
+		$('#deleteButton').show();
+		else {
+			$('#deleteButton').hide();
+		}
+	})
+
+})

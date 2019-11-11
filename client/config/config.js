@@ -1,4 +1,4 @@
-const axiox = require('axios');
+const axios = require('axios');
 
 const serverConfig = {
 	domain:'https://c693cbe6-1b9e-4e5f-bcba-e385ef931e04.mock.pstmn.io',
@@ -11,7 +11,7 @@ const clientConfig = {
 };
 
 let country = (token) => {
-	return axiox.post(`${serverConfig.domain}/util/country`,token)
+	return axios.post(`${serverConfig.domain}/util/country`,token)
 	.then(res=>res.data)
 	.catch(err=>{
 		throw new Error(err.response.data.error);
@@ -19,21 +19,21 @@ let country = (token) => {
 };
 
 let quote = (token) => {
-	return axiox.post(`${serverConfig.domain}/util/quote`,token)
+	return axios.post(`${serverConfig.domain}/util/quote`,token)
 	.then(res=>res.data)
 	.catch(err=>{
 		throw new Error(err.response.data.error);
 	});
 };
 let currency = (token) => {
-	return axiox.post(`${serverConfig.domain}/util/currency`,token)
+	return axios.post(`${serverConfig.domain}/util/currency`,token)
 	.then(res=>res.data)
 	.catch(err=>{
 		throw new Error(err.response.data.error);
 	});
 };
 let phoneCode = (token) => {
-	return axiox.post(`${serverConfig.domain}/util/phoneCode`,token)
+	return axios.post(`${serverConfig.domain}/util/phoneCode`,token)
 	.then(res=>res.data)
 	.catch(err=>{
 		throw new Error(err.response.data.error);
@@ -41,7 +41,7 @@ let phoneCode = (token) => {
 };
 
 let datafmt = (token) => {
-	return await axiox.post(`${serverConfig.domain}/util/datafmt`,token)
+	return axios.post(`${serverConfig.domain}/util/datafmt`,token)
 	.then(res=>res.data)
 	.catch(err=>{
 		throw new Error(err.response.data.error);

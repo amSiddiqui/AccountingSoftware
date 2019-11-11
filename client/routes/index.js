@@ -4,29 +4,33 @@ const router = express.Router();
 const Authentication = require('../modules/auth');
 const auth = new Authentication(router);
 const util = require('../modules/utility');
+const seed = require('../seeds');
 const config = require('../config/config');
 
 const configurations = {};
 
-auth.conn().then(serverKey=>{
-    configurations['country']       = config.country(serverKey);
-    configurations['quote']         = config.quote(serverKey);
-    configurations['currency']      = config.currency(serverKey);
-    configurations['phone_code']    = config.phone_code(serverKey);
-    configurations['datefmt']       = config.datefmt(serverKey);
-}).catch(err=>{
-    throw new Error(err);
-};
+// auth.conn().then(serverKey=>{
+//     configurations['country']       = config.country(serverKey);
+//     configurations['quote']         = config.quote(serverKey);
+//     configurations['currency']      = config.currency(serverKey);
+//     configurations['phone_code']    = config.phone_code(serverKey);
+//     configurations['datefmt']       = config.datefmt(serverKey);
+// }).catch(err=>{
+//     throw new Error(err);
+// });
 
-const cookieOpt = {
-    maxAge: 24 * 60 * 60,
-    httpOnly: true,
-};
+auth.conn();
 
 const axios = require('axios');
 
 
 router.get('/', (req, res, next) => {
+
+    // FIXME: REMOVE THIS 
+    res.cookie('user',seed.pseudoUser, cookieOpt);
+    console.log("Logged in as a pseudo user: ", seed.pseudoUser);
+
+
     res.redirect('/login');
 });
 
@@ -52,12 +56,10 @@ router.post('/login',(req,res)=>{
         password: req.body.password
     };
 
-
     if( typeof(user.username) == 'string' && typeof(user.password) == 'string'){
         auth.login(user).then(result=>{
             if( typeof(result) == 'object' && typeof(result.profile) == 'object'){
                 res.cookie('user',result, cookieOpt);
-                // TODO: Add user object to local session so that it can be displayed in partials
                 res.redirect('/dashboard');
             }else{
                 res.status(401);

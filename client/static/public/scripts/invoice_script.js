@@ -65,16 +65,26 @@
 /* Helper Functions
 /* ========================================================================== */
 
-function generateTableRow() {
+function generateTableRow(row) {
 	var emptyColumn = document.createElement('tr');
 
-	emptyColumn.innerHTML = '<td><a class="cut">-</a><span contenteditable></span></td>' +
-		'<td><span contenteditable></span></td>' +
-		'<td><span data-prefix>$</span><span contenteditable>0.00</span></td>' +
-		'<td><span contenteditable>0</span></td>' +
-		'<td><span data-prefix>$</span><span>0.00</span></td>';
-
+	emptyColumn.innerHTML = '<td><a class="cut">-</a><span contenteditable id="item'+row+'"></span></td>' +
+		'<td><span contenteditable id="description'+row+'"></span></td>' +
+		'<td><span data-prefix>$</span><span contenteditable id="rate'+row+'">0.00</span></td>' +
+		'<td><span contenteditable id="quantity'+row+'">0</span></td>' +
+		'<td><span data-prefix>$</span><span id="price'+row+'">0.00</span></td>';
 	return emptyColumn;
+}
+
+function generateFormRow(row) {
+	var emptyDiv = document.createElement('div');
+
+	emptyDiv.innerHTML = '<input type="text" name="item'+row+'"></input>'+
+	'<input type="text" name="description'+row+'"></input>'+
+	'<input type="text" name="rate'+row+'">'+
+	'<input type="text" name="quantity'+row+'"></input>'+
+	'<input type="text" name="price'+row+'"></input>';
+	return emptyDiv;
 }
 
 function parseFloatHTML(element) {
@@ -163,14 +173,16 @@ function onContentLoad() {
 	var
 	input = document.querySelector('input'),
 	image = document.querySelector('img');
-
+	var rows = 1;
 	function onClick(e) {
 		var element = e.target.querySelector('[contenteditable]'), row;
 
 		element && e.target != document.documentElement && e.target != document.body && element.focus();
 
 		if (e.target.matchesSelector('.add')) {
-			document.querySelector('table.inventory tbody').appendChild(generateTableRow());
+			document.querySelector('table.inventory tbody').appendChild(generateTableRow(++rows));
+			document.querySelector('#inventoryItems').appendChild(generateFormRow(rows));
+			document.querySelector('input[name="numRows"]').value = rows;
 		}
 		else if (e.target.className == 'cut') {
 			row = e.target.ancestorQuerySelector('tr');

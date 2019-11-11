@@ -83,14 +83,18 @@ router.post('/accountant/create', (req, res, next) => {
                     // Everything completed
                     // make axios request to save everything
                     var payload = {
-                        profile: tempProfile,
+                        company: tempProfile,
                         accessToken: accessToken
                     };
                     axios.post(dburl, 'signup', payload)
                         .then(response => {
+                            var data = JSON.parse(response.data);
                             const user = {
-                                username: tempProfile.headAcc.email,
-                            }
+                                name: tempProfile.headAcc.firstName.substring(0, 1)+'. '+tempProfile.headAcc.lastName,
+                                email: tempProfile.headAcc.email,
+                                company: tempProfile.company,
+                                token: data.userToken
+                            };
                             res.cookie('user',user,cookieOpt);
                             tempProfile = null;
                             res.redirect('/dashboard');
