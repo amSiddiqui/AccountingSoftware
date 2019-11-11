@@ -140,8 +140,8 @@ def login_user(request):
         # Is this accessToken encrypted??
         access_token = request.POST['accessToken']
 
-		if (access_token != value['accessToken']):
-    			return HttpResponse("Invalid Authorisation ", status=status[2])
+		# if (access_token != value['accessToken']):
+    	# 	return HttpResponse("Invalid Authorisation ", status=status[2])
 		
 		users = User.objects.filter(Email=email).values()
 
@@ -324,7 +324,7 @@ def dates(request):
     return HttpResponse(" Invalid Authorization ", status=status[2])
 
 
-def company(request):
+def `company`(request):
     if request.method == 'POST':
 		atoken=request.POST['accessToken']
 		if atoken==value['accessToken']:
@@ -482,3 +482,21 @@ def accountant_exists(request):
 		})
 	else :
 		return HttpResponse("Database Error",status=500)
+
+
+
+# Category routes
+@csrf_exempt
+@post('accessToken', 'token', 'category')
+def category_create(request):
+	category = request.POST['category']
+	cat = Category(Type=category)
+	cat.save()
+	return HttpResponse('Created successfully')
+
+@csrf_exempt
+@post('accessToken', 'token')
+def category_fetch(request):
+	res = {'categories': [cat for cat in Category.objects.all().values_list('Type')]}
+	return JsonResponse(res, safe=True)
+
