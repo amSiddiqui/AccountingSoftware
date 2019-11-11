@@ -15,8 +15,8 @@
     <div class="column is-pulled-left">
         <h1 class="is-size-3"><%=client.firstName + ' '+ client.lastName%></h1>
     </div>
-    <div class="column is-pulled-right">
-        <a href="/invoice" class="button is-rounded  is-success is-size-4">
+    <div class="column">
+        <a href="/invoice" class="button is-rounded  is-success is-size-4 is-pulled-right">
             <span> New Invoice</span>
             <span class="icon is-small">
                 <i class="fas fa-file-invoice"></i>
@@ -162,7 +162,7 @@
     </nav>
 </div>
 
-<form class="" action="" method="post">
+<form class="" action="/client/<%=client.id%>/delete?_method=DELETE" method="post">
 
   <div class="table-container">
     <table class="table is-scrollable is-fullwidth is-hoverable is-striped ">

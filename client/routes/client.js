@@ -179,6 +179,29 @@ router.delete('/delete',(req,res,next) =>{
   });
 });
 
+router.delete('/:id/delete',(req,res,next) =>{
+  util.authCheck(req ,(user) =>{
+    if(user){
+      var ids = []
+      var ids = req.body.row;
+      for(var i in ids){
+        for(var j in seeds.invoices){
+          if(seeds.invoices[j].client.id == req.params.id)
+            if(ids[i] == seeds.invoices[j].id){
+              seeds.invoices.splice(j,1);
+              break;
+            }
+        }
+      }
+
+      res.redirect('/client/' + req.params.id);
+    }
+    else{
+      res.redirect('/dashboard');
+    }
+  });
+});
+
 
 
 module.exports = router;

@@ -128,7 +128,7 @@
   </nav>
 </div>
 
-<form action="/invoice/batchDelete?_method=DELETE" method="post">
+<form action="/invoice/delete?_method=DELETE" method="post">
   <div class="table-container">
     <table class="table is-scrollable is-fullwidth is-hoverable is-striped ">
       <thead class="is-size-5">
@@ -159,7 +159,7 @@
         <tr>
           <td>
             <div class="pretty p-svg p-curve">
-              <input type="checkbox" name="invoice_<%=invoice.id%>" id="select-checkbox" value = "<%= invoice.id%>"/>
+              <input type="checkbox" name="row" id="select-checkbox" value = "<%= invoice.id%>"/>
               <div class="state p-success">
                 <!-- svg path -->
                 <svg class="svg svg-icon" viewBox="0 0 20 20">
@@ -192,7 +192,7 @@
       </tbody>
 
       <tfoot class="is-size-6">
-        <th><button class="button is-danger is-rounded" id="deleteButton">Delete</button></th>
+        <th><button type = "submit" class="button is-danger is-rounded" id="deleteButton">Delete</button></th>
         <th></th>
         <th></th>
         <th></th>
