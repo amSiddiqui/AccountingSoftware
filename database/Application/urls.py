@@ -17,6 +17,8 @@ urlpatterns = [
     path('invoice/latest/', views.latest_invoice ),
     path('invoice/delete/', views.delete_invoice ),
     path('vendor/create/', views.create_vendor ),
-    path('vendor/', views.fetch_vendor)
+    path('vendor/', views.fetch_vendor),
+    path('report/outstandingRevenue/',views.outstandingRevenue),
+    path('report/overdue/',views.overdue),
 
 ]

@@ -4,6 +4,7 @@ from django.http import JsonResponse,HttpResponse
 from django.contrib.auth.hashers import make_password,check_password
 from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
+from datetime import date
 
 '''
 Auth Level 0: Accounting Head 
@@ -90,6 +91,19 @@ def get_invoice(client,items,invoice):
 		}
 		res['items'].append(item)
 	return res
+
+def get_date(date_format, date_data):
+	d = [ x for x in date_data.strip().split() if len( x.strip() ) != 0 ]
+	if len(d) != 3:
+		raise Exception('Invalid date data')
+	if choice.big_endian == date_format.strip(): # yyyy/mm/dd
+		return date(d[0],d[1],d[2])
+	elif choice.little_endian == date_format.strip(): # dd/mm/yyyy
+		return date(d[2],d[1],d[0])
+	elif choice.middle_endian == date_format.strip(): # 'mm/dd/yyyy'
+		return  data(d[2],d[0],d[1])
+	else :
+		raise Exception('Invalid date format')
 
 #Create Initial init Request:
 @csrf_exempt
@@ -218,6 +232,7 @@ def logout(request):
 			return HttpResponse('Logout successful')
 		return HttpResponse('User is not logged in')
 
+#Checks if user exists or not
 @csrf_exempt
 @post('accessToken','email')
 def user_exists(request):
@@ -232,6 +247,7 @@ def user_exists(request):
 	else :
 		return HttpResponse("Database Error",status=500)
 
+#Creates invoice
 @csrf_exempt
 @post('accessToken','token','invoice')
 def create_invoice(request):
@@ -251,7 +267,7 @@ def create_invoice(request):
 		'invoiceId' : invoice_id
 	})
 
-
+#Fetch invoice
 @csrf_exempt
 @post('accessToken','token')
 def fetch_invoice(request,invoice_id):
@@ -269,7 +285,8 @@ def fetch_invoice(request,invoice_id):
 		return JsonResponse(get_invoice(clients[0],items,invoice),safe=True)
 	else:
 		return HttpResponse('Invalid invoice Id',status=400)
-	
+
+#Get latest invoice	
 @csrf_exempt
 @post('accessToken','token','quantity')
 def latest_invoice(request):
@@ -288,7 +305,8 @@ def latest_invoice(request):
 			
 	else:
 		return HttpResponse('Quantity is out of bound',status=400)
-	
+
+#Deletes the invoice	
 @csrf_exempt
 @post('accessToken','token','invoices')
 def delete_invoice(request):
@@ -297,6 +315,7 @@ def delete_invoice(request):
 		Invoice.objects.filter(Invoice_Id=i).delete()
 	return HttpResponse('Deleted sucessfully')
 
+#Create Vendor
 @csrf_exempt
 @post('accessToken','token','vendor')
 def create_vendor(request):
@@ -308,12 +327,14 @@ def create_vendor(request):
 	vendor.save()
 	return HttpResponse('Created successfully')
 
+#Fetch Vendor
 @csrf_exempt
 @post('accessToken','token')
 def fetch_vendor(request):
 	res = { 'vendor': [name for name in Vendor.objects.all().values_list('Vendor_Name')] }
 	return JsonResponse(res,safe=True)
 
+#Fetch Vendor
 @csrf_exempt
 @post('accessToken','email')
 def accountant_exists(request):
@@ -324,3 +345,39 @@ def accountant_exists(request):
 		})
 	else :
 		return HttpResponse("Database Error",status=500)
+
+@csrf_exempt
+@post('accessToken','token')
+def outstandingRevenue(request):
+	mon = 6
+	if 'months' in request.POST.keys():
+		mon = request.POST['months']
+	
+	invoices = Invoice.objects.filter(Date__month__gte=mon).values()
+	if invoices is None:
+		return HttpResponse('Unable to extract invoice',status=400)
+	res = {
+		'revenue': 0
+	}
+	for inv in invoices:
+		res['revenue'] += inv['Balance_Due']
+	return JsonResponse(res,safe=True)
+
+@csrf_exempt
+@post('accessToken','token')
+def overdue(request):
+	mon = 6
+	if 'months' in request.POST.keys():
+		mon = request.POST['months']
+	
+	invoices = Invoice.objects.filter(Date__month__gte=mon).values()
+	if invoices is None:
+		return HttpResponse('Unable to extract invoice',status=400)
+	res = {
+		'revenue': 0
+	}
+	for inv in invoices:
+		curr_date = date.today()
+		if curr_date - inv['Date']
+			res['revenue'] += inv['Balance_Due']
+	return JsonResponse(res,safe=True)

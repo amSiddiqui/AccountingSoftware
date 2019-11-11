@@ -132,9 +132,9 @@ class Quotes(models.Model):
         return ( str(self.Id)+','+self.AFName+','+self.ALName+','+self.Quote)
 
 class choice(Enum):
-    inter='dd:mm:yyyy'
-    us='mm:dd:yyyy'
-    jap='yyyy:mm:dd'
+    little_endian='dd/mm/yyyy'
+    middle_endian='mm/dd/yyyy'
+    big_endian='yyyy/mm/dd'
 
 class Date_Formats(models.Model):		
     Id=models.AutoField(primary_key=True)
