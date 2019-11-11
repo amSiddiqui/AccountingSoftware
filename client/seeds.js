@@ -17,7 +17,7 @@ const data = {
   //CLIENT
   pseudoClient:[
     {
-      id:1,
+      id: 1,
       firstName: 'Leviathan1',
       lastName: 'Tidehunter',
       countryCode: '+65',
@@ -28,9 +28,13 @@ const data = {
         city: 'Monterey',
         state: 'California',
         country: 'USA',
-        pincode: '93940',  
+        pincode: '93940',
       },
-      lateFeeRate: '3.15'
+      lateFeeRate: '3.15',
+      amountDue: 200,
+      total:270,
+      currency: '£ (GBP)',
+
     },
     {
       id: 2,
@@ -44,10 +48,13 @@ const data = {
         city: 'Monterey',
         state: 'California',
         country: 'USA',
-        pincode: '93940',  
+        pincode: '93940',
       },
       lateFeeRate: '3.15',
-      dayLimit: 7
+      dayLimit: 7,
+      amountDue: 200,
+      total:270,
+      currency: '£ (GBP)',
     },
     {
       id: 3,
@@ -61,25 +68,28 @@ const data = {
         city: 'Monterey',
         state: 'California',
         country: 'USA',
-        pincode: '93940',  
+        pincode: '93940',
       },
       lateFeeRate: '3.15',
-      dayLimit: 7
+      dayLimit: 7,
+      amountDue: 200,
+      total:270,
+      currency: '£ (GBP)',
     },
 
   ],
   //EXPENSE
 
-  pseudoExpense : [
+  pseudoExpense: [
     {
-        id: '654321',
+        id: 1,
         countryCode: '+91',
         category: 'Education',
         date: '01/22/2018',
         vendor: 'TCS',
         phone: '7823651098',
         description: 'financing education',
-        subtotal: 22.4
+        subtotal: 22400,
     },
   ],
   vendors : [
@@ -133,7 +143,7 @@ const data = {
    },
  ],
  //INVOICE
- 
+
   invoiceGenData : {
     totalOutstanding: 20000,
     totalInDraft: 2500,
@@ -153,7 +163,7 @@ const data = {
         city: 'Monterey',
         state: 'California',
         country: 'USA',
-        pincode: '93940',  
+        pincode: '93940',
       },
       lateFeeRate: '3.15'
     },
@@ -166,21 +176,23 @@ const data = {
         description: 'used for cleaning teeth',
         rate: 50,
         quantity: 3,
-        price: 150 
+        price: 150
       },
       {
         item: 'toothpaste',
         description: 'used for cleaning teeth',
         rate: 60,
         quantity: 2,
-        price: 120 
+        price: 120
       }
     ],
     total: 270,
     amountPaid: 50,
     balanceDue: 220,
     notes: 'shopping done on 22nd of november'
-  }, {
+  },
+
+  {
     client: {
       id:1,
       firstName: 'Leviathan1',
@@ -193,7 +205,7 @@ const data = {
         city: 'Monterey',
         state: 'California',
         country: 'USA',
-        pincode: '93940',  
+        pincode: '93940',
       },
       lateFeeRate: '3.15'
     },
@@ -206,14 +218,14 @@ const data = {
         description: 'used for cleaning teeth',
         rate: 50,
         quantity: 3,
-        price: 150 
+        price: 150
       },
       {
         item: 'toothpaste',
         description: 'used for cleaning teeth',
         rate: 60,
         quantity: 2,
-        price: 120 
+        price: 120
       }
     ],
     total: 270,

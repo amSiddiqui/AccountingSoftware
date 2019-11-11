@@ -1,7 +1,7 @@
 <% include ../partials/header %>
 
 <h1 class="is-size-2 form-heading">Edit Client: </h1>
-<form action="/client/<%= client.id%>?_method=PUT" method="post">
+<form action="/client/<%=client.id%>?_method=PUT" method="post">
     <label class="label">Name: </label>
     <div class="field is-horizontal">
         <div class="field-body">
@@ -45,25 +45,25 @@
     </div>
     <label class="label">Address: </label>
     <div class="field">
-        <input type="text" class="input" name="address1" value="<%= client.address1 %>" placeholder="Address Line 1">
+        <input type="text" class="input" name="address1" value="<%= client.address.address1 %>" placeholder="Address Line 1">
     </div>
     <div class="field is-horizontal">
         <div class="field-body">
             <div class="field">
-                <input type="text" class="input" name="city" value="<%= client.city %>" placeholder="City">
+                <input type="text" class="input" name="city" value="<%= client.address.city %>" placeholder="City">
             </div>
             <div class="field">
-                <input type="text" class="input" name="state" value="<%= client.state %>" placeholder="State">
+                <input type="text" class="input" name="state" value="<%= client.address.state %>" placeholder="State">
             </div>
         </div>
     </div>
     <div class="field is-horizontal">
         <div class="field-body">
             <div class="field">
-                <input type="text" class="input" name="country" value="<%= client.country %>" placeholder="Country">
+                <input type="text" class="input" name="country" value="<%= client.address.country %>" placeholder="Country">
             </div>
             <div class="field">
-                <input type="number" class="input" name="pincode" value="<%= client.pincode %>" placeholder="Pin Code">
+                <input type="number" class="input" name="pincode" value="<%= client.address.pincode %>" placeholder="Pin Code">
             </div>
         </div>
     </div>
@@ -88,8 +88,7 @@
                         class="fas fa-check"></i></span></button>
         </div>
         <div class="column is-1">
-            <a class="button is-large is-danger" href="/client"> <span> Cancel </span><span class="icon is-small"><i
-                        class="fas fa-times"></i></span></a>
+            <a class="button is-large is-danger" href="/client/<%= client.id%>"> <span> Cancel </span><span class="icon is-small"><i class="fas fa-times"></i></span></a>
         </div>
     </div>
 </form>

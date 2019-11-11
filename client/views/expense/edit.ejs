@@ -1,7 +1,7 @@
 <% include ../partials/header %>
 
 <h1 class="is-size-2 form-heading">Edit Expense: </h1>
-<form action="/expense/<%= expense.id%>?_method=PUT" method="post">
+<form action="<%= expense.id %>?_method=PUT" method="post">
     <label for="category-selection" class="label">Catergory</label>
     <div class="columns is-vcentered">
         <div class="column is-4">
