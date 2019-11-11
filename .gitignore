@@ -6,3 +6,4 @@ migrations/
 *~
 *.pyc
 __pycache__
+database/env/

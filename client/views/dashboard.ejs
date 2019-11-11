@@ -17,12 +17,10 @@
             </div>
             <div class="dropdown-menu" id="createDropMenu" role="menu">
                 <div class="dropdown-content">
-                    <a href="#" class="dropdown-item">Item 1</a>
-                    <a href="#" class="dropdown-item">Item 2</a>
-                    <a href="#" class="dropdown-item">Item 3</a>
-                    <a href="#" class="dropdown-item">Item 4</a>
-                    <a href="#" class="dropdown-item">Item 5</a>
-                    <a href="#" class="dropdown-item">Item 6</a>
+                    <a href="/invoice" class="dropdown-item">Invoice</a>
+                    <a href="/client/create" class="dropdown-item">Client</a>
+                    <a href="/vendor/create" class="dropdown-item">Vendor</a>
+                    <a href="/expense/create" class="dropdown-item">Expense</a>
                 </div>
             </div>
         </div>
@@ -36,30 +34,252 @@
 
 
 <h1 class="is-size-3 has-text-weight-light">Outstanding Revenue</h1>
-<div class="graph_card">
-
+<div class="graph_card columns is-vcentered">
+    <div class="column is-9">
+        <div id="progressMarkers">
+            <div>0</div>
+            <div>10k</div>
+            <div>20k</div>
+            <div>30k</div>
+            <div>40k</div>
+            <div>50k</div>
+            <div>60k</div>
+            <div>70k</div>
+        </div>
+        <progress class="progress is-primary" value="<%=percent%>" max="100"><%=percent%></progress>
+    </div>
+    <div class="column has-text-centered" id="showTotalRevenue">
+        <p class="title"><%=currency%> <%=outstandingRevenue%></p>
+        <p class="subtitle is-size-6 is-capitalized">outstanding revenue</p>
+    </div>
 </div>
 
 <h1 class="is-size-3 has-text-weight-light">Total Profit</h1>
 <div class="profit_card">
-
+    <canvas id="profit_chart" height="80px"></canvas>
+    <div class="columns">
+        <div class="column has-text-centered">
+            <p class="title">
+                <%=currency%> <%=totalProfit%>
+            </p>
+            <p class="subtitle is-size-6">
+                Total Profit
+            </p>
+        </div>
+    </div>
 </div>
 
 <h1 class="is-size-3 has-text-weight-light">Revenue Streams</h1>
 <div class="revenue_card">
-
+    <div class="columns is-vcentered">
+        <div class="column is-2"></div>
+        <div class="column is-6">
+            <canvas id="revenue_chart"></canvas>
+        </div>
+        <div class="column has-text-centered">
+            <p class="title  has-text-blue">
+                <%=currency%> <%=revStream.total%>
+            </p>
+            <p class="subtitle is-size-6">
+                Total Revenue
+            </p>
+        </div>
+    </div>
 </div>
 
 <h1 class="is-size-3 has-text-weight-light">Spending</h1>
 <div class="revenue_card">
-
+    <div class="columns is-vcentered">
+        <div class="column is-2"></div>
+        <div class="column is-6">
+            <canvas id="expense_chart"></canvas>
+        </div>
+        <div class="column has-text-centered">
+            <p class="title has-text-danger">
+                <%=currency%> <%=expense.total%>
+            </p>
+            <p class="subtitle is-size-6">
+                Total Spending
+            </p>
+        </div>
+    </div>
 </div>
 
-<h1 class="is-size-3 has-text-weight-light">Unbilled items</h1>
+<h1 class="is-size-3 has-text-weight-light">Unbilled Times</h1>
 <div class="revenue_card">
-
+    <div class="columns is-vcentered">
+        <div class="column is-2"></div>
+        <div class="column is-6">
+            <canvas id="unbilled_chart"></canvas>
+        </div>
+        <div class="column has-text-centered">
+            <p class="title has-text-danger">
+                <%=currency%> <%=unbilled.total%>
+            </p>
+            <p class="subtitle is-size-6">
+                Overdue
+            </p>
+        </div>
+    </div>
 </div>
 
+<script>
+
+    const chartColors = {
+        blue: "rgb(54, 162, 235)",
+        green: "rgb(75, 192, 192)",
+        grey: "rgb(201, 203, 207)",
+        orange: "rgb(255, 159, 64)",
+        purple: "rgb(153, 102, 255)",
+        red: "rgb(255, 99, 132)",
+        yellow: "rgb(255, 205, 86)",
+    }
+
+    // Profit loss chart 
+    var profit_ctx = document.getElementById('profit_chart').getContext('2d');
+    var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    var month = new Date().getMonth();
+    months = months.slice(month - 5, month + 1);
+
+    var profit_chart = new Chart(profit_ctx, {
+        // The type of chart we want to create
+        type: 'line',
+
+        // The data for our dataset
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'Profit',
+                backgroundColor: 'rgb(0, 153, 255)',
+                borderColor: 'rgb(0, 153, 255)',
+                data: [ <%- profit %> ],
+                lineTension: 0,
+                pointRadius: 8,
+                pointHoverRadius: 12,
+                fill: false
+            },],
+        },
+
+        // Configuration options go here
+        options: {
+            responsive: true,
+            hover: {
+                mode: 'index'
+            }
+        }
+    });
+
+
+    // Revenue stream chart
+    client_labels = [];
+    <% revStream.clients.forEach(function (client) {%>
+        client_labels.push("<%=client%>");
+    <%});%>
+    
+    var rev_ctx = document.getElementById('revenue_chart').getContext('2d');
+    var configRevStream = {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: [<%- revStream.revenue %>],
+                backgroundColor: [
+                    chartColors.red,
+                    chartColors.orange,
+                    chartColors.yellow,
+                    chartColors.green,
+                    chartColors.blue
+                ],
+                label: 'Revenue Stream'
+            }],
+            labels: client_labels
+        },
+        options: {
+            responsive: true,
+            legend: {
+                position: 'right',
+                labels: {
+                    padding: 35,
+                    fontSize: 15,
+                }
+            }
+        }
+    };
+    var rev_chart = new Chart(rev_ctx, configRevStream);
+
+    // Expense chart
+    expense_labels = [];
+    <% expense.vendors.forEach(function (vendor) {%>
+        expense_labels.push("<%=vendor%>");
+    <%});%>
+    
+    var exp_ctx = document.getElementById('expense_chart').getContext('2d');
+    var configExpense = {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: [<%- expense.expenditure %>],
+                backgroundColor: [
+                    "#465881",
+                    "#00909e",
+                    "#4dd599",
+                    "#c70d3a",
+                    "#4b8e8d"
+                ],
+                label: 'Expense'
+            }],
+            labels: expense_labels
+        },
+        options: {
+            responsive: true,
+            legend: {
+                position: 'right',
+                labels: {
+                    padding: 35,
+                    fontSize: 15,
+                }
+            }
+        }
+    };
+    var exp_chart = new Chart(exp_ctx, configExpense);
+    
+    
+    // Unbilled chart
+    unbilled_labels = [];
+    <% var index = 0; unbilled.clients.forEach(function (client) {%>
+        unbilled_labels.push("<%=client%>  due: <%=unbilled.dues[index++]%>");
+    <%});%>
+    
+    var unb_ctx = document.getElementById('unbilled_chart').getContext('2d');
+    var configUnbilled = {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: [<%- unbilled.days %>],
+                backgroundColor: [
+                    "#e25822",
+                    "#f1bc31",
+                    "#b22222",
+                    "#5f6769",
+                    "#ff0000"
+                ],
+                label: 'Unbilled Time in days'
+            }],
+            labels: unbilled_labels
+        },
+        options: {
+            responsive: true,
+            legend: {
+                position: 'right',
+                labels: {
+                    padding: 35,
+                    fontSize: 15,
+                }
+            }
+        }
+    };
+    var unb_chart = new Chart(unb_ctx, configUnbilled);
+
+</script>
 
 
 <% include ./partials/footer %>
