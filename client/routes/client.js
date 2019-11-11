@@ -16,6 +16,7 @@ router.get('/create', (req, res, next) => {
     countryCode: seeds.countryCode,
   });
 });
+
 router.post('/', (req, res) => {
   var params = {
     id: '000001',
@@ -65,7 +66,8 @@ router.put('/:id',(req,res) => {
 });
 
 router.get('/:id', (req, res, next) => {
-  var client = seeds.pseudoClient.find(client => client.id === req.params.id);
+  var id = parseInt(req.params.id);
+  var client = seeds.pseudoClient.find(client => client.id === id);
     res.render('client/show', {
         client: client,
     });

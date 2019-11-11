@@ -46,7 +46,8 @@ const data = {
         country: 'USA',
         pincode: '93940',  
       },
-      lateFeeRate: '3.15'
+      lateFeeRate: '3.15',
+      dayLimit: 7
     },
     {
       id: 3,
@@ -62,7 +63,8 @@ const data = {
         country: 'USA',
         pincode: '93940',  
       },
-      lateFeeRate: '3.15'
+      lateFeeRate: '3.15',
+      dayLimit: 7
     },
 
   ],
