@@ -31,6 +31,7 @@ class Company(models.Model):
 	City=models.CharField(max_length=30)
 	#The Pin_Code field is added after creation of table thus need to set a default value
 	Pin_Code=models.PositiveSmallIntegerField(default=0)
+	Country_Code=models.CharField(max_length=5)
 	State=models.CharField(max_length=30)
 	Email=models.EmailField()
 	Phone=models.PositiveSmallIntegerField()
@@ -49,12 +50,14 @@ class User(models.Model):
 	Address_Line=models.TextField()
 	City=models.CharField(max_length=30)
 	#The Pin_Code field is added after creation of table thus need to set a default value
-	Pin_Code=models.PositiveSmallIntegerField(default=0)
+	Pin_Code=models.IntegerField(max_length=6)
 	State=models.CharField(max_length=30)
+	country=models.CharField(max_length=30)
+	Country_Code=models.CharField(max_length=5)
 	Email=models.EmailField()
 	#The Password field is added after creation of table thus need to set a default value
 	Password=models.CharField(max_length=100,default="")
-	Phone=models.PositiveSmallIntegerField()
+	Phone=models.IntegerField(max_length=10)
 	Auth_Level=models.PositiveSmallIntegerField()
 	Comp_Id = models.ForeignKey(Company, on_delete=models.CASCADE)
 
