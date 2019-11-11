@@ -18,12 +18,23 @@ urlpatterns = [
     url(r'^auth/signup$', views.company, name='company'),
     url(r'^auth/exists/$', views.user_exists, name='user_exists'),
     url(r'^auth/accountant/exists/$', views.accountant_exists, name='accountant_exists'),
+
+    # Invoice routes
     path('invoice/<int:invoice_id>/', views.fetch_invoice ),
     path('invoice/create/', views.create_invoice ),
     path('invoice/latest/', views.latest_invoice ),
     path('invoice/delete/', views.delete_invoice ),
+
+    # Vendor routes
     path('vendor/create/', views.create_vendor ),
     path('vendor/', views.fetch_vendor),
+
+    # Category routes
+    path('category/create/', views.category_create),
+    path('category/', views.category_fetch),
+
+
+    
     path('report/outstandingRevenue/',views.outstandingRevenue),
     path('report/overdue/',views.overdue),
     path('report/profit/',views.profit),

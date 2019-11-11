@@ -165,3 +165,8 @@ class Item(models.Model):
 
 	def __str__(self):
 		return f"{self.Item_Id}, ( {self.Name} ), ( {self.Description} ), {self.Rate}, {self.Quantity}, {self.Price}"
+
+
+class Category(models.Model):
+	Cat_Id = models.AutoField(primary_key=True)
+	Type = models.TextField()

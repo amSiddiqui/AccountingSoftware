@@ -169,7 +169,7 @@ def login_user(request):
 	email = request.POST['email']
 	password = request.POST['password']
 	# Is this accessToken encrypted??
-	access_token = request.POST['accessToken']
+	# access_token = request.POST['accessToken']
 
 	# if (access_token != value['accessToken']):
 	# 	return HttpResponse("Invalid Authorisation ", status=status[2])
@@ -229,6 +229,7 @@ def login_user(request):
 
 	else:
 		return HttpResponse("User Does Not Exists", status=status[2])
+
 
 # Create logout Request:
 @csrf_exempt
@@ -495,6 +496,26 @@ def accountant_exists(request):
 	else :
 		return HttpResponse("Database Error",status=500)
 
+
+
+# Category routes
+@csrf_exempt
+@post('accessToken', 'token', 'category')
+def category_create(request):
+	category = request.POST['category']
+	cat = Category(Type=category)
+	cat.save()
+	return HttpResponse('Created successfully')
+
+@csrf_exempt
+@post('accessToken', 'token')
+def category_fetch(request):
+	res = {'categories': [cat for cat in Category.objects.all().values_list('Type')]}
+	return JsonResponse(res, safe=True)
+
+
+
+
 @csrf_exempt
 @post('accessToken','token','startMonth','endMonth')
 def outstandingRevenue(request):
@@ -623,6 +644,7 @@ def overdue(request):
 @csrf_exempt
 @post('accessToken','token','startMonth','endMonth')
 def profit(request):
+
 	rSMonth = request.POST['startMonth']
 	rEMonth = request.POST['endMonth']
 	currMonth = date.today().month

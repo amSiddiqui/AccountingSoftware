@@ -89,8 +89,21 @@ const data = {
         vendor: 'TCS',
         phone: '7823651098',
         description: 'financing education',
-        subtotal: 22400,
+        subtotal: 224,
+
     },
+
+    {
+        id: 1,
+        countryCode: '+91',
+        category: 'Food',
+        date: '01/22/2018',
+        vendor: 'KFC',
+        phone: '7825551028',
+        description: 'Regular lunch funding',
+        subtotal: 224,
+    },
+
   ],
   vendors : [
       'ABC',
@@ -189,7 +202,7 @@ const data = {
     total: 270,
     amountPaid: 50,
     balanceDue: 220,
-    notes: 'shopping done on 22nd of november'
+    notes: 'shopping done on 22nd of November'
   },
 
   {
@@ -231,7 +244,7 @@ const data = {
     total: 270,
     amountPaid: 50,
     balanceDue: 220,
-    notes: 'shopping done on 22nd of november'
+    notes: 'shopping done on 21st of October'
   }],
 
  //REPORT
@@ -253,25 +266,10 @@ const data = {
      description: '',
    },
  ],
- pseudoExpenseR : [
-
-   {
-     vendorName: 'Aslia',
-     description: 'Educating new interns',
-     date: '10/28/2019',
-     amount: '$250000.00',
-     quantity: '1',
-     discount: '0%',
-     expenseType: 'Education',
-     tax: '0.00',
-     total: '$250000.00',
-   },
- ],
 
  pseudoProfitLoss : [
    {
      sales: '$25000.00',
-     cost: '$0.00',
      expenseType: 'Education',
      expenseTotal: '$20000.00',
      profit: '$5000.00',
