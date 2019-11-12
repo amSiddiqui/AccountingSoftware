@@ -17,10 +17,6 @@ class Authentication{
             throw new Error('serverConfig is initialized');
         }
         try{
-            let res = await axios.post(`${this.serverConfig.domain}/init/`, {
-                clientId:this.serverConfig.clientID,
-                secret:this.serverConfig.clientSecret
-            });
             console.log('Awating reposnse for init');
             var payload = {
                 clientId:this.serverConfig.clientID,
