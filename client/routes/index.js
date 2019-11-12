@@ -8,19 +8,13 @@ const seed = require('../seeds');
 const config = require('../config/config');
 const data = require('../modules/data');
 
-const configurations = {};
 
-// auth.conn().then(serverKey=>{
-//     configurations['country']       = config.country(serverKey);
-//     configurations['quote']         = config.quote(serverKey);
-//     configurations['currency']      = config.currency(serverKey);
-//     configurations['phone_code']    = config.phone_code(serverKey);
-//     configurations['datefmt']       = config.datefmt(serverKey);
-// }).catch(err=>{
-//     throw new Error(err);
-// });
-
-auth.conn();
+auth.conn().then(res => {
+    console.log('Connection successful');
+    console.log('Access Token: ', accessToken);
+}).catch(err => {
+    console.log(err);
+});
 
 const axios = require('axios');
 
@@ -30,8 +24,6 @@ router.get('/', (req, res, next) => {
     // FIXME: REMOVE THIS 
     res.cookie('user',seed.pseudoUser, cookieOpt);
     console.log("Logged in as a pseudo user: ", seed.pseudoUser);
-
-
     res.redirect('/login');
 });
 

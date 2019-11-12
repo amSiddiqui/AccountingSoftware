@@ -2,7 +2,7 @@ const express =  require('express');
 const cookieParser = require('cookie-parser');
 const path = require('path');
 const clientConfig = require('./config/config').clientConfig;
-
+const config = require('./config/config');
 const indexRouter = require("./routes/index");
 const companyRouter = require('./routes/company');
 const clientRouter = require('./routes/client');
@@ -29,7 +29,6 @@ app.use(express.static(path.join(__dirname, 'static/public')));
 app.use(methodOverride("_method"));
 
 // Global variables
-global.dburl = process.env.DBURL;
 global.tempProfile = null;
 global.accessToken = "accessToken";
 global.dbErrorMsg = "Database not responding try again later";
