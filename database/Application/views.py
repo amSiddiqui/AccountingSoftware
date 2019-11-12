@@ -44,6 +44,7 @@ def post(*oargs, **okwargs):
 	def inner1(func):
 		def inner2(*args, **kwargs):
 			if args[0].method == 'POST' :
+				print(args[0].POST['clientId'])
 				for k in oargs:
 					if k not in args[0].POST.keys():
 						return HttpResponse('Invalid Payload',status=400)
