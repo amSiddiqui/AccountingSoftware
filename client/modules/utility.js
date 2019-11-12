@@ -15,20 +15,17 @@ module.exports = {
             currOpt['next'] = opt['next'];
         }
         return function( req, res, next ){
-            // TODO: Remove
-            next();
-            return;
 
             if( currOpt['next'] ){
                 next();
             }
-            if( typeof(req.cookies) == 'object' ) {
+            if( typeof(req.cookies) != 'object' ) {
                 res.redirect(`${currOpt['failedRedirect']}`);
-                next();
+                return;
             }
             const user = req.cookies['user'];
             // console.log(req.)
-            if(typeof(user) == 'object' && typeof(user.token) == 'string' && typeof(user.profile) == 'object'){
+            if(typeof(user) == 'object' && typeof(user.token) == 'string' && typeof(user.company) == 'object'){
                 if( currOpt['successRedirect'] ){
                     res.redirect(`${currOpt['successRedirect']}`);
                 }else{

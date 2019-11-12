@@ -4,15 +4,15 @@ from django.db import models
 #---------------------------------------------------------
 class Country(models.Model):
 	Id=models.AutoField(primary_key=True)
-	Country_Code=models.CharField(max_length=10)
-	Country_Name=models.CharField(max_length=50)
-
-
+	Country_Code=models.CharField(max_length=5)
+	Country_Name=models.TextField()
+	
 
 class Currency(models.Model):
 	Id=models.AutoField(primary_key=True)
 	Code=models.CharField(max_length=10)
 	Name=models.CharField(max_length=50)
+	Symbol=models.CharField(max_length=10)
 	
 
 #In mysql client use 'alter table application_phonecode AUTO_INCREMENT=1;' to have starting value as 1
@@ -174,9 +174,13 @@ class Item(models.Model):
 	Name = models.TextField()
 	Description = models.TextField()
 	Rate = models.FloatField()
-	Quantity = models.IntegerField()
-	Price = models.FloatField()
 	Invoice_Id = models.ForeignKey(Invoice,on_delete=models.DO_NOTHING)
+
+class Item_Invoice(models.Model):
+	Item_Id = models.ForeignKey(Item, on_delete=models.DO_NOTHING)
+	Invoice_Id = models.ForeignKey(Invoice, on_delete=models.DO_NOTHING)
+	Quantity = models.IntegerField(default=1)
+	Price = models.IntegerField()
 
 	def __str__(self):
 		return f"{self.Item_Id}, ( {self.Name} ), ( {self.Description} ), {self.Rate}, {self.Quantity}, {self.Price}"

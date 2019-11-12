@@ -6,6 +6,7 @@ from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
 from datetime import date, timedelta
 from django.db.models import Sum
+import json
 
 '''
 Auth Level 0: Accounting Head 
@@ -27,7 +28,7 @@ value={
 
     'clientId': None,
     'secret': None,
-    'accessToken': None
+    'accessToken': 'not an accessToken'
 }
 
 userToken={}
@@ -35,7 +36,7 @@ status=[200,403,404]
 
 def check_user(token):
 	for e,t in userToken:
-		if t is token:
+		if t == token:
 			del userToken[e]
 			return True
 	return False
@@ -44,13 +45,15 @@ def post(*oargs, **okwargs):
 	def inner1(func):
 		def inner2(*args, **kwargs):
 			if args[0].method == 'POST' :
+				args[0].POST = json.loads(args[0].body)
 				for k in oargs:
 					if k not in args[0].POST.keys():
 						return HttpResponse('Invalid Payload',status=400)
-					if k is 'token' and k in args[0].POST.keys() and not check_user(args[0].POST['token']):
+					if k == 'token' and k in args[0].POST.keys() and not check_user(args[0].POST['token']):
 						return HttpResponse('User not Logged in',status=400)
-					if k is 'accessToken' and k in args[0].POST.keys() and args[0].POST['accessToken'] is not value['accessToken']:
-						return HttpResponse('Invalid access token',status=400)
+					if k == 'accessToken' and k in args[0].POST.keys() :
+						if args[0].POST['accessToken'] != value['accessToken']:
+							return HttpResponse('Invalid access token',status=400)
 				return func(*args,**kwargs)
 			else:
 				return HttpResponse(status=status[2])
@@ -422,7 +425,7 @@ def create_invoice(request):
 @csrf_exempt
 @post('accessToken','token')
 def fetch_invoice(request,invoice_id):
-	if value['accessToken'] is not request.POST['accessToken']:
+	if value['accessToken'] != request.POST['accessToken']:
 		return HttpResponse('Invalid access token',status=401)
 	
 	invoices = Invoice.objects.filter(Invoice_Id=invoice_id).values()
@@ -712,21 +715,21 @@ def report_outstandingRevenue(request):
 	if not cycleE and not cycleS:
 		for i in range( 0, len(invs)):
 			inv = invs[i]
-			if curr_year is not inv['Date'].year :
+			if curr_year != inv['Date'].year :
 				break
 			if sMonth <= inv['Date'].month and eMonth >= inv['Date'].month :
 				res['revenue'] += inv['Balance_Due']
 	elif cycleE and not cycleS:
 		for i in range( 0 , len( invs ) ):
 			inv = invs[i]
-			if eMonth >= inv['Date'].month and curr_year is inv['Date'].year :
+			if eMonth >= inv['Date'].month and curr_year == inv['Date'].year :
 				res['revenue'] += inv['Balance_Due']
-			elif sMonth <= inv['Date'].month and curr_year is not inv['Date'].year :
+			elif sMonth <= inv['Date'].month and curr_year != inv['Date'].year :
 				res['revenue'] += inv['Balance_Due']
 	elif cycleS and cycleE:
 		for i in range( 0 , len( invs ) ):
 			inv = invs[i]
-			if sMonth <= inv['Date'].month and curr_year is not inv['Date'].year and eMonth >= inv['Date'].month :
+			if sMonth <= inv['Date'].month and curr_year != inv['Date'].year and eMonth >= inv['Date'].month :
 				res['revenue'] += inv['Balance_Due']
 
 	return JsonResponse(res,safe=True)
@@ -765,7 +768,7 @@ def report_overdue(request):
 			clients = Client.object().filter(Client_Id=inv['Client_Id_id'])
 			if clients is None or len(clients) <= 0:
 				break 
-			if curr_year is not inv['Date'].year :
+			if curr_year != inv['Date'].year :
 				break
 
 			if sMonth <= inv['Date'].month and eMonth >= inv['Date'].month and check_limit(inv['Date'], clients[0]['Day_Limit']):
@@ -778,9 +781,9 @@ def report_overdue(request):
 			if clients is None or len(clients) <= 0:
 				break 
 
-			if eMonth >= inv['Date'].month and curr_year is inv['Date'].year and check_limit(inv['Date'], clients[0]['Day_Limit']):
+			if eMonth >= inv['Date'].month and curr_year == inv['Date'].year and check_limit(inv['Date'], clients[0]['Day_Limit']):
 				res['revenue'] += inv['Balance_Due']
-			elif sMonth <= inv['Date'].month and curr_year is not inv['Date'].year and check_limit(inv['Date'], clients[0]['Day_Limit']):
+			elif sMonth <= inv['Date'].month and curr_year != inv['Date'].year and check_limit(inv['Date'], clients[0]['Day_Limit']):
 				res['revenue'] += inv['Balance_Due']
 	elif cycleS and cycleE:
 		for i in range( 0 , len( invs ) ):
@@ -790,7 +793,7 @@ def report_overdue(request):
 			if clients is None or len(clients) <= 0:
 				break 
 
-			if sMonth <= inv['Date'].month and curr_year is not inv['Date'].year and eMonth >= inv['Date'].month and check_limit(inv['Date'], clients[0]['Day_Limit']):
+			if sMonth <= inv['Date'].month and curr_year != inv['Date'].year and eMonth >= inv['Date'].month and check_limit(inv['Date'], clients[0]['Day_Limit']):
 				res['revenue'] += inv['Balance_Due']
 
 	return JsonResponse(res,safe=True)
@@ -831,17 +834,17 @@ def report_profit(request):
 		temp_year = temp_date.year
 		
 		if not cycleE and not cycleS:
-			if curr_year is not temp_year :
+			if curr_year != temp_year :
 				break
 			if sMonth <= temp_month and eMonth >= temp_month:
 				rev += inv['Balance_Due']
 		elif cycleE and not cycleS:
-			if eMonth >= temp_month and curr_year is temp_year:
+			if eMonth >= temp_month and curr_year == temp_year:
 				rev += inv['Balance_Due']
-			elif sMonth <= temp_month and curr_year is not temp_year:
+			elif sMonth <= temp_month and curr_year != temp_year:
 				rev += inv['Balance_Due']
 		elif cycleS and cycleE:
-			if sMonth <= temp_month and curr_year is not temp_year and eMonth >= temp_month:
+			if sMonth <= temp_month and curr_year != temp_year and eMonth >= temp_month:
 				rev += inv['Balance_Due']
 		res['profit'].append( total_sum - rev )
 
@@ -886,7 +889,7 @@ def report_revenue(request):
 
 	rev = 0
 	for i in range( 0, len(invs)):
-		if qty is 0:
+		if qty == 0:
 			break
 		qty -= 1
 
@@ -908,29 +911,29 @@ def report_revenue(request):
 		idx = 0
 		for i in range( 0, len( temp_rev ) ):
 			r = temp_rev[i]
-			if r['id'] is rev_pat['id']:
+			if r['id'] == rev_pat['id']:
 				rev_pat = r
 				idx = i
 				break
-		if idx is 0:
+		if idx == 0:
 			temp_rev.append(rev_pat)
 			idx = len( temp_rev ) - 1
 			
 		if not cycleE and not cycleS:
-			if curr_year is not temp_year :
+			if curr_year != temp_year :
 				break
 			if sMonth <= temp_month and eMonth >= temp_month:
 				rev += inv['Balance_Due']
 				rev_pat['revenue'] += inv['Balance_Due']
 		elif cycleE and not cycleS:
-			if eMonth >= temp_month and curr_year is temp_year:
+			if eMonth >= temp_month and curr_year == temp_year:
 				rev += inv['Balance_Due']
 				rev_pat['revenue'] += inv['Balance_Due']
-			elif sMonth <= temp_month and curr_year is not temp_year:
+			elif sMonth <= temp_month and curr_year != temp_year:
 				rev += inv['Balance_Due']
 				rev_pat['revenue'] += inv['Balance_Due']
 		elif cycleS and cycleE:
-			if sMonth <= temp_month and curr_year is not temp_year and eMonth >= temp_month:
+			if sMonth <= temp_month and curr_year != temp_year and eMonth >= temp_month:
 				rev += inv['Balance_Due']
 				rev_pat['revenue'] += inv['Balance_Due']
 
@@ -1003,7 +1006,7 @@ def report_expense(request):
 
 	rev = 0
 	for i in range( 0, len(exps)):
-		if qty is 0:
+		if qty == 0:
 			break
 		qty -= 1
 
@@ -1026,29 +1029,29 @@ def report_expense(request):
 		idx = 0
 		for i in range( 0, len( temp_rev ) ):
 			r = temp_rev[i]
-			if r['id'] is rev_pat['id']:
+			if r['id'] == rev_pat['id']:
 				rev_pat = r
 				idx = i
 				break
-		if idx is 0:
+		if idx == 0:
 			temp_rev.append(rev_pat)
 			idx = len( temp_rev ) - 1
 			
 		if not cycleE and not cycleS:
-			if curr_year is not temp_year :
+			if curr_year != temp_year :
 				break
 			if sMonth <= temp_month and eMonth >= temp_month:
 				rev += exps['Amount']
 				rev_pat['expense'] += exps['Amount']
 		elif cycleE and not cycleS:
-			if eMonth >= temp_month and curr_year is temp_year:
+			if eMonth >= temp_month and curr_year == temp_year:
 				rev += exps['Amount']
 				rev_pat['expense'] += exps['Amount']
-			elif sMonth <= temp_month and curr_year is not temp_year:
+			elif sMonth <= temp_month and curr_year != temp_year:
 				rev += exps['Amount']
 				rev_pat['expense'] += exps['Amount']
 		elif cycleS and cycleE:
-			if sMonth <= temp_month and curr_year is not temp_year and eMonth >= temp_month:
+			if sMonth <= temp_month and curr_year != temp_year and eMonth >= temp_month:
 				rev += exps['Amount']
 				rev_pat['expense'] += exps['Amount']
 
