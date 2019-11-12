@@ -36,7 +36,7 @@ class Company(models.Model):
 	Phone=models.PositiveSmallIntegerField()
 	Tax_Rate=models.FloatField()
 	Base_Currency=models.ForeignKey(Currency,on_delete=models.CASCADE,default="")
-	Date_Format=models.CharField(max_length='10')
+	Date_Format=models.CharField(max_length=10)
 
 	def __str__(self):
 		return (str(self.Company_Id)+','+self.Company_Name+', ('+self.Address_Line+','+self.City+','+
@@ -49,14 +49,14 @@ class User(models.Model):
 	Address_Line=models.TextField()
 	City=models.CharField(max_length=30)
 	#The Pin_Code field is added after creation of table thus need to set a default value
-	Pin_Code=models.IntegerField(max_length=6)
+	Pin_Code=models.IntegerField()
 	State=models.CharField(max_length=30)
 	Country_Name=models.TextField()
 	Country_Code=models.CharField(max_length=5)
 	Email=models.EmailField()
 	#The Password field is added after creation of table thus need to set a default value
 	Password=models.CharField(max_length=100,default="")
-	Phone=models.IntegerField(max_length=10)
+	Phone=models.IntegerField()
 	Auth_Level=models.PositiveSmallIntegerField()
 	Comp_Id = models.ForeignKey(Company, on_delete=models.CASCADE)
 
@@ -64,6 +64,9 @@ class User(models.Model):
 		return f"{self.User_Id}, {self.Fname}, {self.Lname}, ( {self.Address_Line}, {self.City}, {self.State}), {self.Email}, {self.Phone}, {self.Auth_Level}"
 
 #------------------------------------------------------------------------------------------------------
+
+class Category(models.Model):
+	Type = models.TextField(primary_key=True)
 
 class Client(models.Model):
 	Client_Id=models.AutoField(max_length=20,primary_key=True)
@@ -102,10 +105,10 @@ class Vendor(models.Model):
 			   self.City+','+self.State+','+ str(self.Pin_Code) +','+self.Email+','+ str(self.Phone) ) 
 
 class Expense(models.Model):
-	Expense_Id=models.AutoField(primaryKey=True)
-	Category=models.ForeignKey(Category)
+	Expense_Id=models.AutoField(primary_key=True)
+	Category_Id=models.ForeignKey(Category, on_delete=models.DO_NOTHING)
 	Date=models.DateField()
-	Vendor_Id=models.ForeignKey(Vendor)
+	Vendor_Id=models.ForeignKey(Vendor, on_delete=models.DO_NOTHING)
 	Description=models.TextField()
 	Amount=models.FloatField()
 
@@ -173,7 +176,3 @@ class Item(models.Model):
 
 	def __str__(self):
 		return f"{self.Item_Id}, ( {self.Name} ), ( {self.Description} ), {self.Rate}, {self.Quantity}, {self.Price}"
-
-
-class Category(models.Model):
-	Type = models.TextField(primaryKey=True)

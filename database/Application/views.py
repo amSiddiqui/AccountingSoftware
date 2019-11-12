@@ -1,5 +1,5 @@
 #from django.shortcuts import render
-from models import *
+from Application.models import *
 from django.http import JsonResponse,HttpResponse
 from django.contrib.auth.hashers import make_password,check_password
 from datetime import datetime
@@ -520,7 +520,7 @@ def category_fetch(request):
 @post('accessToken', 'token', 'client')
 def expense_create(request):
 	exp = request.POST['expense']
-	expense = Expense(Category=Category.objects.get(pk=exp['category']), Date=get_iso_date(request.POST['datefmt'], exp['date']), Vendor_Id=Vendor.objects.filter(Vendor_Name=exp['vendor'])[0].Vendor_Id,Description=exp['description'], Amount=float(exp['amount']))
+	expense = Expense(Category_Id=Category.objects.get(pk=exp['category']), Date=get_iso_date(request.POST['datefmt'], exp['date']), Vendor_Id=Vendor.objects.filter(Vendor_Name=exp['vendor'])[0].Vendor_Id,Description=exp['description'], Amount=float(exp['amount']))
 	expense.save();
 	return HttpResponse('Created Successfully')
 
@@ -569,7 +569,7 @@ def expense_update(request, expense_id):
 	if (exp is not None):
 		new_exp = request.POST['expense']
 		datefmt = request.POST['datefmt']
-		exp.Category = new_exp['category']
+		exp.Category_Id = new_exp['category']
 		exp.Date = get_iso_date(datefmt, new_exp['date'])
 		vendors = Vendor.objects.filter(Vendor_Name=new_exp['vendor']).values()
 		if (not (vendors is not None and len(vendors) > 0)):
