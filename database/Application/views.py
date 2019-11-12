@@ -333,7 +333,7 @@ def dates(request):
 	return JsonResponse({ 'dateFormat' : data },safe=True)
 
 @csrf_exempt
-@post('accessToken')
+@post('accessToken','company')
 def company(request):
 	try:
 		comp=request.POST.get('company')
