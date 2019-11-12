@@ -37,8 +37,14 @@ status=[200,403,404]
 def check_user(token):
 	for e,t in userToken:
 		if t == token:
-			del userToken[e]
-			return True
+			return e
+	return None
+
+def delete_user(token):
+	email = check_user(token)
+	if check_user(token) is not None:
+		del userToken[email]
+		return True
 	return False
 
 def post(*oargs, **okwargs):
@@ -72,21 +78,21 @@ def get_iso_date(date_format, date_data):
 	d = [ x for x in date_data.strip().split() if len( x.strip() ) != 0 ]
 	if len(d) != 3:
 		raise Exception('Invalid date data')
-	if DATE_FORMAT.big_endian == date_format.strip(): # yyyy/mm/dd
+	if DATE_FORMAT['big_endian'] == date_format.strip(): # yyyy/mm/dd
 		return date(d[0],d[1],d[2])
-	elif DATE_FORMAT.little_endian == date_format.strip(): # dd/mm/yyyy
+	elif DATE_FORMAT['little_endian'] == date_format.strip(): # dd/mm/yyyy
 		return date(d[2],d[1],d[0])
-	elif DATE_FORMAT.middle_endian == date_format.strip(): # 'mm/dd/yyyy'
+	elif DATE_FORMAT['middle_endian'] == date_format.strip(): # 'mm/dd/yyyy'
 		return  date(d[2],d[0],d[1])
 	else :
 		raise Exception('Invalid date format')
 
 def get_date(date_format, date_data):
-	if DATE_FORMAT.big_endian == date_format.strip(): # yyyy/mm/dd
+	if DATE_FORMAT['big_endian'] == date_format.strip(): # yyyy/mm/dd
 		return date_data.strftime("%Y/%m/%d")
-	elif DATE_FORMAT.little_endian == date_format.strip(): # dd/mm/yyyy
+	elif DATE_FORMAT['little_endia'] == date_format.strip(): # dd/mm/yyyy
 		return date_data.strftime("%d/%m/%Y")
-	elif DATE_FORMAT.middle_endian == date_format.strip(): # 'mm/dd/yyyy'
+	elif DATE_FORMAT['middle_endian'] == date_format.strip(): # 'mm/dd/yyyy'
 		return date_data.strftime("%m/%d/%Y")
 	else :
 		raise Exception('Invalid date format')
@@ -218,7 +224,7 @@ def login_user(request):
 						'country': company['Country_Name'],
 						'pincode': company['Pin_Code'],
 						},
-					'currency': currency['Code'],
+					'currency': currency['Symbol'],
 					'datefmt': company['Date_Format'],
 					'taxrate': company['Tax_Rate']
 					},
@@ -246,7 +252,7 @@ def logout(request):
 		if ( access_token != value['accessToken'] ):
 			return HttpResponse("Invalid Authorisation ", status=status[2])
 
-		if check_user(uToken):
+		if delete_user(uToken):
 			return HttpResponse('Logout successful')
 		return HttpResponse('User is not logged in')
 
@@ -327,7 +333,7 @@ def dates(request):
 	return JsonResponse({ 'dateFormat' : data },safe=True)
 
 @csrf_exempt
-@post('accessToken')
+@post('accessToken','company')
 def company(request):
 	try:
 		comp=request.POST.get('company')
@@ -463,6 +469,9 @@ def latest_invoice(request):
 		invoices = tempInvoices[:qty]
 		res = []
 		for inv in invoices:
+			if qty == 0:
+				break
+			qty -= 1
 			client = Client.objects.filter(Client_Id=inv['Client_Id_id']).values()
 			items = []
 			item_invoice = Item_Invoice.objects.filter(Invoice_Id_id=inv['Invoice_Id']).values()
@@ -544,7 +553,7 @@ def category_fetch(request):
 def expense_create(request):
 	exp = request.POST['expense']
 	expense = Expense(Category_Id=Category.objects.filter(Type=exp['category'])[0]['Type'], Date=get_iso_date(request.POST['datefmt'], exp['date']), Vendor_Id=Vendor.objects.filter(Vendor_Name=exp['vendor'])[0].Vendor_Id,Description=exp['description'], Amount=float(exp['amount']))
-	expense.save();
+	expense.save()
 	return HttpResponse('Created Successfully')
 
 
@@ -625,7 +634,7 @@ def client_create(request):
 	client = Client(Fname=cli['firstName'], Lname=cli['lastName'], Address_Line=cli['address']['address1'],
 	 City=cli['address']['city'], Pin_Code=cli['address']['pincode'], State=cli['address']['state'], Country_Name=cli['address']['country'],
 	Day_Limit=cli['dayLimit'], Email=cli['email'], Phone=cli['phone'], Country_Code=cli['countryCode'], Late_Fee_Rate=cli['lateFeeRate'])
-	client.save();
+	client.save()
 	return HttpResponse('Created Successfully')
 
 

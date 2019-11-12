@@ -15,7 +15,6 @@ module.exports = {
             currOpt['next'] = opt['next'];
         }
         return function( req, res, next ){
-
             if( currOpt['next'] ){
                 next();
             }
@@ -54,7 +53,6 @@ module.exports = {
         return true;
     },
     authCheck: (req, callback)=>{
-        
         const user = req.cookies['user'];
         if(typeof(user) == 'object' && typeof(user.token) == 'string' && typeof(user.company) == 'object'){
             callback(user);

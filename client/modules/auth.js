@@ -17,13 +17,14 @@ class Authentication{
             throw new Error('serverConfig is initialized');
         }
         try{
+            let res = await axios.post(`${this.serverConfig.domain}/init/`, {
+                clientId:this.serverConfig.clientID,
+                secret:this.serverConfig.clientSecret
+            });
             console.log('Awating reposnse for init');
             var payload = {
                 clientId:this.serverConfig.clientID,
                 secret:this.serverConfig.clientSecret,
-            };
-            var config = {
-                'content-type': 'application/x-www-form-urlencoded;charset=utf-8'
             };
             let res = await axios.post(`${this.serverConfig.domain}/init/`, payload);
             this.accessToken = res.data.accessToken;
