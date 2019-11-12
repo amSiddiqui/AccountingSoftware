@@ -40,12 +40,10 @@
                   <th>Total Units</th>
                   <td><span class = "is-pulled-right">1</span></td>
                 </tr>
-
                 <tr>
                   <th>Total Sales Amount</th>
                   <td><span class = "is-pulled-right">$250000.00</span></td>
                 </tr>
-
               </tbody>
               <thead>
                 <th class="report-header has-text-white"><%= pseudoItem.itemType %></th>
@@ -71,10 +69,8 @@
                 <td><%= pseudoItem.total%></td>
               </tbody>
               <tfoot>
-
               </tfoot>
             <%}%>
-
 <%# --------------------------------------------------INVOICE DETAILS-------------------------------------------- %>
 
             <% if(type === "INVOICE DETAIL"){ %>
@@ -87,91 +83,107 @@
               <tbody class = "report-body">
                 <tr>
                   <td>Total Invoiced</td>
-                  <td><span class ="is-pulled-right">$ 250000.00</span></td>
+                  <td><span class ="is-pulled-right"><%= currency.substring(0,1) + ' ' + totalInvoiced%></span></td>
                 </tr>
 
                 <tr>
                   <td>Total Paid</td>
-                  <td><span class ="is-pulled-right">$ 0.00</span></td>
+                  <td><span class ="is-pulled-right"><%= currency.substring(0,1) + ' ' + totalPaid%></span></td>
                 </tr>
               </tbody>
               <tfoot>
                 <tr>
                   <th>Amount Due</th>
-                  <td ><span class ="is-pulled-right">$ 250000.00</span></td>
+                  <td ><span class ="is-pulled-right"><%= currency.substring(0,1) + ' ' + totalDue%></span></td>
                 </tr>
               </tfoot>
-              <thead>
-                <th class = "report-header has-text-white"><%= pseudoItem.clientName%></th>
-              </thead>
-              <thead>
-                <th>Summary</th>
-              </thead>
-              <tbody class = "report-body">
-                <tr>
-                  <td>Total Invoiced</td>
-                  <td ><span class ="is-pulled-right">$ 250000.00</span></td>
-                </tr>
+              <% invoice.forEach((invoice) =>{ %>
 
-                <tr>
-                  <td>Total Paid</td>
-                  <td ><span class ="is-pulled-right">$ 0.00</span></td>
-                </tr>
-              </tbody>
-              <tfoot>
-                <tr>
-                  <th>Amount Due</th>
-                  <td ><span class ="is-pulled-right">$ 250000.00</span></td>
-                </tr>
-              </tfoot>
+                <thead>
+                  <th class = "report-header has-text-white"><%= invoice.client.firstName + ' ' + invoice.client.lastName%></th>
+                </thead>
+                <thead>
+                  <th>Summary</th>
+                </thead>
+                <tbody class = "report-body">
+                  <tr>
+                    <td>Total Invoiced</td>
+                    <td ><span class ="is-pulled-right"><%= currency.substring(0,1) + ' ' + invoice.total%></span></td>
+                  </tr>
 
-              <thead>
-                <tr>
-                  <th>Invoice #: <a href="#"><%= pseudoItem.invoiceID %></a></th>
-                  <th><span class = "is-pulled-right">Issued On: Date </span></th>
-                </tr>
-              </thead>
-              <thead>
-                <tr>
-                  <th>Description</th>
-                  <th>Amount</th>
-                  <th>Quantity</th>
-                  <th>Tax</th>
-                  <th>Line Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                <td><%= pseudoItem.itemType%></td>
-                <td><%= pseudoItem.unitCost%></td>
-                <td><%= pseudoItem.quantity%></td>
-                <td><%= pseudoItem.tax%></td>
-                <td><%= pseudoItem.total%></td>
-              </tbody>
-              <tfoot>
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <th>Total Amount:</th>
-                  <td><%= pseudoItem.total%></td>
-                </tr>
+                  <tr>
+                    <td>Total Paid</td>
+                    <td ><span class ="is-pulled-right"> <%= currency.substring(0,1) + ' ' + invoice.amountPaid%></span></td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th>Amount Due</th>
+                    <td ><span class ="is-pulled-right"> <%= currency.substring(0,1) + ' ' + invoice.balanceDue%></span></td>
+                  </tr>
+                </tfoot>
 
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <th>Total Paid:</th>
-                  <td><%= pseudoItem.paid%></td>
-                </tr>
+                <thead>
+                  <tr>
+                    <th>Invoice #: <a href="/invoice/<%= invoice.id%>"><%= invoice.id %></a></th>
+                    <th><span class = "is-pulled-right">Issued On: <%=invoice.date%> </span></th>
+                  </tr>
+                </thead>
+                <thead>
+                  <tr>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Quantity</th>
+                    <th><span class = "is-pulled-right">Line Total</span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% invoice.items.forEach(function(items){ %>
+                    <tr>
+                      <td>
+                        <p class = "is-size-4"><%= items.item%></p>
+                        <p class = "is-size-7"><%= items.description%></p>
+                      </td>
+                      <td><%= currency.substring(0,1) + ' ' + items.rate%></td>
+                      <td><%= currency.substring(0,1) + ' ' + items.quantity%></td>
+                      <td><span class = "is-pulled-right"><%= currency.substring(0,1) + ' ' + items.price%></span></td>
+                    </tr>
+                  <%})%>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <th class = "is-size-6"><b>Total Amount:</b></th>
+                    <td><span class = "is-pulled-right"><%= currency.substring(0,1) + ' ' + invoice.total%></span></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <th class = "is-size-6"><b>Total Paid:</b></th>
+                    <td><span class = "is-pulled-right"><%= currency.substring(0,1) + ' ' + invoice.amountPaid%></span></td>
+                  </tr>
 
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <th>Amount Due:</th>
-                  <td><%= pseudoItem.due%></td>
-                </tr>
-              </tfoot>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <th class = "is-size-6"><b>Amount Due:</b></th>
+                    <td><span class = "is-pulled-right"><%= currency.substring(0,1) + ' ' + invoice.balanceDue%></span></td>
+                  </tr>
+                </tfoot>
+              <% })%>
             <%}%>
 
 <%# --------------------------------------------EXPENSE REPORT----------------------------------------------- %>
@@ -182,30 +194,30 @@
               </thead>
               <tbody class="report-body">
                 <th>Total Expense:</th>
-                <td class = "is-pulled-right"><%= pseudoExpense.total%></td>
+                <td class = "is-pulled-right"><%= currency.substring(0,1) + ' '+total%></td>
               </tbody>
               <thead>
-                <th class="report-header has-text-white"><%= pseudoExpense.expenseType%></th>
+                <th class="report-header has-text-white"><%= expense.category%></th>
               </thead>
               <thead>
                 <th>Vendor</th>
                 <th>Date</th>
                 <th>Description</th>
-                <th>Tax</th>
-                <th>Discount</th>
-                <th>Total</th>
+                <th><span class="is-pulled-right">Total</span></th>
               </thead>
               <tbody>
-                <td><%= pseudoExpense.vendorName%></td>
-                <td><%= pseudoExpense.date%></td>
-                <td><%= pseudoExpense.description%></td>
-                <td><%= pseudoExpense.tax%></td>
-                <td><%= pseudoExpense.discount%></td>
-                <td><%= pseudoExpense.total%></td>
+                <% expense.forEach((expense) =>{ %>
+
+                  <tr>
+                    <td><%= expense.vendor%></td>
+                    <td><%= expense.date%></td>
+                    <td><%= expense.description%></td>
+                    <td><span class="is-pulled-right"><%= currency.substring(0,1) + ' ' + expense.subtotal%></span></td>
+                  </tr>
+                  <%});%>
               </tbody>
               <tfoot>
-                <th>Total Expense:</th>
-                <td class="is-pulled-right">$50000.00</td>
+                <td><span  class="is-pulled-right is-size-4"><b>Total :  <%= ' ' + currency.substring(0,1) + ' ' + total%></b></span></td>
               </tfoot>
             <%}%>
 <%# -------------------------------------------CLIENT REPORT------------------------------------------------------ %>
@@ -215,12 +227,16 @@
                 <th class="report-header has-text-white"><span class ="is-pulled-right">Total</span></th>
               </thead>
               <tbody>
-                <td> <%= pseudoItem.clientName%></td>
-                <td><span class="is-pulled-right"><%= pseudoItem.total%></span></td>
+                <% client.forEach((client) =>{ %>
+                  <tr>
+                    <td> <%= client.firstName.substring(0.1) + '.' + client.lastName%></td>
+                    <td><span class="is-pulled-right"><%= client.currency.substring(0,1) + ' ' + client.total%></span></td>
+                  </tr>
+                <% })%>
               </tbody>
               <tfoot>
-                  <th>Total</th>
-                  <td><span class="is-pulled-right">$ 250000.00</span></td>
+                  <th class = "is-size-3">Total :</th>
+                  <td><span class="is-pulled-right is-size-3"><%= currency.substring(0,1) + ' ' + total%></span></td>
               </tfoot>
             <%}%>
 <%# --------------------------------------------PAYMENT PENDING----------------------------------------------- %>
@@ -231,8 +247,8 @@
                   <th class = "report-header has-text-white"></th>
                 </tr>
                 <tr>
-                  <th>Total Amount Pending:</th>
-                  <th><span class="is-pulled-right"><%= pseudoItem.due%></span></th>
+                  <th class = "is-size-4">Total Amount Pending:</th>
+                  <th class = "is-size-4"><span class="is-pulled-right"><%=currency.substring(0,1)+ ' ' + total%></span></th>
                 </tr>
               </thead>
               <thead>
@@ -248,11 +264,17 @@
                 <th>Amount</th>
               </thead>
               <tbody>
-                <td><%= pseudoItem.invoiceDate%></td>
-                <td><a href="#"><%= pseudoItem.clientName%></a></td>
-                <td><%= pseudoItem.description%></td>
-                <td><a href="#"><%= pseudoItem.invoiceID%></a></td>
-                <td><%= pseudoItem.due%></td>
+                <%invoice.forEach((invoice) =>{%>
+                  <%if(invoice.balanceDue > 0){ %>
+                    <tr>
+                      <td><%= invoice.date%></td>
+                      <td><a href="/client/<%=invoice.client.id%>"><%= invoice.client.firstName.substring(0,1) + '. ' + invoice.client.lastName%></a></td>
+                      <td><%= invoice.notes%></td>
+                      <td><a href="/invoice/<%= invoice.id%>"><%= invoice.id%></a></td>
+                      <td><%= currency.substring(0,1) + ' ' + invoice.balanceDue%></td>
+                    </tr>
+                  <% } %>
+                <%})%>
               </tbody>
 
             <%}%>
@@ -264,8 +286,8 @@
                   <th class = "report-header has-text-white"></th>
                 </tr>
                 <tr>
-                  <th>Total Amount Collected:</th>
-                  <th><span class="is-pulled-right"><%= pseudoItem.paid%></span></th>
+                  <th class = "is-size-4">Total Amount Collected:</th>
+                  <th class = "is-size-4"><span class="is-pulled-right"><%=currency.substring(0,1)+ ' ' + total%></span></th>
                 </tr>
               </thead>
               <thead>
@@ -281,11 +303,17 @@
                 <th>Amount</th>
               </thead>
               <tbody>
-                <td><%= pseudoItem.paidDate%></td>
-                <td><a href="#"><%= pseudoItem.clientName%></a></td>
-                <td><%= pseudoItem.description%></td>
-                <td><a href="#"><%= pseudoItem.invoiceID%></a></td>
-                <td><%= pseudoItem.paid%></td>
+                <% invoice.forEach((invoice) =>{%>
+                  <%if(invoice.amountPaid>0){%>
+                    <tr>
+                      <td><%= invoice.date%></td>
+                      <td><a href="/client/<%=invoice.client.id%>"><%= invoice.client.firstName.substring(0,1) + '. ' + invoice.client.lastName%></a></td>
+                      <td><%= invoice.notes%></td>
+                      <td><a href="/invoice/<%= invoice.id%>"><%= invoice.id%></a></td>
+                      <td><%=currency.substring(0,1)+ ' ' +  invoice.amountPaid%></td>
+                    </tr>
+                  <%}%>
+                <%})%>
               </tbody>
 
             <%}%>
@@ -297,23 +325,27 @@
               <tbody class="report-body">
                 <tr>
                   <th>Sales</th>
-                  <td><span class="is-pulled-right"><%= pseudoProfitLoss.sales%></span></td>
-                </tr>
-                <tr>
-                  <th>Cost of Goods</th>
-                  <td><span class="is-pulled-right"><%= pseudoProfitLoss.cost%></span></td>
+                  <td><span class="is-pulled-right"><%= currency.substring(0,1)+ ' ' + salesTotal%></span></td>
                 </tr>
               </tbody>
               <thead>
                 <th class="report-header has-text-white">Expenses</th>
               </thead>
               <tbody class="report-body">
-                <th><%= pseudoProfitLoss.expenseType%></th>
-                <td><span class="is-pulled-right"><%= pseudoProfitLoss.expenseTotal%></span></td>
+                <% expense.forEach((expense) =>{%>
+                  <tr>
+                    <th><%= expense.category%></th>
+                    <td><span class="is-pulled-right"><%= currency.substring(0,1)+ ' ' + expense.subtotal%></span></td>
+                  </tr>
+                <%})%>
               </tbody>
               <tfoot>
+                <th>Total Expense:</th>
+                <td><span class="is-pulled-right"><b><%= currency.substring(0,1)+ ' ' + expenseTotal%></b></span></td>
+              </tfoot>
+              <tfoot>
                 <th>Net Profit/Loss</th>
-                <td><span class="is-pulled-right"><%= pseudoProfitLoss.profit%></span></td>
+                <td><span class="is-pulled-right"><%= currency.substring(0,1)+ ' ' + profit%></span></td>
               </tfoot>
             <%}%>
 
@@ -333,47 +365,47 @@
                   <td colspan="2">
                     <p class="is-size-4"><a href="/report/general-ledger">Cash</a></p>
                   </td>
-                  <td>$0.00</td>
-                  <td>$150000.00</td>
+                  <td>0.00</td>
+                  <td>150000.00</td>
                 </tr>
 
                 <tr>
                   <td colspan="2">
                     <p class="is-size-4"><a href="/report/general-ledger">Account Receivable</a></p>
                   </td>
-                  <td>$150000.00</td>
-                  <td>$0.00</td>
+                  <td>150000.00</td>
+                  <td>0.00</td>
                 </tr>
 
                 <tr>
                   <td colspan="2">
                     <p class="is-size-4"><a href="/report/general-ledger">Revenue</a></p>
                   </td>
-                  <td>$0.00</td>
-                  <td>$250000.00</td>
+                  <td>0.00</td>
+                  <td>250000.00</td>
                 </tr>
 
                 <tr>
                   <td colspan="2">
                     <p class="is-size-4"><a href="/report/general-ledger">Education</a></p>
                   </td>
-                  <td>$250000.00</td>
-                  <td>$0.00</td>
+                  <td>250000.00</td>
+                  <td>0.00</td>
                 </tr>
 
                 <tr>
                   <td colspan="2">
                     <p class="is-size-4"><a href="/report/general-ledger">Tax</a></p>
                   </td>
-                  <td>$0.00</td>
-                  <td>$0.00</td>
+                  <td>0.00</td>
+                  <td>0.00</td>
                 </tr>
 
               </tbody>
               <tfoot>
                 <th colspan="2">Total</th>
-                <th>$400000.00</th>
-                <th>$400000.00</th>
+                <th>400000.00</th>
+                <th>400000.00</th>
               </tfoot>
             <%}%>
 
@@ -395,7 +427,7 @@
                 </tbody>
                 <tfoot>
                   <th>Total Assets:</th>
-                  <th><span class="is-pulled-right">$ 250000.00</span></th>
+                  <th><span class="is-pulled-right"> 250000.00</span></th>
                 </tfoot>
 
               <thead>
@@ -409,7 +441,7 @@
                 </tbody>
                 <tfoot>
                   <th>Total Equity:</th>
-                  <th><span class="is-pulled-right">$ 250000.00</span></th>
+                  <th><span class="is-pulled-right"> 250000.00</span></th>
                 </tfoot>
               <thead>
                 <th class="report-header has-text-white">Liability</th>
@@ -417,12 +449,12 @@
               <tbody class = "report-body">
                 <tr>
                   <td>Loan</td>
-                  <td><span class="is-pulled-right">$0.00</span></td>
+                  <td><span class="is-pulled-right">0.00</span></td>
                 </tr>
                 </tbody>
                 <tfoot>
                   <th>Total Liability:</th>
-                  <th><span class="is-pulled-right">$0.00</span></th>
+                  <th><span class="is-pulled-right">0.00</span></th>
                 </tfoot>
 
 
@@ -469,7 +501,7 @@
               <tfoot>
                 <th colspan="2">Net Movement:</th>
                 <th></th>
-                <th>$150000.00</th>
+                <th>150000.00</th>
               </tfoot>
 
               <thead>
@@ -511,7 +543,7 @@
               </tbody>
               <tfoot>
                 <th colspan="2">Net Movement:</th>
-                <th>$150000.00</th>
+                <th>150000.00</th>
                 <th></th>
               </tfoot>
               <thead>
@@ -542,7 +574,7 @@
               <tfoot>
                 <th colspan="2">Net Movement:</th>
                 <th></th>
-                <th>$250000.00</th>
+                <th>250000.00</th>
               </tfoot>
 
               <thead>
@@ -572,7 +604,7 @@
               </tbody>
               <tfoot>
                 <th colspan="2">Net Movement:</th>
-                <th>$250000.00</th>
+                <th>250000.00</th>
                 <th></th>
               </tfoot>
 
@@ -596,7 +628,7 @@
                     <p>--</p>
                     <p class = "has-text-grey-light">--</p>
                   </td>
-                  <td>$<%= pseudoExpense.tax%></td>
+                  <td><%= pseudoExpense.tax%></td>
                   <td><%= %></td>
                 </tr>
 

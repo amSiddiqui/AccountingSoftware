@@ -132,8 +132,8 @@ router.delete('/delete',(req,res,next) =>{
   });
 });
 
-// router.get('/:id', (req, res, next) => {
-//     res.render('expense/show');
-// });
+router.get('/:id', (req, res, next) => {
+    res.redirect('/expense/'+req.params.id+'/edit');
+});
 
 module.exports = router;

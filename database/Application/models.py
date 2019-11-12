@@ -1,6 +1,4 @@
 from django.db import models
-#from django_mysql.models import EnumField
-from enum import Enum
 
 #Utility Database:
 #---------------------------------------------------------
@@ -23,7 +21,7 @@ class Currency(models.Model):
 #In mysql client use 'alter table application_phonecode AUTO_INCREMENT=1;' to have starting value as 1
 class PhoneCode(models.Model):
 	Id=models.AutoField(primary_key=True)
-	Country_Name=models.CharField(max_length=50)
+	Country_Name=models.TextField()
 	ISO_Code=models.CharField(max_length=10)
 	ISD_Code=models.CharField(max_length=10)
 
@@ -36,13 +34,13 @@ class Company(models.Model):
 	#The Pin_Code field is added after creation of table thus need to set a default value
 	Pin_Code=models.PositiveSmallIntegerField(default=0)
 	Country_Code=models.CharField(max_length=5)
+	Country_Name=models.TextField()
 	State=models.CharField(max_length=30)
 	Email=models.EmailField()
 	Phone=models.PositiveSmallIntegerField()
-	Date=models.DateField()
-	Date_Fmt=Types=models.CharField(max_length=10,choices=[(tag,tag.value) for tag in choice]);
 	Tax_Rate=models.FloatField()
 	Base_Currency=models.ForeignKey(Currency,on_delete=models.CASCADE,default="")
+	Date_Format=models.CharField(max_length='10')
 
 	def __str__(self):
 		return (str(self.Company_Id)+','+self.Company_Name+', ('+self.Address_Line+','+self.City+','+
@@ -57,7 +55,7 @@ class User(models.Model):
 	#The Pin_Code field is added after creation of table thus need to set a default value
 	Pin_Code=models.IntegerField(max_length=6)
 	State=models.CharField(max_length=30)
-	Country=models.CharField(max_length=30)
+	Country_Name=models.TextField()
 	Country_Code=models.CharField(max_length=5)
 	Email=models.EmailField()
 	#The Password field is added after creation of table thus need to set a default value
@@ -79,8 +77,9 @@ class Client(models.Model):
 	City=models.CharField(max_length=30)
 	Pin_Code=models.PositiveSmallIntegerField()
 	State=models.CharField(max_length=30)
-	Country_Code=models.CharField(max_length=10)
-	Country=models.CharField(max_length=20)
+	Country_Name=models.TextField()
+	Country_Code=models.CharField(max_length=5)
+	Day_Limit=models.DateField()
 	#The Late_Fee_Rate field is added after creation of table thus need to set a default value
 	Late_Fee_Rate=models.FloatField(default=0)
 	Email=models.EmailField()
@@ -96,6 +95,8 @@ class Vendor(models.Model):
 	Address_Line=models.TextField()
 	City=models.CharField(max_length=30)
 	Pin_Code=models.PositiveSmallIntegerField()
+	Country_Name=models.TextField()
+	Country_Code=models.CharField(max_length=5)
 	State=models.CharField(max_length=30)
 	Country_Code=models.CharField(max_length=10)
 	Country=models.CharField(max_length=6)
@@ -105,6 +106,14 @@ class Vendor(models.Model):
 	def __str__(self):
 		return(str(self.Vendor_Id)+','+self.Vendor_Name+','+self.Vendor_Category+','+self.Address_Line+','+
 			   self.City+','+self.State+','+ str(self.Pin_Code) +','+self.Email+','+ str(self.Phone) ) 
+
+class Expense(models.Model):
+	Expense_Id=models.AutoField(primaryKey=True)
+	Category=models.ForeignKey(Category)
+	Date=models.DateField()
+	Vendor_Id=models.ForeignKey(Vendor)
+	Description=models.TextField()
+	Amount=models.FloatField()
 
 class Account(models.Model):
 	Account_Id=models.AutoField(primary_key=True)
@@ -145,15 +154,6 @@ class Quotes(models.Model):
     def __str__(self):
         return ( str(self.Id)+','+self.AFName+','+self.ALName+','+self.Quote)
 
-
-
-class Date_Formats(models.Model):		
-    Id=models.AutoField(primary_key=True)
-    Types=models.CharField(max_length=10,choices=[(tag,tag.value) for tag in choice])
-    
-    def __str__(self):
-	    return ( str(self.Id)+','+self.Types)
-
 class Invoice(models.Model):
 	Invoice_Id = models.AutoField(primary_key=True)
 	Client_Id = models.ForeignKey(Client, on_delete=models.CASCADE)
@@ -163,6 +163,7 @@ class Invoice(models.Model):
 	Total = models.FloatField()
 	Balance_Due = models.FloatField()
 	Notes = models.TextField()
+	Date_Fomat = models.CharField(max_length=10)
 
 	def __str__(self):
 		return f"{self.Invoice_Id}, {self.Date}, {self.Amount_Due}, {self.Amount_Paid}, {self.Total}, {self.Balance_Due}, ( {self.Notes} )"
@@ -179,9 +180,6 @@ class Item(models.Model):
 	def __str__(self):
 		return f"{self.Item_Id}, ( {self.Name} ), ( {self.Description} ), {self.Rate}, {self.Quantity}, {self.Price}"
 
-class Category(models.Model):
-	Id=models.AutoField(primary_key=True)
-	Category_Type=models.CharField(max_length=20)
 
-	def __str(self):
-		return f"{self.Id},{self.Category_Type}"
+class Category(models.Model):
+	Type = models.TextField(primaryKey=True)

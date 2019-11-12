@@ -48,10 +48,11 @@ router.get('/create', (req, res, next) => {
     }
   })
 });
+
 router.post('/', (req, res) => {
   util.authCheck(req , (user) =>{
     if(user){
-      //TODO :create auto-generate ID
+      //TODO: create auto-generate ID
       var clientID=4;
       var params = {
         id: clientID,
@@ -107,7 +108,7 @@ router.put('/:id',(req,res) => {
     if(user){
 
       for(var i in seeds.pseudoClient){
-        if(seeds.pseudoClient[i].id === req.params.id){
+        if(seeds.pseudoClient[i].id == req.params.id){
           seeds.pseudoClient[i].firstName = req.body.firstName;
           seeds.pseudoClient[i].lastName= req.body.lastName;
           seeds.pseudoClient[i].countryCode= req.body.countryCode;
@@ -172,6 +173,29 @@ router.delete('/delete',(req,res,next) =>{
       }
 
       res.redirect('/client');
+    }
+    else{
+      res.redirect('/dashboard');
+    }
+  });
+});
+
+router.delete('/:id/delete',(req,res,next) =>{
+  util.authCheck(req ,(user) =>{
+    if(user){
+      var ids = []
+      var ids = req.body.row;
+      for(var i in ids){
+        for(var j in seeds.invoices){
+          if(seeds.invoices[j].client.id == req.params.id)
+            if(ids[i] == seeds.invoices[j].id){
+              seeds.invoices.splice(j,1);
+              break;
+            }
+        }
+      }
+
+      res.redirect('/client/' + req.params.id);
     }
     else{
       res.redirect('/dashboard');

@@ -74,21 +74,7 @@
             </a>
         </div>
     </div>
-    <label class="label">Phone: </label>
-    <div class="field has-addons">
-        <p class="control">
-            <span class="select">
-                <select name="countryCode" id="countryCode">
-                    <% countryCode.forEach((code) => { %>
-                        <option value="<%= code %>"><%= code %></option>
-                    <% }) %>
-                </select>
-            </span>
-        </p>
-        <p class="control">
-            <input type="text" class="input" name="phone" maxlength="10">
-        </p>
-    </div>
+    
     <label class="label">Description: </label>
     <div class="field">
         <textarea class="textarea" name="description" placeholder="description"></textarea>
