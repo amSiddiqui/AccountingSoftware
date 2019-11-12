@@ -1,3 +1,15 @@
+const qs = require('querystring');
+const config = require('../config/config');
+const axios = require('axios');
+var quotes = {};
+
+axios.post(config.url+'/util/quote/', qs.stringify({
+    accessToken: accessToken
+}), config.postConfig).then(res => {
+    var data = JSON.parse(res.data);
+    quotes = data.quotes;
+});
+
 module.exports = {
     outstandingRevenue: 20000,
     overdue: 4000,

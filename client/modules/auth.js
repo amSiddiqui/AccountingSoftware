@@ -1,41 +1,47 @@
 const serverConfig = require('../config/config').serverConfig;
 const axios = require('axios');
 const util = require('./utility');
+const qs = require('querystring');
 
 class Authentication{
     constructor(router){
         this.router = router;
         this.serverConfig = {...serverConfig};
-        this.serverKey = {accessToken:'1234'};
+        this.serverKey = null;
         this.loginRoute = `${this.serverConfig.domain}/auth/login`;
         this.logoutRoute = `${this.serverConfig.domain}/auth/logout`;
         this.signUpRoute = `${this.serverConfig.domain}/auth/signup`;
     }
 
     async conn(){
-        // TODO: remove
-        const serverKey = {accessToken:'1234'};
-        return {serverKey};
-
-
-
-
+        console.log('Connection procedure initialized');
         if( !util.validateObj(this.serverConfig,{clientID:'string',clientSecret:'string'}) ){
             throw new Error('serverConfig is initialized');
         }
         try{
-            let res = await axios.post(`${this.serverConfig.domain}/init`, {
-                clientID:this.serverConfig.clientID,
-                clientSecret:this.serverConfig.clientSecret
-            });
+            console.log('Awating reposnse for init');
+            var payload = {
+                clientId:this.serverConfig.clientID,
+                secret:this.serverConfig.clientSecret,
+                something: 'Something'
+            };
+            var config = {
+                'content-type': 'application/x-www-form-urlencoded;charset=utf-8'
+            };
+            let res = await axios.post(`${this.serverConfig.domain}/init/`, qs.stringify(payload), config);
             this.serverKey = {accessToken: res.data.accessToken};
+            accessToken = this.serverKey;
+
+            console.log('Initializing connection with Database at url '+dburl);
+            console.log('Client Access Token: ', accessToken);
+
             this.router.use( function(req,resp,next){
                 req.serverKey = {accessToken: res.data.accessToken};
                 next();
             });
             return this.serverKey;
         }catch(err){
-            throw new Error(err.response.data.error);
+            throw new Error(err);
         }
     }
 
