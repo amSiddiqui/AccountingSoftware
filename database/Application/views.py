@@ -97,14 +97,14 @@ def get_invoice(client,items,invoice):
 		'id': client['Client_Id'],
 		'firstName': client['Fname'],
 		'lastName': client['Lname'],
-		'countryCode': '+65',
+		'countryCode': client['Country_Code'],
 		'phone': client['Phone'],
 		'email': client['Email'],
 		'address': {
 			'address1': client['Address'],
 			'city': client['City'],
 			'state': client['State'],
-			'country': 'USA',
+			'country': client['Country_Name'],
 			'pincode': client['Pin_Code'],  
 		},
 		'lateFeeRate': client['Late_Fee_Rate']
@@ -112,7 +112,7 @@ def get_invoice(client,items,invoice):
 		'id':invoice['Invoice_Id'],
 		'date': get_date( invoice['datefmt'], invoice['Date'] ),
 		'amountDue': invoice['Amount_Due'],
-		'items' : []
+		'items' : items
 	}
 
 	for itm in items:
@@ -289,12 +289,15 @@ def quote(request):
 def currencies(request):
 	currency_code = list()
 	currency_name = list()
-	for cc, c in Currency.objects.all().values_list('Code', 'Name'):
+	currency_sym = list()
+	for cc, c, sy in Currency.objects.all().values_list('Code', 'Name', 'Symbol'):
 		currency_code.append(cc)
 		currency_name.append(c)
+		currency_sym.append(sy)
 	data = {
 		'code': currency_code,
-		'currency': currency_name
+		'currency': currency_name,
+		'symbol': currency_sym
 	}
 	return JsonResponse(data)
 
@@ -401,6 +404,7 @@ def user_exists(request):
 		return HttpResponse("Database Error",status=500)
 
 #Creates invoice
+
 @csrf_exempt
 @post('accessToken','token','invoice')
 def create_invoice(request):
@@ -415,8 +419,10 @@ def create_invoice(request):
 	invoice_id = invoice.pk()
 
 	for itm in data['items']:
-		item = Item(Name=itm['item'], Description=itm['description'], Rate=itm['rate'], Quantity=itm['quantity'], Price=itm['price'], Invoice_Id=invoice_id)
+		item = Item(Name=itm['item'], Description=itm['description'], Rate=itm['rate'])
 		item.save()
+		item_invoice = Item_Invoice(Item_Id=item.pk(), Invoice_Id=invoice_id, Quantity=itm['quantity'], Price=itm['price'])
+		item_invoice.save()
 	return JsonResponse({
 		'invoiceId' : invoice_id
 	})
@@ -431,7 +437,14 @@ def fetch_invoice(request,invoice_id):
 	invoices = Invoice.objects.filter(Invoice_Id=invoice_id).values()
 	if invoices is not None and len(invoices) > 0:
 		invoice = invoices[0]
-		items = Item.objects.filter(Invoice_Id_id=invoice_id).values()
+		item_invoices = Item_Invoice.objects.filter(Invoice_Id_id=invoice['Invoice_Id']).values()
+		items = []
+		for itm in item_invoices:
+			item = Item.objects.filter(Item_Id=itm['Item_Id_id']).value()[0]
+			item['quantity'] = itm['Quantity']
+			item['price'] = itm['Price']
+			items.append(item)
+		
 		clients = Client.objects.filter(Client_Id=invoice['Client_Id_id']).values()
 		if items is None or len(items) <= 0 or clients is None or len(clients) <= 0:
 			return HttpResponse('Client or Items does not exits in database', status=400)
@@ -451,7 +464,14 @@ def latest_invoice(request):
 		res = []
 		for inv in invoices:
 			client = Client.objects.filter(Client_Id=inv['Client_Id_id']).values()
-			items = Item.objects.filter(Invoice_Id_id=inv['Invoice_Id']).values()
+			items = []
+			item_invoice = Item_Invoice.objects.filter(Invoice_Id_id=inv['Invoice_Id']).values()
+			for itm in item_invoice:
+				item = Item.objects.filter(Item_Id=itm['Item_Id_id']).values()[0]
+				item['quantity'] = itm['Quantity']
+				item['price'] = itm['Price']
+				items.append(item)
+
 			if items is None or len(items) <= 0 or client is None or len(client) <= 0:
 				return HttpResponse('Client or Items does not exits in database', status=400)
 			res.append(get_invoice(client,items,inv))

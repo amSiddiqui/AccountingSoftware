@@ -1,3 +1,126 @@
 insert into Application_user values (0, "Amit","Singh","address","lucknow",22602,"UP","test@g.com","pass",1234,0,0)
 insert into Application_company values (0,"Singhs","address","lucknow",22602,"UP","test@g.com",1234, TO_DATE('17/12/2015', 'DD/MM/YYYY'), 123,0 )
 insert into Application_currency values (0,'1234','rupee')
+
+Client table
+
+insert into Application_client(Fname,Lname,Address_Line,City,Pin_Code,State,Country_Name,Country_Code,Day_Limit,Late_Fee_Rate,Email,Phone) values ("Joshua","Clarke","770 Leeton Ridge Court","Casselberry",32707,"Florida","USA","+1",5,5.6,"joshua@gmail.com",722361856);
+
+insert into Application_client(Fname,Lname,Address_Line,City,Pin_Code,State,Country_Name,Country_Code,Day_Limit,Late_Fee_Rate,Email,Phone) values ("Saul","Robins","226 E. Griffin Street
+Bronx","New York City",10468,"New York","USA","+1",7,5.6,"saula@gmail.com",722364556);
+
+insert into Application_client(Fname,Lname,Address_Line,City,Pin_Code,State,Country_Name,Country_Code,Day_Limit,Late_Fee_Rate,Email,Phone) values ("Abigayle","Knight","765 Shadow Brook St. ","Huston",77092,"Texas","USA","+1",9,5.6,"abygayl@gmail.com",865364556);
+
+insert into Application_client(Fname,Lname,Address_Line,City,Pin_Code,State,Country_Name,Country_Code,Day_Limit,Late_Fee_Rate,Email,Phone) values ("Qabeel","Khan","18 , Morol Naka, Janardhan Bhavan, Chimai Pada, Andheri (west)","Mumbai",400069,"Maharashtra","India","+91",9,5.6,"qabeell@gmail.com",858398986);
+
+insert into Application_client(Fname,Lname,Address_Line,City,Pin_Code,State,Country_Name,Country_Code,Day_Limit,Late_Fee_Rate,Email,Phone) values ("Indrani","Bobal","Gb1-c, Korba Mithagar, Opp Wadala Police Station, Wadala","Mumbai",400037,"Maharashtra","India","+91",8,5.6,"picol@gmail.com",936548986);
+
+insert into Application_client(Fname,Lname,Address_Line,City,Pin_Code,State,Country_Name,Country_Code,Day_Limit,Late_Fee_Rate,Email,Phone) values ("Lalit","Kabra","546 , Arun Chambers, Tardeo","Mumbai",400034,"Maharashtra","India","+91",8,5.6,"lalit@gmail.com",866548986);
+
+Invoice
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-05-12',20000.45,40000,60000.45,20000.45,"2+2=6","yyyy-mm-dd",1);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-06-12',22000.45,35000,55000.45,22000.45,"Despacito","yyyy-mm-dd",1);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-07-12',15000.85,20000,35000.85,15000.85,"wass' up","yyyy-mm-dd",1);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-07-23',20000.45,40000,60000.45,20000.45,"Da vinci code","yyyy-mm-dd",1);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-08-12',20000.45,40000,60000.45,20000.45,"Modern warfare 1","yyyy-mm-dd",1);
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-09-12',20000.45,40000,60000.45,20000.45,"Modern warfare 2","yyyy-mm-dd",1);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-10-12',20000.45,40000,60000.45,20000.45,"Modern Warfare","yyyy-mm-dd",1);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-11-12',20000.45,40000,60000.45,20000.45,"COD: world at war","yyyy-mm-dd",1);
+
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-05-16',30000.45,50000,80000.45,30000.45,"Da da da","yyyy-mm-dd",2);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-05-29',30000.45,50000,80000.45,30000.45,"Mercury","yyyy-mm-dd",2);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-06-16',20000.45,50000,70000.45,20000.45,"Venus","yyyy-mm-dd",2);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-07-16',30000.45,50000,80000.45,30000.45,"Earth","yyyy-mm-dd",2);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-08-16',30000.45,50000,80000.45,30000.45,"Mars","yyyy-mm-dd",2);
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-09-16',30000.45,50000,80000.45,30000.45,"Jupiter","yyyy-mm-dd",2);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-10-16',30000.45,50000,80000.45,30000.45,"Saturn","yyyy-mm-dd",2);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-10-30',30000.45,50000,80000.45,30000.45,"Uranus","yyyy-mm-dd",2);
+
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-05-14',30000.45,50000,80000.45,30000.45,"Neptune","yyyy-mm-dd",3);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-06-14',30000.45,50000,80000.45,30000.45,"abc","yyyy-mm-dd",3);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-07-14',30000.45,50000,80000.45,30000.45,"yo","yyyy-mm-dd",3);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-07-24',30000.45,50000,80000.45,30000.45,"Neptune","yyyy-mm-dd",3);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-08-14',30000.45,50000,80000.45,30000.45,"Neptune","yyyy-mm-dd",3);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-08-30',30000.45,50000,80000.45,30000.45,"Neptune","yyyy-mm-dd",3);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-09-14',30000.45,50000,80000.45,30000.45,"Neptune","yyyy-mm-dd",3);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-10-14',30000.45,50000,80000.45,30000.45,"Neptune","yyyy-mm-dd",3);
+
+
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-05-19',10000.45,50000,60000.45,10000.45,"Neptune","yyyy-mm-dd",4);
+
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-05-29',10000.45,50000,60000.45,10000.45,"Neptune","yyyy-mm-dd",4);
+
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-06-19',10000.45,50000,60000.45,10000.45,"Neptune","yyyy-mm-dd",4);
+
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-07-19',10000.45,50000,60000.45,10000.45,"Neptune","yyyy-mm-dd",4);
+
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-08-19',10000.45,50000,60000.45,10000.45,"Neptune","yyyy-mm-dd",4);
+
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-08-29',10000.45,50000,60000.45,10000.45,"Neptune","yyyy-mm-dd",4);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-09-19',10000.45,50000,60000.45,10000.45,"Neptune","yyyy-mm-dd",4);
+
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-10-19',10000.45,50000,60000.45,10000.45,"Neptune","yyyy-mm-dd",4);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-06-23',10000.45,50000,60000.45,10000.45,"Neptune","yyyy-mm-dd",5);
+
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-05-19',20000.45,50000,70000.45,20000.45,"Neptune","yyyy-mm-dd",5);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-06-19',20000.45,50000,70000.45,20000.45,"Neptune","yyyy-mm-dd",5);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-07-19',20000.45,50000,70000.45,20000.45,"Neptune","yyyy-mm-dd",5);
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-08-19',20000.45,50000,70000.45,20000.45,"Neptune","yyyy-mm-dd",5);
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-09-19',20000.45,50000,70000.45,20000.45,"Neptune","yyyy-mm-dd",5);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-10-19',20000.45,50000,70000.45,20000.45,"Neptune","yyyy-mm-dd",5);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-05-05',18000.45,23000,41000.45,18000.45,"Neptune","yyyy-mm-dd",6);
+
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-05-15',18000.45,23000,41000.45,18000.45,"Neptune","yyyy-mm-dd",6);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-06-05',18000.45,23000,41000.45,18000.45,"Neptune","yyyy-mm-dd",6);
+
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-07-05',18000.45,23000,41000.45,18000.45,"Neptune","yyyy-mm-dd",6);
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-08-05',18000.45,23000,41000.45,18000.45,"Neptune","yyyy-mm-dd",6);
+
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-08-15',18000.45,23000,41000.45,18000.45,"Neptune","yyyy-mm-dd",6);
+
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-09-05',18000.45,23000,41000.45,18000.45,"Neptune","yyyy-mm-dd",6);
+
+
+insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-10-05',18000.45,23000,41000.45,18000.45,"Neptune","yyyy-mm-dd",6);
