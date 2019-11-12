@@ -12,7 +12,7 @@ class Currency(models.Model):
 	Id=models.AutoField(primary_key=True)
 	Code=models.CharField(max_length=10)
 	Name=models.CharField(max_length=50)
-	Symbol=models.CharField(max_length=10)
+	Symbol=models.CharField(max_length=10, default="")
 	
 
 #In mysql client use 'alter table application_phonecode AUTO_INCREMENT=1;' to have starting value as 1
