@@ -8,7 +8,11 @@ class Country(models.Model):
 	Id=models.AutoField(primary_key=True)
 	Country_Code=models.CharField(max_length=10)
 	Country_Name=models.CharField(max_length=50)
-	
+
+class choice(Enum):
+    inter='dd:mm:yyyy'
+    us='mm:dd:yyyy'
+    jap='yyyy:mm:dd'
 
 class Currency(models.Model):
 	Id=models.AutoField(primary_key=True)
@@ -36,6 +40,7 @@ class Company(models.Model):
 	Email=models.EmailField()
 	Phone=models.PositiveSmallIntegerField()
 	Date=models.DateField()
+	Date_Fmt=Types=models.CharField(max_length=10,choices=[(tag,tag.value) for tag in choice]);
 	Tax_Rate=models.FloatField()
 	Base_Currency=models.ForeignKey(Currency,on_delete=models.CASCADE,default="")
 
@@ -52,7 +57,7 @@ class User(models.Model):
 	#The Pin_Code field is added after creation of table thus need to set a default value
 	Pin_Code=models.IntegerField(max_length=6)
 	State=models.CharField(max_length=30)
-	country=models.CharField(max_length=30)
+	Country=models.CharField(max_length=30)
 	Country_Code=models.CharField(max_length=5)
 	Email=models.EmailField()
 	#The Password field is added after creation of table thus need to set a default value
@@ -74,6 +79,8 @@ class Client(models.Model):
 	City=models.CharField(max_length=30)
 	Pin_Code=models.PositiveSmallIntegerField()
 	State=models.CharField(max_length=30)
+	Country_Code=models.CharField(max_length=10)
+	Country=models.CharField(max_length=20)
 	#The Late_Fee_Rate field is added after creation of table thus need to set a default value
 	Late_Fee_Rate=models.FloatField(default=0)
 	Email=models.EmailField()
@@ -90,6 +97,8 @@ class Vendor(models.Model):
 	City=models.CharField(max_length=30)
 	Pin_Code=models.PositiveSmallIntegerField()
 	State=models.CharField(max_length=30)
+	Country_Code=models.CharField(max_length=10)
+	Country=models.CharField(max_length=6)
 	Email=models.EmailField()
 	Phone=models.PositiveIntegerField()
 
@@ -136,10 +145,7 @@ class Quotes(models.Model):
     def __str__(self):
         return ( str(self.Id)+','+self.AFName+','+self.ALName+','+self.Quote)
 
-class choice(Enum):
-    inter='dd:mm:yyyy'
-    us='mm:dd:yyyy'
-    jap='yyyy:mm:dd'
+
 
 class Date_Formats(models.Model):		
     Id=models.AutoField(primary_key=True)
@@ -172,3 +178,10 @@ class Item(models.Model):
 
 	def __str__(self):
 		return f"{self.Item_Id}, ( {self.Name} ), ( {self.Description} ), {self.Rate}, {self.Quantity}, {self.Price}"
+
+class Category(models.Model):
+	Id=models.AutoField(primary_key=True)
+	Category_Type=models.CharField(max_length=20)
+
+	def __str(self):
+		return f"{self.Id},{self.Category_Type}"

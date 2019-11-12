@@ -138,26 +138,21 @@ def login_user(request):
         email = request.POST['email']
         password = request.POST['password']
         # Is this accessToken encrypted??
-        access_token = request.POST['accessToken']
-
-		if (access_token != value['accessToken']):
-    			return HttpResponse("Invalid Authorisation ", status=status[2])
-		
-		users = User.objects.filter(Email=email).values()
+        users = User.objects.filter(Email=email).values()
 
 		# for e,enc_p in User.objects.all().values_list('Email','Password'):
 		# 	if e == email:
-		if users is not None and len(users) == 1:
-			user = users[0]
-			companies = Company.objects.filter(Company_Id=user['Comp_Id_id']).values()
-			if companies is None or len(companies) < 1:
-				return HttpResponse('Company is not set', status=406 )
+        if users is not None and len(users) == 1:
+            user = users[0]
+            companies = Company.objects.filter(Company_Id=user['Comp_Id_id']).values()
+            if companies is None or len(companies) < 1:
+                return HttpResponse('Company is not set', status=406 )
 			
-			currencies = Currency.objects.filter(Id=companies[0]['Base_Currency_id']).values()
+            currencies = Currency.objects.filter(Id=companies[0]['Base_Currency_id']).values()
 			
-			if currencies is None or len( currencies ) < 1 :
-					return HttpResponse('Currency is not added', status=406 )
-			currency = currencies[0]
+            if currencies is None or len( currencies ) < 1 :
+               return HttpResponse('Currency is not added', status=406 )
+            currency = currencies[0]
 			company = companies[0]
 			if check_password(password,user['Password']):
 				tokenTemp = None
@@ -370,7 +365,7 @@ def company(request):
 				return JsonResponse(data)
 
 			except:
-				return HttpResponse(" Data Already Present ",status=status[1])
+				printf("Error in company create route.")
 
 
 
