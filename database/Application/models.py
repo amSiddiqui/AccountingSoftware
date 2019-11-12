@@ -57,7 +57,7 @@ class User(models.Model):
 	#The Password field is added after creation of table thus need to set a default value
 	Password=models.CharField(max_length=100,default="")
 	Phone=models.IntegerField()
-	Auth_Level=models.PositiveSmallIntegerField()
+	Auth_Level=models.PositiveIntegerField()
 	Comp_Id = models.ForeignKey(Company, on_delete=models.DO_NOTHING)
 
 	def __str__(self):
@@ -75,7 +75,7 @@ class Client(models.Model):
 	Lname=models.CharField(max_length=50)
 	Address_Line=models.TextField()
 	City=models.CharField(max_length=30)
-	Pin_Code=models.PositiveSmallIntegerField()
+	Pin_Code=models.PositiveIntegerField()
 	State=models.CharField(max_length=30)
 	Country_Name=models.TextField()
 	Country_Code=models.CharField(max_length=5)
