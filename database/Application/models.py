@@ -80,7 +80,7 @@ class Client(models.Model):
 	State=models.CharField(max_length=30)
 	Country_Name=models.TextField()
 	Country_Code=models.CharField(max_length=5)
-	Day_Limit=models.DateField()
+	Day_Limit=models.PositiveSmallIntegerField()
 	#The Late_Fee_Rate field is added after creation of table thus need to set a default value
 	Late_Fee_Rate=models.FloatField(default=0)
 	Email=models.EmailField()
@@ -99,6 +99,8 @@ class Vendor(models.Model):
 	Country_Name=models.TextField()
 	Country_Code=models.CharField(max_length=5)
 	State=models.CharField(max_length=30)
+	Country_Code=models.CharField(max_length=10)
+	Country=models.CharField(max_length=6)
 	Email=models.EmailField()
 	Phone=models.PositiveIntegerField()
 
