@@ -1,5 +1,3 @@
-const axios = require('axios');
-
 const serverConfig = {
 	domain: 'http://localhost:8000/Application',
 	clientID:'AccountingSoftware',
@@ -18,5 +16,5 @@ module.exports = {
 	serverConfig,
 	clientConfig,
 	postConfig,
-	url: 'http://localhost:8000/Application'
+	url: serverConfig.domain,
 };

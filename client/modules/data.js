@@ -1,16 +1,9 @@
-const qs = require('querystring');
 const config = require('../config/config');
 const axios = require('axios');
-var quotes = {};
 
-axios.post(config.url+'/util/quote/', qs.stringify({
-    accessToken: accessToken
-}), config.postConfig).then(res => {
-    var data = JSON.parse(res.data);
-    quotes = data.quotes;
-});
+console.log('Access Token in data.js: ', accessToken);
 
-module.exports = {
+global.utilData = {
     outstandingRevenue: 20000,
     overdue: 4000,
     profit: [
@@ -100,3 +93,21 @@ module.exports = {
         
     ],
 };
+
+(async () => {
+    try {
+        utilData.quotes =  (await axios.post(config.url+'/util/quote/', {
+            accessToken
+        })).data;
+    }
+    catch(err) {
+        throw new Error(err.response.data);
+    }
+})().then(() => {
+    console.log('All initialization complete starting server');
+    require('../init');
+}).catch(err => {
+    console.error("Error while loading util data");
+    throw new Error(err);
+});
+

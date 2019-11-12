@@ -1,29 +1,10 @@
 const express = require("express");
 const router = express.Router();
-
-const Authentication = require('../modules/auth');
-const auth = new Authentication(router);
 const util = require('../modules/utility');
-const seed = require('../seeds');
-const config = require('../config/config');
-const data = require('../modules/data');
-
-
-auth.conn().then(res => {
-    console.log('Connection successful');
-    console.log('Access Token: ', accessToken);
-}).catch(err => {
-    console.log(err);
-});
-
 const axios = require('axios');
 
 
 router.get('/', (req, res, next) => {
-
-    // FIXME: REMOVE THIS 
-    res.cookie('user',seed.pseudoUser, cookieOpt);
-    console.log("Logged in as a pseudo user: ", seed.pseudoUser);
     res.redirect('/login');
 });
 
@@ -43,34 +24,12 @@ router.get('/login', (req, res) => {
 
 
 router.post('/login',(req,res)=>{
-    
     const user = {
         username: req.body.email,
         password: req.body.password
     };
 
-    if( typeof(user.username) == 'string' && typeof(user.password) == 'string'){
-        auth.login(user).then(result=>{
-            if( typeof(result) == 'object' && typeof(result.profile) == 'object'){
-                res.cookie('user',result, cookieOpt);
-                res.redirect('/dashboard');
-            }else{
-                res.status(401);
-            }
-        })
-        .catch(err=>{
-            console.log('auth/login: '+err);
-            // Database side error
-            res.render('error', {
-                message: dbErrorMsg
-            });
-        });
-    }else{
-        res.status(400);
-        res.render( 'login', {
-            error: true
-        });
-    }
+    res.send('TODO');
 });
 
 
