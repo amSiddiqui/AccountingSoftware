@@ -6,6 +6,7 @@ from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
 from datetime import date, timedelta
 from django.db.models import Sum
+import json
 
 '''
 Auth Level 0: Accounting Head 
@@ -27,7 +28,7 @@ value={
 
     'clientId': None,
     'secret': None,
-    'accessToken': None
+    'accessToken': 'not an accessToken'
 }
 
 userToken={}
@@ -35,23 +36,30 @@ status=[200,403,404]
 
 def check_user(token):
 	for e,t in userToken:
-		if t is token:
-			del userToken[e]
-			return True
+		if t == token:
+			return e
+	return None
+
+def delete_user(token):
+	email = check_user(token)
+	if check_user(token) is not None:
+		del userToken[email]
+		return True
 	return False
 
 def post(*oargs, **okwargs):
 	def inner1(func):
 		def inner2(*args, **kwargs):
 			if args[0].method == 'POST' :
-				print(args[0].POST['clientId'])
+				args[0].POST = json.loads(args[0].body)
 				for k in oargs:
 					if k not in args[0].POST.keys():
 						return HttpResponse('Invalid Payload',status=400)
-					if k is 'token' and k in args[0].POST.keys() and not check_user(args[0].POST['token']):
+					if k == 'token' and k in args[0].POST.keys() and not check_user(args[0].POST['token']):
 						return HttpResponse('User not Logged in',status=400)
-					if k is 'accessToken' and k in args[0].POST.keys() and args[0].POST['accessToken'] is not value['accessToken']:
-						return HttpResponse('Invalid access token',status=400)
+					if k == 'accessToken' and k in args[0].POST.keys() :
+						if args[0].POST['accessToken'] != value['accessToken']:
+							return HttpResponse('Invalid access token',status=400)
 				return func(*args,**kwargs)
 			else:
 				return HttpResponse(status=status[2])
@@ -70,21 +78,21 @@ def get_iso_date(date_format, date_data):
 	d = [ x for x in date_data.strip().split() if len( x.strip() ) != 0 ]
 	if len(d) != 3:
 		raise Exception('Invalid date data')
-	if DATE_FORMAT.big_endian == date_format.strip(): # yyyy/mm/dd
+	if DATE_FORMAT['big_endian'] == date_format.strip(): # yyyy/mm/dd
 		return date(d[0],d[1],d[2])
-	elif DATE_FORMAT.little_endian == date_format.strip(): # dd/mm/yyyy
+	elif DATE_FORMAT['little_endian'] == date_format.strip(): # dd/mm/yyyy
 		return date(d[2],d[1],d[0])
-	elif DATE_FORMAT.middle_endian == date_format.strip(): # 'mm/dd/yyyy'
+	elif DATE_FORMAT['middle_endian'] == date_format.strip(): # 'mm/dd/yyyy'
 		return  date(d[2],d[0],d[1])
 	else :
 		raise Exception('Invalid date format')
 
 def get_date(date_format, date_data):
-	if DATE_FORMAT.big_endian == date_format.strip(): # yyyy/mm/dd
+	if DATE_FORMAT['big_endian'] == date_format.strip(): # yyyy/mm/dd
 		return date_data.strftime("%Y/%m/%d")
-	elif DATE_FORMAT.little_endian == date_format.strip(): # dd/mm/yyyy
+	elif DATE_FORMAT['little_endia'] == date_format.strip(): # dd/mm/yyyy
 		return date_data.strftime("%d/%m/%Y")
-	elif DATE_FORMAT.middle_endian == date_format.strip(): # 'mm/dd/yyyy'
+	elif DATE_FORMAT['middle_endian'] == date_format.strip(): # 'mm/dd/yyyy'
 		return date_data.strftime("%m/%d/%Y")
 	else :
 		raise Exception('Invalid date format')
@@ -216,7 +224,7 @@ def login_user(request):
 						'country': company['Country_Name'],
 						'pincode': company['Pin_Code'],
 						},
-					'currency': currency['Code'],
+					'currency': currency['Symbol'],
 					'datefmt': company['Date_Format'],
 					'taxrate': company['Tax_Rate']
 					},
@@ -244,7 +252,7 @@ def logout(request):
 		if ( access_token != value['accessToken'] ):
 			return HttpResponse("Invalid Authorisation ", status=status[2])
 
-		if check_user(uToken):
+		if delete_user(uToken):
 			return HttpResponse('Logout successful')
 		return HttpResponse('User is not logged in')
 
@@ -423,7 +431,7 @@ def create_invoice(request):
 @csrf_exempt
 @post('accessToken','token')
 def fetch_invoice(request,invoice_id):
-	if value['accessToken'] is not request.POST['accessToken']:
+	if value['accessToken'] != request.POST['accessToken']:
 		return HttpResponse('Invalid access token',status=401)
 	
 	invoices = Invoice.objects.filter(Invoice_Id=invoice_id).values()
@@ -448,6 +456,9 @@ def latest_invoice(request):
 		invoices = tempInvoices[:qty]
 		res = []
 		for inv in invoices:
+			if qty == 0:
+				break
+			qty -= 1
 			client = Client.objects.filter(Client_Id=inv['Client_Id_id']).values()
 			items = Item.objects.filter(Invoice_Id_id=inv['Invoice_Id']).values()
 			if items is None or len(items) <= 0 or client is None or len(client) <= 0:
@@ -522,7 +533,7 @@ def category_fetch(request):
 def expense_create(request):
 	exp = request.POST['expense']
 	expense = Expense(Category_Id=Category.objects.filter(Type=exp['category'])[0]['Type'], Date=get_iso_date(request.POST['datefmt'], exp['date']), Vendor_Id=Vendor.objects.filter(Vendor_Name=exp['vendor'])[0].Vendor_Id,Description=exp['description'], Amount=float(exp['amount']))
-	expense.save();
+	expense.save()
 	return HttpResponse('Created Successfully')
 
 
@@ -603,7 +614,7 @@ def client_create(request):
 	client = Client(Fname=cli['firstName'], Lname=cli['lastName'], Address_Line=cli['address']['address1'],
 	 City=cli['address']['city'], Pin_Code=cli['address']['pincode'], State=cli['address']['state'], Country_Name=cli['address']['country'],
 	Day_Limit=cli['dayLimit'], Email=cli['email'], Phone=cli['phone'], Country_Code=cli['countryCode'], Late_Fee_Rate=cli['lateFeeRate'])
-	client.save();
+	client.save()
 	return HttpResponse('Created Successfully')
 
 
@@ -713,21 +724,21 @@ def report_outstandingRevenue(request):
 	if not cycleE and not cycleS:
 		for i in range( 0, len(invs)):
 			inv = invs[i]
-			if curr_year is not inv['Date'].year :
+			if curr_year != inv['Date'].year :
 				break
 			if sMonth <= inv['Date'].month and eMonth >= inv['Date'].month :
 				res['revenue'] += inv['Balance_Due']
 	elif cycleE and not cycleS:
 		for i in range( 0 , len( invs ) ):
 			inv = invs[i]
-			if eMonth >= inv['Date'].month and curr_year is inv['Date'].year :
+			if eMonth >= inv['Date'].month and curr_year == inv['Date'].year :
 				res['revenue'] += inv['Balance_Due']
-			elif sMonth <= inv['Date'].month and curr_year is not inv['Date'].year :
+			elif sMonth <= inv['Date'].month and curr_year != inv['Date'].year :
 				res['revenue'] += inv['Balance_Due']
 	elif cycleS and cycleE:
 		for i in range( 0 , len( invs ) ):
 			inv = invs[i]
-			if sMonth <= inv['Date'].month and curr_year is not inv['Date'].year and eMonth >= inv['Date'].month :
+			if sMonth <= inv['Date'].month and curr_year != inv['Date'].year and eMonth >= inv['Date'].month :
 				res['revenue'] += inv['Balance_Due']
 
 	return JsonResponse(res,safe=True)
@@ -766,7 +777,7 @@ def report_overdue(request):
 			clients = Client.object().filter(Client_Id=inv['Client_Id_id'])
 			if clients is None or len(clients) <= 0:
 				break 
-			if curr_year is not inv['Date'].year :
+			if curr_year != inv['Date'].year :
 				break
 
 			if sMonth <= inv['Date'].month and eMonth >= inv['Date'].month and check_limit(inv['Date'], clients[0]['Day_Limit']):
@@ -779,9 +790,9 @@ def report_overdue(request):
 			if clients is None or len(clients) <= 0:
 				break 
 
-			if eMonth >= inv['Date'].month and curr_year is inv['Date'].year and check_limit(inv['Date'], clients[0]['Day_Limit']):
+			if eMonth >= inv['Date'].month and curr_year == inv['Date'].year and check_limit(inv['Date'], clients[0]['Day_Limit']):
 				res['revenue'] += inv['Balance_Due']
-			elif sMonth <= inv['Date'].month and curr_year is not inv['Date'].year and check_limit(inv['Date'], clients[0]['Day_Limit']):
+			elif sMonth <= inv['Date'].month and curr_year != inv['Date'].year and check_limit(inv['Date'], clients[0]['Day_Limit']):
 				res['revenue'] += inv['Balance_Due']
 	elif cycleS and cycleE:
 		for i in range( 0 , len( invs ) ):
@@ -791,7 +802,7 @@ def report_overdue(request):
 			if clients is None or len(clients) <= 0:
 				break 
 
-			if sMonth <= inv['Date'].month and curr_year is not inv['Date'].year and eMonth >= inv['Date'].month and check_limit(inv['Date'], clients[0]['Day_Limit']):
+			if sMonth <= inv['Date'].month and curr_year != inv['Date'].year and eMonth >= inv['Date'].month and check_limit(inv['Date'], clients[0]['Day_Limit']):
 				res['revenue'] += inv['Balance_Due']
 
 	return JsonResponse(res,safe=True)
@@ -832,17 +843,17 @@ def report_profit(request):
 		temp_year = temp_date.year
 		
 		if not cycleE and not cycleS:
-			if curr_year is not temp_year :
+			if curr_year != temp_year :
 				break
 			if sMonth <= temp_month and eMonth >= temp_month:
 				rev += inv['Balance_Due']
 		elif cycleE and not cycleS:
-			if eMonth >= temp_month and curr_year is temp_year:
+			if eMonth >= temp_month and curr_year == temp_year:
 				rev += inv['Balance_Due']
-			elif sMonth <= temp_month and curr_year is not temp_year:
+			elif sMonth <= temp_month and curr_year != temp_year:
 				rev += inv['Balance_Due']
 		elif cycleS and cycleE:
-			if sMonth <= temp_month and curr_year is not temp_year and eMonth >= temp_month:
+			if sMonth <= temp_month and curr_year != temp_year and eMonth >= temp_month:
 				rev += inv['Balance_Due']
 		res['profit'].append( total_sum - rev )
 
@@ -887,7 +898,7 @@ def report_revenue(request):
 
 	rev = 0
 	for i in range( 0, len(invs)):
-		if qty is 0:
+		if qty == 0:
 			break
 		qty -= 1
 
@@ -909,29 +920,29 @@ def report_revenue(request):
 		idx = 0
 		for i in range( 0, len( temp_rev ) ):
 			r = temp_rev[i]
-			if r['id'] is rev_pat['id']:
+			if r['id'] == rev_pat['id']:
 				rev_pat = r
 				idx = i
 				break
-		if idx is 0:
+		if idx == 0:
 			temp_rev.append(rev_pat)
 			idx = len( temp_rev ) - 1
 			
 		if not cycleE and not cycleS:
-			if curr_year is not temp_year :
+			if curr_year != temp_year :
 				break
 			if sMonth <= temp_month and eMonth >= temp_month:
 				rev += inv['Balance_Due']
 				rev_pat['revenue'] += inv['Balance_Due']
 		elif cycleE and not cycleS:
-			if eMonth >= temp_month and curr_year is temp_year:
+			if eMonth >= temp_month and curr_year == temp_year:
 				rev += inv['Balance_Due']
 				rev_pat['revenue'] += inv['Balance_Due']
-			elif sMonth <= temp_month and curr_year is not temp_year:
+			elif sMonth <= temp_month and curr_year != temp_year:
 				rev += inv['Balance_Due']
 				rev_pat['revenue'] += inv['Balance_Due']
 		elif cycleS and cycleE:
-			if sMonth <= temp_month and curr_year is not temp_year and eMonth >= temp_month:
+			if sMonth <= temp_month and curr_year != temp_year and eMonth >= temp_month:
 				rev += inv['Balance_Due']
 				rev_pat['revenue'] += inv['Balance_Due']
 
@@ -1004,7 +1015,7 @@ def report_expense(request):
 
 	rev = 0
 	for i in range( 0, len(exps)):
-		if qty is 0:
+		if qty == 0:
 			break
 		qty -= 1
 
@@ -1027,29 +1038,29 @@ def report_expense(request):
 		idx = 0
 		for i in range( 0, len( temp_rev ) ):
 			r = temp_rev[i]
-			if r['id'] is rev_pat['id']:
+			if r['id'] == rev_pat['id']:
 				rev_pat = r
 				idx = i
 				break
-		if idx is 0:
+		if idx == 0:
 			temp_rev.append(rev_pat)
 			idx = len( temp_rev ) - 1
 			
 		if not cycleE and not cycleS:
-			if curr_year is not temp_year :
+			if curr_year != temp_year :
 				break
 			if sMonth <= temp_month and eMonth >= temp_month:
 				rev += exps['Amount']
 				rev_pat['expense'] += exps['Amount']
 		elif cycleE and not cycleS:
-			if eMonth >= temp_month and curr_year is temp_year:
+			if eMonth >= temp_month and curr_year == temp_year:
 				rev += exps['Amount']
 				rev_pat['expense'] += exps['Amount']
-			elif sMonth <= temp_month and curr_year is not temp_year:
+			elif sMonth <= temp_month and curr_year != temp_year:
 				rev += exps['Amount']
 				rev_pat['expense'] += exps['Amount']
 		elif cycleS and cycleE:
-			if sMonth <= temp_month and curr_year is not temp_year and eMonth >= temp_month:
+			if sMonth <= temp_month and curr_year != temp_year and eMonth >= temp_month:
 				rev += exps['Amount']
 				rev_pat['expense'] += exps['Amount']
 

@@ -1,5 +1,3 @@
-const axios = require('axios');
-
 const serverConfig = {
 <<<<<<< HEAD
 	domain: 'http://localhost:8000/Application',//'https://c693cbe6-1b9e-4e5f-bcba-e385ef931e04.mock.pstmn.io',
@@ -24,5 +22,5 @@ module.exports = {
 	serverConfig,
 	clientConfig,
 	postConfig,
-	url: 'http://localhost:8000/Application'
+	url: serverConfig.domain,
 };
