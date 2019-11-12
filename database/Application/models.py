@@ -66,7 +66,8 @@ class User(models.Model):
 #------------------------------------------------------------------------------------------------------
 
 class Category(models.Model):
-	Type = models.TextField(primary_key=True)
+	Category_Id = models.AutoField(primary_key=True)
+	Type = models.TextField()
 
 class Client(models.Model):
 	Client_Id=models.AutoField(max_length=20,primary_key=True)
