@@ -137,7 +137,7 @@ router.post('/create', (req, res, next) => {
             .error(err => {
                 console.error(err);
                 res.render('error', {
-                    message: dbErrorMsg
+                    message: err.response.data,
                 });
             });
 
@@ -182,21 +182,33 @@ router.post('/create', (req, res, next) => {
 //     });
 // });
 
-router.delete('/delete',(req,res,next) =>{
+router.post('/delete',(req,res,next) =>{
   util.authCheck(req ,(user) =>{
     if(user){
       var ids = []
       ids = req.body.row;
-      for(var i in ids){
-        for(var j in seeds.invoices){
-          if(ids[i] == seeds.invoices[j].id){
-            seeds.invoices.splice(j,1);
-            break;
-          }
-        }
-      }
 
-      res.redirect('/invoice');
+
+      axios.post(dburl + 'invoice/delete', {
+          token:user.token,
+          accessToken:accessToken,
+          invoices: ids,
+      }).then( response =>{
+        // for(var i in ids){
+        //   for(var j in response.data){
+        //     if(ids[i] == response.data.invoice[j].id){
+        //       response.data.invoice.splice(j,1);
+        //       break;
+        //     }
+        //   }
+        // }
+        res.redirect('/invoice');
+      }).catch(err =>{
+        res.render('error',{
+          message:err.response.data,
+        });
+      });
+
     }
     else{
       res.redirect('/dashboard');
@@ -212,19 +224,26 @@ router.get('/:id', (req, res, next) => {
             // Fetch invoice details from the database
             var id = parseInt(req.params.id);
             // TODO: Use axios
+              axios.post(dburl + '/invoice/' +req.params.id,{
+                token:user.token,
+                accessToken:accessToken
+              }).then( response =>{
 
-            // TODO: remove
-            var invoices = seeds.invoices;
-            var invoice;
-            invoices.forEach(invo => {
-                if (invo.id == id) {
+                var invoices = response.data;
+                var invoice;
+                invoices.forEach(invo => {
+                  if (invo.id == id) {
                     invoice = invo;
-                }
-            });
-            res.render('invoice/edit', {
-                currency: user.company.currency.substring(0, 1),
-                invoice: invoice
-            });
+                  }
+                });
+                res.render('invoice/edit', {
+                  currency: user.company.currency.substring(0, 1),
+                  invoice: invoice
+                });
+              }).catch(err =>res.render('error',{
+                message: err.response.data,
+              }))
+            // TODO: remove
         }else{
             res.redirect('/dashboard');
         }

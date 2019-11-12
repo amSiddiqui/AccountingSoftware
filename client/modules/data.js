@@ -43,7 +43,7 @@ global.utilData = {
             vendor: "Who1",
             spent: 5000
         },
-        
+
         {
             vendor: "Who2",
             spent: 4000
@@ -56,12 +56,12 @@ global.utilData = {
             vendor: "Who4",
             spent: 200
         },
-        
+
         {
             vendor: "Who5",
             spent: 2400
         },
-        
+
     ],
     totalSpending: 10000,
     unbilledTimes: [
@@ -90,7 +90,7 @@ global.utilData = {
             time: 4,
             due: 100
         },
-        
+
     ],
 };
 
@@ -99,6 +99,28 @@ global.utilData = {
         utilData.quotes =  (await axios.post(config.url+'/util/quote/', {
             accessToken
         })).data;
+
+
+        utilData.country =  (await axios.post(config.url+'/util/country/', {
+            accessToken
+        })).data;
+
+
+        utilData.phone_code =  (await axios.post(config.url+'/util/phone_code/', {
+            accessToken
+        })).data;
+
+
+        utilData.datefmt =  (await axios.post(config.url+'/util/datefmt/', {
+            accessToken
+        })).data;
+
+
+        utilData.currency =  (await axios.post(config.url+'/util/currency/', {
+            accessToken
+        })).data;
+
+
     }
     catch(err) {
         throw new Error(err.response.data);
@@ -110,4 +132,3 @@ global.utilData = {
     console.error("Error while loading util data");
     throw new Error(err);
 });
-

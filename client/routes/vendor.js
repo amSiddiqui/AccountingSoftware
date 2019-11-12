@@ -9,14 +9,9 @@ router.get('/create', (req, res, next) => {
     util.authCheck(req, user => {
         if (user)
         {
-            // TODO: Use axios
-            // axios.post(dburl + '/vendor/'{
-            //
-            // }).then(response => {
-            //   var
-            // })
+
             res.render('vendor/create', {
-                countryCode: seeds.countryCode,
+                countryCode: utilData.country.countryCode,
             });
         }
         else
@@ -42,25 +37,24 @@ router.post('/',(req , res,next) =>{
           pincode:req.body.pincode
         }
       }
-      seeds.vendor.push(vendor);
+      // seeds.vendor.push(vendor);
 
       // TODO: Push data into database using axios
-      // axios.post(dburl+'/client/create'{
-      //     token: user.token,
-      //     accessToken: accessToken
-      //     vendor: vendor
-      // }).then(response => {
-      //     console.log(Vendor Added)
-      //
-      //     res.render('/dashboard')
-      //     });
-      // }).catch(error => {
-      //     console.error(error);
-      //     res.render('error', {
-      //         message: dbErrorMsg
-      //     });
-      // });
-      res.render('back');
+      axios.post(dburl+'/client/create/'{
+          token: user.token,
+          accessToken: accessToken,
+          vendor: vendor
+      }).then(response => {
+
+          res.render('back')
+          });
+      }).catch(err => {
+          // console.error(err);
+          res.render('error', {
+              message: err.response.data
+          });
+      });
+      // res.render('back');
     }
     else {
       res.redirect('/dashboard')
