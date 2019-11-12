@@ -59,25 +59,24 @@ router.post('/',(req , res) => {
         subtotal: req.body.subtotal,
       }
       id++;
-      seeds.pseudoExpense.push(params);
-      res.redirect('/expense');
+      // seeds.pseudoExpense.push(params);
 
       // TODO: Push data into database using axios
-      // axios.post(dburl+'/expense/create'{
-      //     token: user.token,
-      //     accessToken: accessToken
-      //     expense: params
-      // }).then(response => {
-      //     console.log(Expense Added)
-      //
-      //     res.render('/expense')
-      //     });
-      // }).catch(error => {
-      //     console.error(error);
-      //     res.render('error', {
-      //         message: dbErrorMsg
-      //     });
-      // });
+      axios.post(dburl+'/expense/create/'{
+          token: user.token,
+          accessToken: accessToken,
+          expense: params,
+      }).then(response => {
+          console.log(Expense Added);
+
+          res.render('/expense');
+          });
+      }).catch(err => {
+          console.error(err);
+          res.render('error', {
+              message: err.response.data
+          });
+      });
 
     }
     else {
@@ -107,17 +106,52 @@ router.get('/:id/edit', (req, res, next) => {
 router.put('/:id', (req , res) => {
   util.authCheck(req , (user) =>{
     if(user){
-      for(var i in seeds.pseudoExpense){
-        if(seeds.pseudoExpense[i].id === req.params.id){
-          seeds.pseudoExpense[i].category= req.body.category;
-          seeds.pseudoExpense[i].date= req.body.date;
-          seeds.pseudoExpense[i].vendor= req.body.vendor;
-          seeds.pseudoExpense[i].phone= req.body.phone;
-          seeds.pseudoExpense[i].countryCode= req.body.countryCode;
-          seeds.pseudoExpense[i].description= req.body.description;
-          seeds.pseudoExpense[i].subtotal= req.body.subtotal;
-          break;
+
+      axios.post(dburl + `expense/${req.params.id}/`{
+        token: user.token.
+        accessToken: accessToken,
+      }).then(res1 =>res1.data)
+        .then(res1){
+          for(var i in res1){
+            if(res1[i].id === req.params.id){
+              res1[i].category= req.body.category;
+              res1[i].date= req.body.date;
+              res1[i].vendor= req.body.vendor;
+              res1[i].phone= req.body.phone;
+              res1[i].countryCode= req.body.countryCode;
+              res1[i].description= req.body.description;
+              res1[i].subtotal= req.body.subtotal;
+              break;
+            }
+          }
+
+          axios.post(dburl + `/expense/${req.params.id}/update`,{
+            token: user.token.
+            accessToken: accessToken,
+            client: res1,
+          }).then(response =>{
+            console.log(client updated);
+            res.render('/expense/'+req.params.id);
+          }).catch(error => {
+            console.log(error)
+            res.render('/error',{error:error})
+          });
         }
+
+      });
+
+
+      // for(var i in seeds.pseudoExpense){
+      //   if(seeds.pseudoExpense[i].id === req.params.id){
+      //     seeds.pseudoExpense[i].category= req.body.category;
+      //     seeds.pseudoExpense[i].date= req.body.date;
+      //     seeds.pseudoExpense[i].vendor= req.body.vendor;
+      //     seeds.pseudoExpense[i].phone= req.body.phone;
+      //     seeds.pseudoExpense[i].countryCode= req.body.countryCode;
+      //     seeds.pseudoExpense[i].description= req.body.description;
+      //     seeds.pseudoExpense[i].subtotal= req.body.subtotal;
+      //     break;
+      //   }
     }
   }
     else{
@@ -127,7 +161,7 @@ router.put('/:id', (req , res) => {
 
   res.redirect('/expense');
 });
-
+// TODO: Same as client
 router.delete('/delete',(req,res,next) =>{
   util.authCheck(req , (user) =>{
     if(user){
