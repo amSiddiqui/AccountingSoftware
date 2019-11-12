@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const util = require('../modules/utility');
 const axios = require('axios');
-
+const config = require('../modules/utility');
 
 router.get('/', (req, res, next) => {
     res.redirect('/login');
@@ -23,13 +23,51 @@ router.get('/login', (req, res) => {
 });
 
 
-router.post('/login',(req,res)=>{
-    const user = {
-        username: req.body.email,
-        password: req.body.password
-    };
+router.get('/logout', (req, res) => {
+    util.authCheck(req, user => {
+        if (user) {
+            axios.post(config.url+'/auth/logout/', {
+                accessToken: accessToken,
+                token: user.token
+            }).then(response => {
+                res.clearCookie('user');
+                res.redirect('/login');
+            }).catch(err => {
+                res.render('error', {
+                    message: err.response.data
+                });
+            });
+        }else{
+            res.redirect('/login');
+        }
+    });
+});
 
-    res.send('TODO');
+router.post('/login',(req,res)=>{
+    util.authCheck(req, user => {
+        if (user) {
+            res.redirect('/dashboard');
+        }
+        else {
+            const userData = {
+                email: req.body.email,
+                password: req.body.password
+            };
+            axios.post(config.url+'/auth/login/', {
+                accessToken: accessToken,
+                email: email,
+                password: password
+            }).then(res => {
+                res.cookie('user', res.data, cookieOpt);
+                res.redirect('/dashboard');
+            }).error(err => {
+                console.error(err);
+                res.render('error', {
+                    message: err.response.data
+                });
+            });
+        }
+    });
 });
 
 
@@ -151,7 +189,7 @@ function inKNotation(val) {
     var totalExp = val;
     var totalExpStr = `${totalExp}`;
     if (totalExp > 1000) {
-        totalExp = parseFloat(totalExp / 1000.).toFixed(2);
+        totalExp = parseFloat(totalExp / 1000.0).toFixed(2);
         if (parseInt(totalExp) == totalExp) {
             totalExp = parseInt(totalExp);
         }
