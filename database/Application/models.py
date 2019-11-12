@@ -12,7 +12,7 @@ class Currency(models.Model):
 	Id=models.AutoField(primary_key=True)
 	Code=models.CharField(max_length=10)
 	Name=models.CharField(max_length=50)
-	Symbol=models.CharField(max_length=10, default="")
+	Symbol=models.CharField(max_length=10,default="")
 	
 
 #In mysql client use 'alter table application_phonecode AUTO_INCREMENT=1;' to have starting value as 1
@@ -80,7 +80,7 @@ class Client(models.Model):
 	State=models.CharField(max_length=30)
 	Country_Name=models.TextField()
 	Country_Code=models.CharField(max_length=5)
-	Day_Limit=models.DateField()
+	Day_Limit=models.PositiveSmallIntegerField()
 	#The Late_Fee_Rate field is added after creation of table thus need to set a default value
 	Late_Fee_Rate=models.FloatField(default=0)
 	Email=models.EmailField()
@@ -97,7 +97,7 @@ class Vendor(models.Model):
 	City=models.CharField(max_length=30)
 	Pin_Code=models.PositiveIntegerField()
 	Country_Name=models.TextField()
-	Country_Code=models.CharField(max_length=5)
+	Country_Code=models.CharField(max_length=10)
 	State=models.CharField(max_length=30)
 	Email=models.EmailField()
 	Phone=models.PositiveIntegerField()
