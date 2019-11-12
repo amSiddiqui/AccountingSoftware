@@ -20,7 +20,7 @@ const configurations = {};
 //     throw new Error(err);
 // });
 
-auth.conn();
+auth.conn().then(res=>console.log(res));
 
 const axios = require('axios');
 

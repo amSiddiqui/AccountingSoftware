@@ -13,20 +13,13 @@ class Authentication{
     }
 
     async conn(){
-        // TODO: remove
-        const serverKey = {accessToken:'1234'};
-        return {serverKey};
-
-
-
-
         if( !util.validateObj(this.serverConfig,{clientID:'string',clientSecret:'string'}) ){
             throw new Error('serverConfig is initialized');
         }
         try{
-            let res = await axios.post(`${this.serverConfig.domain}/init`, {
-                clientID:this.serverConfig.clientID,
-                clientSecret:this.serverConfig.clientSecret
+            let res = await axios.post(`${this.serverConfig.domain}/init/`, {
+                clientId:this.serverConfig.clientID,
+                secret:this.serverConfig.clientSecret
             });
             this.serverKey = {accessToken: res.data.accessToken};
             this.router.use( function(req,resp,next){
@@ -35,28 +28,16 @@ class Authentication{
             });
             return this.serverKey;
         }catch(err){
-            throw new Error(err.response.data.error);
+            throw new Error(err);
         }
     }
 
     async login(user){
-        // TODO: Remove
-        return {
-            profile:{firstName: 'Sam', lastName: 'Harris', company: 'Pineapple'},
-            userToken:'123',
-            error: null 
-        };
-
-        
         if( this.serverKey == null ){
             console.log("Not connected to server");
             return null;
         }
         try{
-            
-
-
-            
             if( util.validateObj(user,{username:'string',password:'string'})) {
                 const userRes = await axios.post(`${this.loginRoute}`, {
                     ...user,
