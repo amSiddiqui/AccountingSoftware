@@ -114,6 +114,8 @@ class Expense(models.Model):
 	Description=models.TextField()
 	Amount=models.FloatField()
 
+	def __str__(self):
+		return str(self.Expense_Id)+','+ self.Description
 class Account(models.Model):
 	Account_Id=models.AutoField(primary_key=True)
 	Tax=models.FloatField()
