@@ -48,7 +48,10 @@ urlpatterns = [
     path('client/delete/', views.client_delete),
     
     
-    path('report/outstandingRevenue/',views.outstandingRevenue),
-    path('report/overdue/',views.overdue),
-    path('report/profit/',views.profit),
+    # Report routes
+    path('report/outstandingRevenue/',views.report_outstandingRevenue),
+    path('report/overdue/',views.report_overdue),
+    path('report/profit/',views.report_profit),
+    path('report/revenue/',views.report_revenue),
+    path('report/expense/',views.report_expense),
 ]
