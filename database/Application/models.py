@@ -97,10 +97,8 @@ class Vendor(models.Model):
 	City=models.CharField(max_length=30)
 	Pin_Code=models.PositiveIntegerField()
 	Country_Name=models.TextField()
-	Country_Code=models.CharField(max_length=5)
-	State=models.CharField(max_length=30)
 	Country_Code=models.CharField(max_length=10)
-	Country=models.CharField(max_length=6)
+	State=models.CharField(max_length=30)
 	Email=models.EmailField()
 	Phone=models.PositiveIntegerField()
 
