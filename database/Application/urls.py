@@ -36,11 +36,22 @@ urlpatterns = [
     #Expense Routes
     path('expense/create/', views.expense_create),
     path('expense/latest/', views.expense_latest),
-    path('expense/<int:expense_id>', views.expense_fetch),
-    path('expense/<int:expense_id>/update', views.expense_update),
-
+    path('expense/<int:expense_id>/', views.expense_fetch),
+    path('expense/<int:expense_id>/update/', views.expense_update),
+    path('expense/delete/', views.expense_delete),
     
-    path('report/outstandingRevenue/',views.outstandingRevenue),
-    path('report/overdue/',views.overdue),
-    path('report/profit/',views.profit),
+    #Client Routes
+    path('client/create/', views.client_create),
+    path('client/latest/', views.client_latest),
+    path('client/<int:client_id>/', views.client_fetch),
+    path('client/<int:client_id>/update/', views.client_update),
+    path('client/delete/', views.client_delete),
+    
+    
+    # Report routes
+    path('report/outstandingRevenue/',views.report_outstandingRevenue),
+    path('report/overdue/',views.report_overdue),
+    path('report/profit/',views.report_profit),
+    path('report/revenue/',views.report_revenue),
+    path('report/expense/',views.report_expense),
 ]

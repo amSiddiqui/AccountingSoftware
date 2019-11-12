@@ -52,6 +52,7 @@ router.post('/',(req , res) => {
         category: req.body.category,
         date: req.body.date,
         vendor: req.body.vendor,
+
         phone: req.body.phone,
         countryCode: req.body.countryCode,
         description: req.body.description,
@@ -60,6 +61,23 @@ router.post('/',(req , res) => {
       id++;
       seeds.pseudoExpense.push(params);
       res.redirect('/expense');
+
+      // TODO: Push data into database using axios
+      // axios.post(dburl+'/expense/create'{
+      //     token: user.token,
+      //     accessToken: accessToken
+      //     expense: params
+      // }).then(response => {
+      //     console.log(Expense Added)
+      //
+      //     res.render('/expense')
+      //     });
+      // }).catch(error => {
+      //     console.error(error);
+      //     res.render('error', {
+      //         message: dbErrorMsg
+      //     });
+      // });
 
     }
     else {
