@@ -66,7 +66,8 @@ class User(models.Model):
 #------------------------------------------------------------------------------------------------------
 
 class Category(models.Model):
-	Type = models.TextField(primary_key=True)
+	Category_Id = models.AutoField(primary_key=True)
+	Type = models.TextField()
 
 class Client(models.Model):
 	Client_Id=models.AutoField(max_length=20,primary_key=True)
@@ -103,9 +104,6 @@ class Vendor(models.Model):
 	def __str__(self):
 		return(str(self.Vendor_Id)+','+self.Vendor_Name+','+self.Vendor_Category+','+self.Address_Line+','+
 			   self.City+','+self.State+','+ str(self.Pin_Code) +','+self.Email+','+ str(self.Phone) ) 
-
-class Category(models.Model):
-	Type = models.TextField(primary_key=True)
 
 class Expense(models.Model):
 	Expense_Id=models.AutoField(primary_key=True)
