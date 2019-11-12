@@ -1,5 +1,5 @@
 #from django.shortcuts import render
-from Application.models import *
+from models import *
 from django.http import JsonResponse,HttpResponse
 from django.contrib.auth.hashers import make_password,check_password
 from datetime import datetime
@@ -74,7 +74,7 @@ def get_iso_date(date_format, date_data):
 	elif DATE_FORMAT.little_endian == date_format.strip(): # dd/mm/yyyy
 		return date(d[2],d[1],d[0])
 	elif DATE_FORMAT.middle_endian == date_format.strip(): # 'mm/dd/yyyy'
-		return  data(d[2],d[0],d[1])
+		return  date(d[2],d[0],d[1])
 	else :
 		raise Exception('Invalid date format')
 
@@ -106,7 +106,7 @@ def get_invoice(client,items,invoice):
 		},
 		'lateFeeRate': client['Late_Fee_Rate']
 		},
-		'id':invoice_id,
+		'id':invoice['Invoice_Id'],
 		'date': get_date( invoice['datefmt'], invoice['Date'] ),
 		'amountDue': invoice['Amount_Due'],
 		'items' : []
@@ -449,7 +449,7 @@ def latest_invoice(request):
 		for inv in invoices:
 			client = Client.objects.filter(Client_Id=inv['Client_Id_id']).values()
 			items = Item.objects.filter(Invoice_Id_id=inv['Invoice_Id']).values()
-			if items is None or len(items) <= 0 or clients is None or len(clients) <= 0:
+			if items is None or len(items) <= 0 or client is None or len(client) <= 0:
 				return HttpResponse('Client or Items does not exits in database', status=400)
 			res.append(get_invoice(client,items,inv))
 		return JsonResponse(res,safe=True)
@@ -515,11 +515,153 @@ def category_fetch(request):
 
 
 # Expense Routes
-# @csrf_exempt
-# @post('accessToken', 'token', 'expense')
-# def expense_create(request):
-# 	exp = request.POST['expense']
-# 	expense = Expense(Category=Category.objects.get(pk=exp['category']), Date=get_iso_date(request.POST['datefmt'], ))
+# Creation
+@csrf_exempt
+@post('accessToken', 'token', 'client')
+def expense_create(request):
+	exp = request.POST['expense']
+	expense = Expense(Category=Category.objects.get(pk=exp['category']), Date=get_iso_date(request.POST['datefmt'], exp['date']), Vendor_Id=Vendor.objects.filter(Vendor_Name=exp['vendor'])[0].Vendor_Id,Description=exp['description'], Amount=float(exp['amount']))
+	expense.save();
+	return HttpResponse('Created Successfully')
+
+
+def _get_expense(expense):
+	return {
+			'category': expense['Category'],
+			'date': expense['Date'],
+			'description': expense['Description'],
+			'amount': expense['Amount'],
+			'vendor': Vendor.objects.filter(pk=expense['Vendor_Id']).values()[0]
+		}
+
+# fetch_latest
+@csrf_exempt
+@post('accessToken', 'token', 'quantity')
+def expense_latest(request):
+	qty = int(request.POST['quantity'])
+	all_expense = Expense.objects.all().order_by("-Expense_Id").values()
+	if all_expense is not None and len(all_expense) >= qty:
+		expenses = all_expense[:qty]
+		res = {'expenses': []}
+		for exp in expenses:
+			expense = _get_expense(exp)
+			res['expenses'].append(expense)
+		return (JsonResponse(res, safe=True))
+	else:
+		return HttpResponse('Quatity Requested is out of bounds', status=400)
+
+
+@csrf_exempt
+@post('accessToken', 'token')
+def expense_fetch(request, expense_id):
+	exp = Expense.objects.filter(Expense_Id=expense_id).values()[0]
+	if (exp is not None):
+		res = {'expense': _get_expense(exp)}
+		return JsonResponse(res, safe=True)
+	else:
+		return HttpResponse('Expense does not exists', status=400)
+
+
+@csrf_exempt
+@post('accessToken', 'token', 'expense')
+def expense_update(request, expense_id):
+	exp = Expense.objects.get(pk=expense_id)
+	if (exp is not None):
+		new_exp = request.POST['expense']
+		datefmt = request.POST['datefmt']
+		exp.Category = new_exp['category']
+		exp.Date = get_iso_date(datefmt, new_exp['date'])
+		vendors = Vendor.objects.filter(Vendor_Name=new_exp['vendor']).values()
+		if (not (vendors is not None and len(vendors) > 0)):
+			return HttpResponse('Vendor does not exists', status=400)
+		exp.Vendor_Id = Vendor.objects.filter(Vendor_Name=new_exp['vendor']).values()[0]['Vendor_Id']
+		exp.Description = new_exp['description']
+		exp.Amount = new_exp['amount']
+		exp.save()
+		return HttpResponse('Save successfully')
+	else:
+		return HttpResponse('Expense does not exists', status=400)
+
+
+@csrf_exempt
+@post('accessToken', 'token', 'expenses')
+def expense_delete(request):
+	exp_ids = request.POST['expenses']
+	for id in exp_ids:
+		Expense.objects.filter(Expense_Id=id).delete()
+	return HttpResponse('Successfully Deleted')
+
+
+
+# Client Routes
+
+@csrf_exempt
+@post('accessToken', 'token', 'client')
+def client_create(request):
+	cli = request.POST['client']
+	client = Client(Fname=cli['firstName'], Lname=cli['lastName'], Address_Line=cli['address']['address1'],
+	 City=cli['address']['city'], Pin_Code=cli['address']['pincode'], State=cli['address']['state'], Country_Name=cli['address']['country'],
+	Day_Limit=cli['dayLimit'], Email=cli['email'], Phone=cli['phone'], Country_Code=cli['countryCode'], Late_Fee_Rate=cli['lateFeeRate'])
+	client.save();
+	return HttpResponse('Created Successfully')
+
+
+@csrf_exempt
+@post('accessToken', 'token', 'quantity')
+def client_latest(request):
+	qty = int(request.POST['quantity'])
+	all_client = Client.objects.all().order_by("-Client_Id").values()
+	if all_client is not None and len(all_client) >= qty:
+		clients = all_client[:qty]
+		res = {'clients': clients}
+		return (JsonResponse(res, safe=True))
+	else:
+		return HttpResponse('Quatity Requested is out of bounds', status=400)
+
+
+@csrf_exempt
+@post('accessToken', 'token')
+def client_fetch(request, client_id):
+	cli = Client.objects.filter(Client_Id=client_id).values()[0]
+	if (cli is not None):
+		res = {'client': cli}
+		return JsonResponse(res, safe=True)
+	else:
+		return HttpResponse('Client does not exists', status=400)
+
+
+@csrf_exempt
+@post('accessToken', 'token', 'client')
+def client_update(request, client_id):
+	cli = Client.objects.get(pk=client_id)
+	if (cli is not None):
+		new_cli = request.POST['client']
+		address = new_cli['address']
+		cli.Fname = new_cli['firstName']
+		cli.Lname = new_cli['lastName']
+		cli.Address_Line = address['address1']
+		cli.City = address['city']
+		cli.Pin_Code = address['pincode']
+		cli.State = address['State']
+		cli.Country_Name = address['country']
+		cli.Country_Code = new_cli['countryCode']
+		cli.Late_Fee_rate = new_cli['lateFeeRate']
+		cli.Phone = new_cli['phone']
+		cli.Email = new_cli['email']
+		cli.Day_Limit = new_cli['dayLimit']
+		cli.save()
+		return HttpResponse('Save successfully')
+	else:
+		return HttpResponse('Expense does not exists', status=400)
+
+@csrf_exempt
+@post('accessToken', 'token', 'clients')
+def client_delete(request):
+	cli_ids = request.POST['clients']
+	for id in cli_ids:
+		Client.objects.filter(Client_Id=id).delete()
+	return HttpResponse('Successfully Deleted')
+
 
 
 @csrf_exempt
@@ -646,8 +788,6 @@ def overdue(request):
 
 	return JsonResponse(res,safe=True)
 
-<<<<<<< HEAD
-=======
 
 @csrf_exempt
 @post('accessToken','token','startMonth','endMonth')
@@ -711,4 +851,3 @@ def profit(request):
 	
 
 	return JsonResponse(res,safe=True)
->>>>>>> 10b3c16aa788cb4488a857e09d9c52cc65b9ec15
