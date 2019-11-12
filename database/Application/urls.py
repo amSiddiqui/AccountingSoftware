@@ -42,4 +42,5 @@ urlpatterns = [
     
     path('report/outstandingRevenue/',views.outstandingRevenue),
     path('report/overdue/',views.overdue),
+    path('report/profit/',views.profit),
 ]

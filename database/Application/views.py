@@ -4,8 +4,8 @@ from django.http import JsonResponse,HttpResponse
 from django.contrib.auth.hashers import make_password,check_password
 from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
-from datetime import date
-from django.db.models import Q
+from datetime import date, timedelta
+from django.db.models import Sum
 
 '''
 Auth Level 0: Accounting Head 
@@ -48,9 +48,9 @@ def post(*oargs, **okwargs):
 					if k not in args[0].POST.keys():
 						return HttpResponse('Invalid Payload',status=400)
 					if k is 'token' and k in args[0].POST.keys() and not check_user(args[0].POST['token']):
-						return HttpResponse('User not Logged in')
+						return HttpResponse('User not Logged in',status=400)
 					if k is 'accessToken' and k in args[0].POST.keys() and args[0].POST['accessToken'] is not value['accessToken']:
-						return HttpResponse('Invalid access token')
+						return HttpResponse('Invalid access token',status=400)
 				return func(*args,**kwargs)
 			else:
 				return HttpResponse(status=status[2])
@@ -166,69 +166,69 @@ def init(request):
 @csrf_exempt
 @post('accessToken','email','password')
 def login_user(request):
-    if request.method == 'POST':
-        email = request.POST['email']
-        password = request.POST['password']
-        # Is this accessToken encrypted??
-        access_token = request.POST['accessToken']
-		# if (access_token != value['accessToken']):
-    	# 	return HttpResponse("Invalid Authorisation ", status=status[2])
-		users = User.objects.filter(Email=email).values()
+	email = request.POST['email']
+	password = request.POST['password']
+	# Is this accessToken encrypted??
+	# access_token = request.POST['accessToken']
 
-		# for e,enc_p in User.objects.all().values_list('Email','Password'):
-		# 	if e == email:
-		if users is not None and len(users) == 1:
-			user = users[0]
-			companies = Company.objects.filter(Company_Id=user['Comp_Id_id']).values()
-			if companies is None or len(companies) < 1:
-				return HttpResponse('Company is not set', status=406 )
-			
-			currencies = Currency.objects.filter(Id=companies[0]['Base_Currency_id']).values()
-			
-			if currencies is None or len( currencies ) < 1 :
-					return HttpResponse('Currency is not added', status=406 )
-			currency = currencies[0]
-			company = companies[0]
-			if check_password(password,user['Password']):
-				tokenTemp = None
-				global userToken  						#Use global keyword to access global variable
-				if email in userToken.keys():
-					tokenTemp = userToken[email]
-				else:
-					token=email+str(datetime.now())
-					tokenTemp = make_password(token)
-					userToken[email] = tokenTemp
+	# if (access_token != value['accessToken']):
+	# 	return HttpResponse("Invalid Authorisation ", status=status[2])
+	users = User.objects.filter(Email=email).values()
 
-				data={
-					'name': f"{user['Fname']} {user['Lname']}",
-					'email': email,
-					'company' :
-						{
-						'name': company['Company_Name'],
-						'countryCode': company['Country_Code'],
-						'phone': company['Phone'],
-						'email': company['Email'],
-						'address': {
-							'address1': company['Address_Line'],
-							'city': company['City'],
-							'state': company['State'],
-							'country': company['Country_Name'],
-							'pincode': company['Pin_Code'],
-							},
-						'currency': currency['Code'],
-						'datefmt': company['Date_Format'],
-						'taxrate': company['Tax_Rate']
-						},
-					'token': tokenTemp
-				}
-
-				return JsonResponse(data,safe=False)
-
+	# for e,enc_p in User.objects.all().values_list('Email','Password'):
+	# 	if e == email:
+	if users is not None and len(users) == 1:
+		user = users[0]
+		companies = Company.objects.filter(Company_Id=user['Comp_Id_id']).values()
+		if companies is None or len(companies) < 1:
+			return HttpResponse('Company is not set', status=406 )
+		
+		currencies = Currency.objects.filter(Id=companies[0]['Base_Currency_id']).values()
+		
+		if currencies is None or len( currencies ) < 1 :
+				return HttpResponse('Currency is not added', status=406 )
+		currency = currencies[0]
+		company = companies[0]
+		if check_password(password,user['Password']):
+			tokenTemp = None
+			global userToken  						#Use global keyword to access global variable
+			if email in userToken.keys():
+				tokenTemp = userToken[email]
 			else:
-				return HttpResponse("Invalid Password", status=status[1])
+				token=email+str(datetime.now())
+				tokenTemp = make_password(token)
+				userToken[email] = tokenTemp
 
-        else:
-            return HttpResponse("User Does Not Exists", status=status[2])
+			data={
+				'name': f"{user['Fname']} {user['Lname']}",
+				'email': email,
+				'company' :
+					{
+					'name': company['Company_Name'],
+					'countryCode': company['Country_Code'],
+					'phone': company['Phone'],
+					'email': company['Email'],
+					'address': {
+						'address1': company['Address_Line'],
+						'city': company['City'],
+						'state': company['State'],
+						'country': company['Country_Name'],
+						'pincode': company['Pin_Code'],
+						},
+					'currency': currency['Code'],
+					'datefmt': company['Date_Format'],
+					'taxrate': company['Tax_Rate']
+					},
+				'token': tokenTemp
+			}
+
+			return JsonResponse(data,safe=False)
+
+		else:
+			return HttpResponse("Invalid Password", status=status[1])
+
+	else:
+		return HttpResponse("User Does Not Exists", status=status[2])
 
 
 # Create logout Request:
@@ -251,8 +251,8 @@ def logout(request):
 @csrf_exempt
 @post('accessToken')
 def country(request):
-    country_code = list()
-    country_name = list()
+	country_code = list()
+	country_name = list()
 	for code, c_name in Country.objects.all().values_list('Country_Code', 'Country_Name'):
 		country_code.append(code)
 		country_name.append(c_name)
@@ -266,9 +266,9 @@ def country(request):
 @csrf_exempt
 @post('accessToken')
 def quote(request):
-    fn = list()
-    ln = list()
-    quotes = list()
+	fn = list()
+	ln = list()
+	quotes = list()
 	for f, l, q in Quotes.objects.all().values_list('AFName', 'ALName', 'Quote'):
 		fn.append(f)
 		ln.append(l)
@@ -284,8 +284,8 @@ def quote(request):
 @csrf_exempt
 @post('accessToken')
 def currencies(request):
-    currency_code = list()
-    currency_name = list()
+	currency_code = list()
+	currency_name = list()
 	for cc, c in Currency.objects.all().values_list('Code', 'Name'):
 		currency_code.append(cc)
 		currency_name.append(c)
@@ -299,9 +299,9 @@ def currencies(request):
 @csrf_exempt
 @post('accessToken')
 def phones(request):
-    country_name = list()
-    iso = list()
-    isd = list()
+	country_name = list()
+	iso = list()
+	isd = list()
 	for c, i, d in PhoneCode.objects.all().values_list('Country_Name', 'ISO_Code', 'ISD_Code'):
 		country_name.append(c)
 		iso.append(i)
@@ -317,7 +317,7 @@ def phones(request):
 @csrf_exempt
 @post('accessToken')
 def dates(request):
-    data = [v for _,v in DATE_FORMAT ]
+	data = [v for _,v in DATE_FORMAT ]
 	return JsonResponse({ 'dateFormat' : data },safe=True)
 
 @csrf_exempt
@@ -401,8 +401,8 @@ def user_exists(request):
 @csrf_exempt
 @post('accessToken','token','invoice')
 def create_invoice(request):
-	if value['accessToken'] is not request.POST['accessToken']:
-		return HttpResponse('Invalid access token',status=401)
+	# if value['accessToken'] is not request.POST['accessToken']:
+	# 	return HttpResponse('Invalid access token',status=401)
 	data = request.POST['invoice']
 	datefmt = data['datefmt']
 	invoice = Invoice(Client_Id=data['clientId'], Date=get_iso_date(datefmt, data['date']), Amount_Due=data['amountDue'], 
@@ -525,39 +525,190 @@ def category_fetch(request):
 @csrf_exempt
 @post('accessToken','token','startMonth','endMonth')
 def outstandingRevenue(request):
-	sMonth = request.POST['startMonth']
-	eMonth = request.POST['endMonth']
-	currMonth = date.today().month()
+	rSMonth = request.POST['startMonth']
+	rEMonth = request.POST['endMonth']
+	currMonth = date.today().month
 	
-	cycle = True if currMonth < sMonth else False
+	cycleS = True if currMonth < rSMonth else False
+	cycleE = True if currMonth < rEMonth else False
+	sMonth = abs( currMonth - rSMonth )
+	eMonth = abs( currMonth - rEMonth )
 
 	invoices = Invoice.objects.all().order_by('-Date').values()
-
-	if invoices is None:
-		return HttpResponse('Unable to extract invoice',status=400)
+	if invoices is None or len( invoices ) <= 0 :
+		return HttpResponse('Invoice not found',status=400)
+	invs_y = [invoices[0]]
+	invs = []
+	curr_year = invs_y[0]['Date'].year
+	for i in invoices:
+		y = i['Date'].year
+		invs.append(i)
+		if y < curr_year:
+			invs_y.append(i)
+			invs.append(i)
+			break
+	if len( invs_y ) == 1 and cycleS and cycleE:
+		return HttpResponse('Invalid Arguments',status=400)
+	
 	res = {
 		'revenue': 0
 	}
-	for inv in invoices:
-		res['revenue'] += inv['Balance_Due']
+
+	if not cycleE and not cycleS:
+		for i in range( 0, len(invs)):
+			inv = invs[i]
+			if curr_year is not inv['Date'].year :
+				break
+			if sMonth <= inv['Date'].month and eMonth >= inv['Date'].month :
+				res['revenue'] += inv['Balance_Due']
+	elif cycleE and not cycleS:
+		for i in range( 0 , len( invs ) ):
+			inv = invs[i]
+			if eMonth >= inv['Date'].month and curr_year is inv['Date'].year :
+				res['revenue'] += inv['Balance_Due']
+			elif sMonth <= inv['Date'].month and curr_year is not inv['Date'].year :
+				res['revenue'] += inv['Balance_Due']
+	elif cycleS and cycleE:
+		for i in range( 0 , len( invs ) ):
+			inv = invs[i]
+			if sMonth <= inv['Date'].month and curr_year is not inv['Date'].year and eMonth >= inv['Date'].month :
+				res['revenue'] += inv['Balance_Due']
+
 	return JsonResponse(res,safe=True)
 
 @csrf_exempt
-@post('accessToken','token')
+@post('accessToken','token','startMonth','endMonth')
 def overdue(request):
-	mon = 6
-	if 'months' in request.POST.keys():
-		mon = request.POST['months']
+	rSMonth = request.POST['startMonth']
+	rEMonth = request.POST['endMonth']
+	currMonth = date.today().month
 	
-	invoices = Invoice.objects.filter(Date__month__gte=mon).values()
-	if invoices is None:
-		return HttpResponse('Unable to extract invoice',status=400)
+	cycleS = True if currMonth < rSMonth else False
+	cycleE = True if currMonth < rEMonth else False
+	sMonth = abs( currMonth - rSMonth )
+	eMonth = abs( currMonth - rEMonth )
+
+	invoices = Invoice.objects.all().order_by('-Date').values()
+	if invoices is None or len( invoices ) <= 0 :
+		return HttpResponse('Invoice not found',status=400)
+	invs_y = [invoices[0]]
+	invs = []
+	curr_year = invs_y[0]['Date'].year
+	for i in invoices:
+		y = i['Date'].year
+		invs.append(i)
+		if y < curr_year:
+			invs_y.append(i)
+			invs.append(i)
+			break
+	if len( invs_y ) == 1 and cycleS and cycleE:
+		return HttpResponse('Invalid Arguments',status=400)
+	
 	res = {
 		'revenue': 0
 	}
-	for inv in invoices:
-		curr_date = date.today()
-		if curr_date - inv['Date']
-			res['revenue'] += inv['Balance_Due']
+
+	check_limit = lambda d, limit: ( date.today() - d ).days > limit 
+
+	if not cycleE and not cycleS:
+		for i in range( 0, len(invs)):
+			inv = invs[i]
+			clients = Client.object().filter(Client_Id=inv['Client_Id_id'])
+			if clients is None or len(clients) <= 0:
+				break 
+			if curr_year is not inv['Date'].year :
+				break
+
+			if sMonth <= inv['Date'].month and eMonth >= inv['Date'].month and check_limit(inv['Date'], clients[0]['Day_Limit']):
+				res['revenue'] += inv['Balance_Due']
+	elif cycleE and not cycleS:
+		for i in range( 0 , len( invs ) ):
+			inv = invs[i]
+			
+			clients = Client.object().filter(Client_Id=inv['Client_Id_id'])
+			if clients is None or len(clients) <= 0:
+				break 
+
+			if eMonth >= inv['Date'].month and curr_year is inv['Date'].year and check_limit(inv['Date'], clients[0]['Day_Limit']):
+				res['revenue'] += inv['Balance_Due']
+			elif sMonth <= inv['Date'].month and curr_year is not inv['Date'].year and check_limit(inv['Date'], clients[0]['Day_Limit']):
+				res['revenue'] += inv['Balance_Due']
+	elif cycleS and cycleE:
+		for i in range( 0 , len( invs ) ):
+			inv = invs[i]
+			
+			clients = Client.object().filter(Client_Id=inv['Client_Id_id'])
+			if clients is None or len(clients) <= 0:
+				break 
+
+			if sMonth <= inv['Date'].month and curr_year is not inv['Date'].year and eMonth >= inv['Date'].month and check_limit(inv['Date'], clients[0]['Day_Limit']):
+				res['revenue'] += inv['Balance_Due']
+
 	return JsonResponse(res,safe=True)
 
+<<<<<<< HEAD
+=======
+
+@csrf_exempt
+@post('accessToken','token','startMonth','endMonth')
+def profit(request):
+
+	rSMonth = request.POST['startMonth']
+	rEMonth = request.POST['endMonth']
+	currMonth = date.today().month
+	
+	cycleS = True if currMonth < rSMonth else False
+	cycleE = True if currMonth < rEMonth else False
+	sMonth = abs( currMonth - rSMonth )
+	eMonth = abs( currMonth - rEMonth )
+
+	invoices = Invoice.objects.all().order_by('-Date').values()
+	if invoices is None or len( invoices ) <= 0 :
+		return HttpResponse('Invoice not found',status=400)
+	invs_y = [invoices[0]]
+	invs = []
+	curr_year = invs_y[0]['Date'].year
+	for i in invoices:
+		y = i['Date'].year
+		invs.append(i)
+		if y < curr_year:
+			invs_y.append(i)
+			invs.append(i)
+			break
+	if len( invs_y ) == 1 and cycleS and cycleE:
+		return HttpResponse('Invalid Arguments',status=400)
+	
+	res = {
+		'profit': []
+	}
+
+	mon = -1
+	prev_mon = None
+	for i in range( 0, len(invs)):
+		rev = 0
+		inv = invs[i]
+		temp_date = inv['Date']
+		temp_month = temp_date.month
+		temp_year = temp_date.year
+		
+		if prev_mon is not temp_month:
+			prev_mon = temp_month
+			mon += 1
+
+		if not cycleE and not cycleS:
+			if curr_year is not temp_year :
+				break
+			if sMonth <= temp_month and eMonth >= temp_month:
+				rev += inv['Balance_Due']
+		elif cycleE and not cycleS:
+			if eMonth >= temp_month and curr_year is temp_year:
+				rev += inv['Balance_Due']
+			elif sMonth <= temp_month and curr_year is not temp_year:
+				rev += inv['Balance_Due']
+		elif cycleS and cycleE:
+			if sMonth <= temp_month and curr_year is not temp_year and eMonth >= temp_month:
+				rev += inv['Balance_Due']
+	
+
+	return JsonResponse(res,safe=True)
+>>>>>>> 10b3c16aa788cb4488a857e09d9c52cc65b9ec15
