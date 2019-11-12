@@ -1,5 +1,5 @@
 #from django.shortcuts import render
-from models import *
+from Application.models import *
 from django.http import JsonResponse,HttpResponse
 from django.contrib.auth.hashers import make_password,check_password
 from datetime import datetime
@@ -74,7 +74,7 @@ def get_iso_date(date_format, date_data):
 	elif DATE_FORMAT.little_endian == date_format.strip(): # dd/mm/yyyy
 		return date(d[2],d[1],d[0])
 	elif DATE_FORMAT.middle_endian == date_format.strip(): # 'mm/dd/yyyy'
-		return  data(d[2],d[0],d[1])
+		return  date(d[2],d[0],d[1])
 	else :
 		raise Exception('Invalid date format')
 
@@ -106,7 +106,7 @@ def get_invoice(client,items,invoice):
 		},
 		'lateFeeRate': client['Late_Fee_Rate']
 		},
-		'id':invoice_id,
+		'id':invoice['Invoice_Id'],
 		'date': get_date( invoice['datefmt'], invoice['Date'] ),
 		'amountDue': invoice['Amount_Due'],
 		'items' : []
@@ -146,8 +146,7 @@ def init(request):
 			return HttpResponse("Invalid Authorisation", status=status[2])
 	
 	lastClientId = Client.objects.all().order_by('-Client_Id')
-	# TODO: add lastExpense
-	# lastExpenseId = .objects.order_by()
+	lastExpenseId = Expense.objects.all().order_by('-Expense_Id')
 	lastInvoiceId = Invoice.objects.all().order_by('-Invoice_Id')
 	lastVendorId = Vendor.objects.all().order_by('-Vendor_Id')
 
@@ -157,6 +156,7 @@ def init(request):
 				'lastClientId' : int(str(lastClientId[0]).split(',')[0].strip()) if len(lastClientId) > 0 else 0,
 				'lastInvoiceId' : int(str(lastInvoiceId[0]).split(',')[0].strip()) if len(lastInvoiceId) > 0 else 0,
 				'lastVendorId' : int(str(lastVendorId[0]).split(',')[0].strip()) if len(lastVendorId) > 0 else 0
+				'lastExpenseId' : int(str(lastExpenseId[0]).split(',')[0].strip()) if len(lastExpenseId) > 0 else 0
 			}
 	}
 
@@ -449,7 +449,7 @@ def latest_invoice(request):
 		for inv in invoices:
 			client = Client.objects.filter(Client_Id=inv['Client_Id_id']).values()
 			items = Item.objects.filter(Invoice_Id_id=inv['Invoice_Id']).values()
-			if items is None or len(items) <= 0 or clients is None or len(clients) <= 0:
+			if items is None or len(items) <= 0 or client is None or len(client) <= 0:
 				return HttpResponse('Client or Items does not exits in database', status=400)
 			res.append(get_invoice(client,items,inv))
 		return JsonResponse(res,safe=True)
@@ -513,6 +513,154 @@ def category_fetch(request):
 	res = {'categories': [cat for cat in Category.objects.all().values_list('Type')]}
 	return JsonResponse(res, safe=True)
 
+
+# Expense Routes
+# Creation
+@csrf_exempt
+@post('accessToken', 'token', 'client')
+def expense_create(request):
+	exp = request.POST['expense']
+	expense = Expense(Category=Category.objects.get(pk=exp['category']), Date=get_iso_date(request.POST['datefmt'], exp['date']), Vendor_Id=Vendor.objects.filter(Vendor_Name=exp['vendor'])[0].Vendor_Id,Description=exp['description'], Amount=float(exp['amount']))
+	expense.save();
+	return HttpResponse('Created Successfully')
+
+
+def _get_expense(expense):
+	return {
+			'category': expense['Category'],
+			'date': expense['Date'],
+			'description': expense['Description'],
+			'amount': expense['Amount'],
+			'vendor': Vendor.objects.filter(pk=expense['Vendor_Id']).values()[0]
+		}
+
+# fetch_latest
+@csrf_exempt
+@post('accessToken', 'token', 'quantity')
+def expense_latest(request):
+	qty = int(request.POST['quantity'])
+	all_expense = Expense.objects.all().order_by("-Expense_Id").values()
+	if all_expense is not None and len(all_expense) >= qty:
+		expenses = all_expense[:qty]
+		res = {'expenses': []}
+		for exp in expenses:
+			expense = _get_expense(exp)
+			res['expenses'].append(expense)
+		return (JsonResponse(res, safe=True))
+	else:
+		return HttpResponse('Quatity Requested is out of bounds', status=400)
+
+
+@csrf_exempt
+@post('accessToken', 'token')
+def expense_fetch(request, expense_id):
+	exp = Expense.objects.filter(Expense_Id=expense_id).values()[0]
+	if (exp is not None):
+		res = {'expense': _get_expense(exp)}
+		return JsonResponse(res, safe=True)
+	else:
+		return HttpResponse('Expense does not exists', status=400)
+
+
+@csrf_exempt
+@post('accessToken', 'token', 'expense')
+def expense_update(request, expense_id):
+	exp = Expense.objects.get(pk=expense_id)
+	if (exp is not None):
+		new_exp = request.POST['expense']
+		datefmt = request.POST['datefmt']
+		exp.Category = new_exp['category']
+		exp.Date = get_iso_date(datefmt, new_exp['date'])
+		vendors = Vendor.objects.filter(Vendor_Name=new_exp['vendor']).values()
+		if (not (vendors is not None and len(vendors) > 0)):
+			return HttpResponse('Vendor does not exists', status=400)
+		exp.Vendor_Id = Vendor.objects.filter(Vendor_Name=new_exp['vendor']).values()[0]['Vendor_Id']
+		exp.Description = new_exp['description']
+		exp.Amount = new_exp['amount']
+		exp.save()
+		return HttpResponse('Save successfully')
+	else:
+		return HttpResponse('Expense does not exists', status=400)
+
+
+@csrf_exempt
+@post('accessToken', 'token', 'expenses')
+def expense_delete(request):
+	exp_ids = request.POST['expenses']
+	for id in exp_ids:
+		Expense.objects.filter(Expense_Id=id).delete()
+	return HttpResponse('Successfully Deleted')
+
+
+
+# Client Routes
+
+@csrf_exempt
+@post('accessToken', 'token', 'client')
+def client_create(request):
+	cli = request.POST['client']
+	client = Client(Fname=cli['firstName'], Lname=cli['lastName'], Address_Line=cli['address']['address1'],
+	 City=cli['address']['city'], Pin_Code=cli['address']['pincode'], State=cli['address']['state'], Country_Name=cli['address']['country'],
+	Day_Limit=cli['dayLimit'], Email=cli['email'], Phone=cli['phone'], Country_Code=cli['countryCode'], Late_Fee_Rate=cli['lateFeeRate'])
+	client.save();
+	return HttpResponse('Created Successfully')
+
+
+@csrf_exempt
+@post('accessToken', 'token', 'quantity')
+def client_latest(request):
+	qty = int(request.POST['quantity'])
+	all_client = Client.objects.all().order_by("-Client_Id").values()
+	if all_client is not None and len(all_client) >= qty:
+		clients = all_client[:qty]
+		res = {'clients': clients}
+		return (JsonResponse(res, safe=True))
+	else:
+		return HttpResponse('Quatity Requested is out of bounds', status=400)
+
+
+@csrf_exempt
+@post('accessToken', 'token')
+def client_fetch(request, client_id):
+	cli = Client.objects.filter(Client_Id=client_id).values()[0]
+	if (cli is not None):
+		res = {'client': cli}
+		return JsonResponse(res, safe=True)
+	else:
+		return HttpResponse('Client does not exists', status=400)
+
+
+@csrf_exempt
+@post('accessToken', 'token', 'client')
+def client_update(request, client_id):
+	cli = Client.objects.get(pk=client_id)
+	if (cli is not None):
+		new_cli = request.POST['client']
+		address = new_cli['address']
+		cli.Fname = new_cli['firstName']
+		cli.Lname = new_cli['lastName']
+		cli.Address_Line = address['address1']
+		cli.City = address['city']
+		cli.Pin_Code = address['pincode']
+		cli.State = address['State']
+		cli.Country_Name = address['country']
+		cli.Country_Code = new_cli['countryCode']
+		cli.Late_Fee_rate = new_cli['lateFeeRate']
+		cli.Phone = new_cli['phone']
+		cli.Email = new_cli['email']
+		cli.Day_Limit = new_cli['dayLimit']
+		cli.save()
+		return HttpResponse('Save successfully')
+	else:
+		return HttpResponse('Expense does not exists', status=400)
+
+@csrf_exempt
+@post('accessToken', 'token', 'clients')
+def client_delete(request):
+	cli_ids = request.POST['clients']
+	for id in cli_ids:
+		Client.objects.filter(Client_Id=id).delete()
+	return HttpResponse('Successfully Deleted')
 
 
 
@@ -773,18 +921,18 @@ def report_revenue(request):
 				break
 			if sMonth <= temp_month and eMonth >= temp_month:
 				rev += inv['Balance_Due']
-				rev_pat['revenue'] += inv['Balace_Due']
+				rev_pat['revenue'] += inv['Balance_Due']
 		elif cycleE and not cycleS:
 			if eMonth >= temp_month and curr_year is temp_year:
 				rev += inv['Balance_Due']
-				rev_pat['revenue'] += inv['Balace_Due']
+				rev_pat['revenue'] += inv['Balance_Due']
 			elif sMonth <= temp_month and curr_year is not temp_year:
 				rev += inv['Balance_Due']
-				rev_pat['revenue'] += inv['Balace_Due']
+				rev_pat['revenue'] += inv['Balance_Due']
 		elif cycleS and cycleE:
 			if sMonth <= temp_month and curr_year is not temp_year and eMonth >= temp_month:
 				rev += inv['Balance_Due']
-				rev_pat['revenue'] += inv['Balace_Due']
+				rev_pat['revenue'] += inv['Balance_Due']
 
 		res['totalRevenue'] = rev
 		for r in temp_rev:
@@ -796,7 +944,26 @@ def report_revenue(request):
 
 	return JsonResponse(res,safe=True)
 
-# TODO: complete this func
+
+
+def _get_expense_by_year(expenses):
+	exps_y = [expenses[0]]
+	exps = []
+	curr_year = exps_y[0]['Date'].year
+	flag = False
+	for i in invoices:
+		y = i['Date'].year
+		exps.append(i)
+		if y < curr_year:
+			if flag :
+				break
+			exps_y.append(i)
+			exps.append(i)
+			curr_year = y
+			flag = True
+	return (len(exps_y),exps)
+
+
 @csrf_exempt
 @post('accessToken','token','startMonth','endMonth','quantity')
 def report_expense(request):
@@ -811,48 +978,49 @@ def report_expense(request):
 	sMonth = abs( currMonth - rSMonth )
 	eMonth = abs( currMonth - rEMonth )
 
-	invoices = Invoice.objects.all().order_by('-Date').values()
+	expense = Expense.objects.all().order_by('-Date').values()
 
-	if invoices is None or len( invoices ) <= 0 :
-		return HttpResponse('Invoice not found',status=400)
+	if expense is None or len( expense ) <= 0 :
+		return HttpResponse('Expense not found',status=400)
 	
-	invs_y,invs = _get_invoices_by_year(invoices)
-	curr_year = invs[0]['Date'].year
+	exps_y,exps = _get_expense_by_year(expense)
+	curr_year = exps[0]['Date'].year
 	if invs_y == 1 and cycleS and cycleE:
 		return HttpResponse('Invalid Arguments',status=400)
 	
 	res = {
-		'revenue':[],
-		'totalRevenue': 0
+		'expense':[],
+		'totalExpense': 0
 	}
 
 	'''
 	revPat = {
-		'client':
-		'revenue':
+		'vendor':
+		'expense':
 	}
 	'''
 	temp_rev = []
 
 	rev = 0
-	for i in range( 0, len(invs)):
+	for i in range( 0, len(exps)):
 		if qty is 0:
 			break
 		qty -= 1
 
-		inv = invs[i]
-		temp_date = inv['Date']
+		exps = exps[i]
+		temp_date = exps['Date']
 		temp_month = temp_date.month
 		temp_year = temp_date.year
-		clients = Client.objects.filter(Client_Id=inv['Client_Id_id']).values()
-		if clients is None or len(clients) <= 0:
+		vendor = Vendor.objects.filter(Vendor_Id=exps['Vendor_Id_id']).values()
+		if vendor is None or len(vendor) <= 0:
 			return HttpResponse('Database is correpted', status=500)
 
-		name = f"{clients[0]['Fname']} {clients[0]['Lname']}"
+		name = vendor[0]['Vendor_Name']
+
 		rev_pat = {
-			'client': name,
-			'revenue': 0,
-			'id' : clients[0]['Client_Id']
+			'vendor': name,
+			'expense': 0,
+			'id' : vendor[0]['Vendor_Id']
 		} 
 
 		idx = 0
@@ -870,27 +1038,26 @@ def report_expense(request):
 			if curr_year is not temp_year :
 				break
 			if sMonth <= temp_month and eMonth >= temp_month:
-				rev += inv['Balance_Due']
-				rev_pat['revenue'] += inv['Balace_Due']
+				rev += exps['Amount']
+				rev_pat['expense'] += exps['Amount']
 		elif cycleE and not cycleS:
 			if eMonth >= temp_month and curr_year is temp_year:
-				rev += inv['Balance_Due']
-				rev_pat['revenue'] += inv['Balace_Due']
+				rev += exps['Amount']
+				rev_pat['expense'] += exps['Amount']
 			elif sMonth <= temp_month and curr_year is not temp_year:
-				rev += inv['Balance_Due']
-				rev_pat['revenue'] += inv['Balace_Due']
+				rev += exps['Amount']
+				rev_pat['expense'] += exps['Amount']
 		elif cycleS and cycleE:
 			if sMonth <= temp_month and curr_year is not temp_year and eMonth >= temp_month:
-				rev += inv['Balance_Due']
-				rev_pat['revenue'] += inv['Balace_Due']
+				rev += exps['Amount']
+				rev_pat['expense'] += exps['Amount']
 
-		res['totalRevenue'] = rev
+		res['totalExpense'] = rev
 		for r in temp_rev:
 			rev_pat = {
-				'client': r['client'],
-				'revenue': r['revenue']
+				'vendor': r['vendor'],
+				'expense': r['expense']
 			}
-			res['revenue'].append(rev_pat)
+			res['expense'].append(rev_pat)
 
 	return JsonResponse(res,safe=True)
-

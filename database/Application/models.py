@@ -28,19 +28,19 @@ class Company(models.Model):
 	Address_Line=models.TextField()
 	City=models.CharField(max_length=30)
 	#The Pin_Code field is added after creation of table thus need to set a default value
-	Pin_Code=models.PositiveSmallIntegerField(default=0)
+	Pin_Code=models.PositiveIntegerField()
 	Country_Code=models.CharField(max_length=5)
 	Country_Name=models.TextField()
 	State=models.CharField(max_length=30)
 	Email=models.EmailField()
-	Phone=models.PositiveSmallIntegerField()
+	Phone=models.PositiveIntegerField()
 	Tax_Rate=models.FloatField()
 	Base_Currency=models.ForeignKey(Currency,on_delete=models.CASCADE,default="")
 	Date_Format=models.CharField(max_length='10')
 
 	def __str__(self):
 		return (str(self.Company_Id)+','+self.Company_Name+', ('+self.Address_Line+','+self.City+','+
-			   self.State+') ,'+self.Email+','+str(self.Phone)+','+str(self.Date)+','+str(self.Tax_Rate) )
+			   self.State+') ,'+self.Email+','+str(self.Phone)+','+','+str(self.Tax_Rate) )
 
 class User(models.Model):
 	User_Id=models.AutoField(primary_key=True)
@@ -58,7 +58,7 @@ class User(models.Model):
 	Password=models.CharField(max_length=100,default="")
 	Phone=models.IntegerField(max_length=10)
 	Auth_Level=models.PositiveSmallIntegerField()
-	Comp_Id = models.ForeignKey(Company, on_delete=models.CASCADE)
+	Comp_Id = models.ForeignKey(Company, on_delete=models.DO_NOTHING)
 
 	def __str__(self):
 		return f"{self.User_Id}, {self.Fname}, {self.Lname}, ( {self.Address_Line}, {self.City}, {self.State}), {self.Email}, {self.Phone}, {self.Auth_Level}"
@@ -90,7 +90,7 @@ class Vendor(models.Model):
 	Vendor_Category=models.CharField(max_length=10)
 	Address_Line=models.TextField()
 	City=models.CharField(max_length=30)
-	Pin_Code=models.PositiveSmallIntegerField()
+	Pin_Code=models.PositiveIntegerField()
 	Country_Name=models.TextField()
 	Country_Code=models.CharField(max_length=5)
 	State=models.CharField(max_length=30)
@@ -100,6 +100,17 @@ class Vendor(models.Model):
 	def __str__(self):
 		return(str(self.Vendor_Id)+','+self.Vendor_Name+','+self.Vendor_Category+','+self.Address_Line+','+
 			   self.City+','+self.State+','+ str(self.Pin_Code) +','+self.Email+','+ str(self.Phone) ) 
+
+class Category(models.Model):
+	Type = models.TextField(primary_key=True)
+
+class Expense(models.Model):
+	Expense_Id=models.AutoField(primary_key=True)
+	Category_Id=models.ForeignKey(Category,on_delete=models.DO_NOTHING)
+	Date=models.DateField()
+	Vendor_Id=models.ForeignKey(Vendor,on_delete=models.DO_NOTHING)
+	Description=models.TextField()
+	Amount=models.FloatField()
 
 class Account(models.Model):
 	Account_Id=models.AutoField(primary_key=True)
@@ -115,15 +126,15 @@ class Account(models.Model):
 			   str(self.Due_Date))
 
 class Vendor_Account(models.Model):
-    Vendor_Id=models.ForeignKey(Vendor, on_delete=models.CASCADE)
-    Account_Id=models.ForeignKey(Account,on_delete=models.CASCADE)
+    Vendor_Id=models.ForeignKey(Vendor, on_delete=models.DO_NOTHING)
+    Account_Id=models.ForeignKey(Account,on_delete=models.DO_NOTHING)
 
 class Client_Account(models.Model):
-    Client_Id=models.ForeignKey(Client, on_delete=models.CASCADE)
-    Account_Id=models.ForeignKey(Account, on_delete=models.CASCADE)
+    Client_Id=models.ForeignKey(Client, on_delete=models.DO_NOTHING)
+    Account_Id=models.ForeignKey(Account, on_delete=models.DO_NOTHING)
     
 class Transactions(models.Model):
-    Account_Id=models.ForeignKey(Account, on_delete=models.CASCADE)
+    Account_Id=models.ForeignKey(Account, on_delete=models.DO_NOTHING)
     Transaction_Id=models.AutoField(primary_key=True)
     Transaction_Date=models.DateField()
     Transaction_amt=models.FloatField()
@@ -142,7 +153,7 @@ class Quotes(models.Model):
 
 class Invoice(models.Model):
 	Invoice_Id = models.AutoField(primary_key=True)
-	Client_Id = models.ForeignKey(Client, on_delete=models.CASCADE)
+	Client_Id = models.ForeignKey(Client, on_delete=models.DO_NOTHING)
 	Date = models.DateField()
 	Amount_Due = models.FloatField()
 	Amount_Paid = models.FloatField()
@@ -161,12 +172,7 @@ class Item(models.Model):
 	Rate = models.FloatField()
 	Quantity = models.IntegerField()
 	Price = models.FloatField()
-	Invoice_Id = models.ForeignKey(Invoice,on_delete=models.CASCADE)
+	Invoice_Id = models.ForeignKey(Invoice,on_delete=models.DO_NOTHING)
 
 	def __str__(self):
 		return f"{self.Item_Id}, ( {self.Name} ), ( {self.Description} ), {self.Rate}, {self.Quantity}, {self.Price}"
-
-
-class Category(models.Model):
-	Cat_Id = models.AutoField(primary_key=True)
-	Type = models.TextField()
