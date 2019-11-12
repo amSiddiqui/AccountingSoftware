@@ -116,6 +116,20 @@ const data = {
       'SBI',
       'ICICI'
   ],
+  vendor: [
+  {
+    name: 'ABC',
+    phone: '98345621',
+    email: 'abc@example.com',
+    address: {
+      address1: 'Some Address',
+      city: 'Some City',
+      state: 'Some State',
+      country: 'Some Country',
+      pincode: '100010',
+    }
+  }
+],
   categories : [
      'Education', 'Food', 'Advertising'
  ],

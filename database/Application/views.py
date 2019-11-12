@@ -521,7 +521,7 @@ def category_fetch(request):
 @post('accessToken', 'token', 'client')
 def expense_create(request):
 	exp = request.POST['expense']
-	expense = Expense(Category_Id=Category.objects.get(pk=exp['category']), Date=get_iso_date(request.POST['datefmt'], exp['date']), Vendor_Id=Vendor.objects.filter(Vendor_Name=exp['vendor'])[0].Vendor_Id,Description=exp['description'], Amount=float(exp['amount']))
+	expense = Expense(Category_Id=Category.objects.filter(Type=exp['category'])[0]['Type'], Date=get_iso_date(request.POST['datefmt'], exp['date']), Vendor_Id=Vendor.objects.filter(Vendor_Name=exp['vendor'])[0].Vendor_Id,Description=exp['description'], Amount=float(exp['amount']))
 	expense.save();
 	return HttpResponse('Created Successfully')
 
