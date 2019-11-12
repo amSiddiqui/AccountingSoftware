@@ -1,5 +1,5 @@
 #from django.shortcuts import render
-from Application.models import *
+from models import *
 from django.http import JsonResponse,HttpResponse
 from django.contrib.auth.hashers import make_password,check_password
 from datetime import datetime
@@ -516,9 +516,28 @@ def category_fetch(request):
 
 
 
+
+def _get_invoices_by_year(invoices):
+	invs_y = [invoices[0]]
+	invs = []
+	curr_year = invs_y[0]['Date'].year
+	flag = False
+	for i in invoices:
+		y = i['Date'].year
+		invs.append(i)
+		if y < curr_year:
+			if flag :
+				break
+			invs_y.append(i)
+			invs.append(i)
+			curr_year = y
+			flag = True
+	return (len(invs_y),invs)
+
+
 @csrf_exempt
 @post('accessToken','token','startMonth','endMonth')
-def outstandingRevenue(request):
+def report_outstandingRevenue(request):
 	rSMonth = request.POST['startMonth']
 	rEMonth = request.POST['endMonth']
 	currMonth = date.today().month
@@ -531,17 +550,11 @@ def outstandingRevenue(request):
 	invoices = Invoice.objects.all().order_by('-Date').values()
 	if invoices is None or len( invoices ) <= 0 :
 		return HttpResponse('Invoice not found',status=400)
-	invs_y = [invoices[0]]
-	invs = []
-	curr_year = invs_y[0]['Date'].year
-	for i in invoices:
-		y = i['Date'].year
-		invs.append(i)
-		if y < curr_year:
-			invs_y.append(i)
-			invs.append(i)
-			break
-	if len( invs_y ) == 1 and cycleS and cycleE:
+	
+	invs_y,invs = _get_invoices_by_year(invoices)
+	curr_year = invs[0]['Date'].year
+	
+	if invs_y == 1 and cycleS and cycleE:
 		return HttpResponse('Invalid Arguments',status=400)
 	
 	res = {
@@ -572,7 +585,7 @@ def outstandingRevenue(request):
 
 @csrf_exempt
 @post('accessToken','token','startMonth','endMonth')
-def overdue(request):
+def report_overdue(request):
 	rSMonth = request.POST['startMonth']
 	rEMonth = request.POST['endMonth']
 	currMonth = date.today().month
@@ -585,17 +598,11 @@ def overdue(request):
 	invoices = Invoice.objects.all().order_by('-Date').values()
 	if invoices is None or len( invoices ) <= 0 :
 		return HttpResponse('Invoice not found',status=400)
-	invs_y = [invoices[0]]
-	invs = []
-	curr_year = invs_y[0]['Date'].year
-	for i in invoices:
-		y = i['Date'].year
-		invs.append(i)
-		if y < curr_year:
-			invs_y.append(i)
-			invs.append(i)
-			break
-	if len( invs_y ) == 1 and cycleS and cycleE:
+	
+	invs_y,invs = _get_invoices_by_year(invoices)
+	curr_year = invs[0]['Date'].year
+	
+	if invs_y == 1 and cycleS and cycleE:
 		return HttpResponse('Invalid Arguments',status=400)
 	
 	res = {
@@ -640,10 +647,9 @@ def overdue(request):
 
 	return JsonResponse(res,safe=True)
 
-
 @csrf_exempt
 @post('accessToken','token','startMonth','endMonth')
-def profit(request):
+def report_profit(request):
 
 	rSMonth = request.POST['startMonth']
 	rEMonth = request.POST['endMonth']
@@ -655,27 +661,20 @@ def profit(request):
 	eMonth = abs( currMonth - rEMonth )
 
 	invoices = Invoice.objects.all().order_by('-Date').values()
+	total_sum = Invoice.objects.aggregate(Sum('Total'))
+
 	if invoices is None or len( invoices ) <= 0 :
 		return HttpResponse('Invoice not found',status=400)
-	invs_y = [invoices[0]]
-	invs = []
-	curr_year = invs_y[0]['Date'].year
-	for i in invoices:
-		y = i['Date'].year
-		invs.append(i)
-		if y < curr_year:
-			invs_y.append(i)
-			invs.append(i)
-			break
-	if len( invs_y ) == 1 and cycleS and cycleE:
+	
+	invs_y,invs = _get_invoices_by_year(invoices)
+	curr_year = invs[0]['Date'].year
+	if invs_y == 1 and cycleS and cycleE:
 		return HttpResponse('Invalid Arguments',status=400)
 	
 	res = {
 		'profit': []
 	}
 
-	mon = -1
-	prev_mon = None
 	for i in range( 0, len(invs)):
 		rev = 0
 		inv = invs[i]
@@ -683,10 +682,6 @@ def profit(request):
 		temp_month = temp_date.month
 		temp_year = temp_date.year
 		
-		if prev_mon is not temp_month:
-			prev_mon = temp_month
-			mon += 1
-
 		if not cycleE and not cycleS:
 			if curr_year is not temp_year :
 				break
@@ -700,6 +695,202 @@ def profit(request):
 		elif cycleS and cycleE:
 			if sMonth <= temp_month and curr_year is not temp_year and eMonth >= temp_month:
 				rev += inv['Balance_Due']
-	
+		res['profit'].append( total_sum - rev )
 
 	return JsonResponse(res,safe=True)
+
+@csrf_exempt
+@post('accessToken','token','startMonth','endMonth','quantity')
+def report_revenue(request):
+
+	rSMonth = request.POST['startMonth']
+	rEMonth = request.POST['endMonth']
+	qty = request.POST['quantity']
+	currMonth = date.today().month
+	
+	cycleS = True if currMonth < rSMonth else False
+	cycleE = True if currMonth < rEMonth else False
+	sMonth = abs( currMonth - rSMonth )
+	eMonth = abs( currMonth - rEMonth )
+
+	invoices = Invoice.objects.all().order_by('-Date').values()
+
+	if invoices is None or len( invoices ) <= 0 :
+		return HttpResponse('Invoice not found',status=400)
+	
+	invs_y,invs = _get_invoices_by_year(invoices)
+	curr_year = invs[0]['Date'].year
+	if invs_y == 1 and cycleS and cycleE:
+		return HttpResponse('Invalid Arguments',status=400)
+	
+	res = {
+		'revenue':[],
+		'totalRevenue': 0
+	}
+
+	'''
+	revPat = {
+		'client':
+		'revenue':
+	}
+	'''
+	temp_rev = []
+
+	rev = 0
+	for i in range( 0, len(invs)):
+		if qty is 0:
+			break
+		qty -= 1
+
+		inv = invs[i]
+		temp_date = inv['Date']
+		temp_month = temp_date.month
+		temp_year = temp_date.year
+		clients = Client.objects.filter(Client_Id=inv['Client_Id_id']).values()
+		if clients is None or len(clients) <= 0:
+			return HttpResponse('Database is correpted', status=500)
+
+		name = f"{clients[0]['Fname']} {clients[0]['Lname']}"
+		rev_pat = {
+			'client': name,
+			'revenue': 0,
+			'id' : clients[0]['Client_Id']
+		} 
+
+		idx = 0
+		for i in range( 0, len( temp_rev ) ):
+			r = temp_rev[i]
+			if r['id'] is rev_pat['id']:
+				rev_pat = r
+				idx = i
+				break
+		if idx is 0:
+			temp_rev.append(rev_pat)
+			idx = len( temp_rev ) - 1
+			
+		if not cycleE and not cycleS:
+			if curr_year is not temp_year :
+				break
+			if sMonth <= temp_month and eMonth >= temp_month:
+				rev += inv['Balance_Due']
+				rev_pat['revenue'] += inv['Balace_Due']
+		elif cycleE and not cycleS:
+			if eMonth >= temp_month and curr_year is temp_year:
+				rev += inv['Balance_Due']
+				rev_pat['revenue'] += inv['Balace_Due']
+			elif sMonth <= temp_month and curr_year is not temp_year:
+				rev += inv['Balance_Due']
+				rev_pat['revenue'] += inv['Balace_Due']
+		elif cycleS and cycleE:
+			if sMonth <= temp_month and curr_year is not temp_year and eMonth >= temp_month:
+				rev += inv['Balance_Due']
+				rev_pat['revenue'] += inv['Balace_Due']
+
+		res['totalRevenue'] = rev
+		for r in temp_rev:
+			rev_pat = {
+				'client': r['client'],
+				'revenue': r['revenue']
+			}
+			res['revenue'].append(rev_pat)
+
+	return JsonResponse(res,safe=True)
+
+# TODO: complete this func
+@csrf_exempt
+@post('accessToken','token','startMonth','endMonth','quantity')
+def report_expense(request):
+
+	rSMonth = request.POST['startMonth']
+	rEMonth = request.POST['endMonth']
+	qty = request.POST['quantity']
+	currMonth = date.today().month
+	
+	cycleS = True if currMonth < rSMonth else False
+	cycleE = True if currMonth < rEMonth else False
+	sMonth = abs( currMonth - rSMonth )
+	eMonth = abs( currMonth - rEMonth )
+
+	invoices = Invoice.objects.all().order_by('-Date').values()
+
+	if invoices is None or len( invoices ) <= 0 :
+		return HttpResponse('Invoice not found',status=400)
+	
+	invs_y,invs = _get_invoices_by_year(invoices)
+	curr_year = invs[0]['Date'].year
+	if invs_y == 1 and cycleS and cycleE:
+		return HttpResponse('Invalid Arguments',status=400)
+	
+	res = {
+		'revenue':[],
+		'totalRevenue': 0
+	}
+
+	'''
+	revPat = {
+		'client':
+		'revenue':
+	}
+	'''
+	temp_rev = []
+
+	rev = 0
+	for i in range( 0, len(invs)):
+		if qty is 0:
+			break
+		qty -= 1
+
+		inv = invs[i]
+		temp_date = inv['Date']
+		temp_month = temp_date.month
+		temp_year = temp_date.year
+		clients = Client.objects.filter(Client_Id=inv['Client_Id_id']).values()
+		if clients is None or len(clients) <= 0:
+			return HttpResponse('Database is correpted', status=500)
+
+		name = f"{clients[0]['Fname']} {clients[0]['Lname']}"
+		rev_pat = {
+			'client': name,
+			'revenue': 0,
+			'id' : clients[0]['Client_Id']
+		} 
+
+		idx = 0
+		for i in range( 0, len( temp_rev ) ):
+			r = temp_rev[i]
+			if r['id'] is rev_pat['id']:
+				rev_pat = r
+				idx = i
+				break
+		if idx is 0:
+			temp_rev.append(rev_pat)
+			idx = len( temp_rev ) - 1
+			
+		if not cycleE and not cycleS:
+			if curr_year is not temp_year :
+				break
+			if sMonth <= temp_month and eMonth >= temp_month:
+				rev += inv['Balance_Due']
+				rev_pat['revenue'] += inv['Balace_Due']
+		elif cycleE and not cycleS:
+			if eMonth >= temp_month and curr_year is temp_year:
+				rev += inv['Balance_Due']
+				rev_pat['revenue'] += inv['Balace_Due']
+			elif sMonth <= temp_month and curr_year is not temp_year:
+				rev += inv['Balance_Due']
+				rev_pat['revenue'] += inv['Balace_Due']
+		elif cycleS and cycleE:
+			if sMonth <= temp_month and curr_year is not temp_year and eMonth >= temp_month:
+				rev += inv['Balance_Due']
+				rev_pat['revenue'] += inv['Balace_Due']
+
+		res['totalRevenue'] = rev
+		for r in temp_rev:
+			rev_pat = {
+				'client': r['client'],
+				'revenue': r['revenue']
+			}
+			res['revenue'].append(rev_pat)
+
+	return JsonResponse(res,safe=True)
+
