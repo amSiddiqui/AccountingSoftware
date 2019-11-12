@@ -104,9 +104,6 @@ class Vendor(models.Model):
 		return(str(self.Vendor_Id)+','+self.Vendor_Name+','+self.Vendor_Category+','+self.Address_Line+','+
 			   self.City+','+self.State+','+ str(self.Pin_Code) +','+self.Email+','+ str(self.Phone) ) 
 
-class Category(models.Model):
-	Type = models.TextField(primary_key=True)
-
 class Expense(models.Model):
 	Expense_Id=models.AutoField(primary_key=True)
 	Category_Id=models.ForeignKey(Category,on_delete=models.DO_NOTHING)
