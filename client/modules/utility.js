@@ -33,7 +33,7 @@ module.exports = {
             }else {
                 res.redirect(`${currOpt['failedRedirect']}`);
             }
-        }
+        };
     },
 
     validateObj : (obj, param)=>{

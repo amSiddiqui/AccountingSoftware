@@ -73,7 +73,7 @@ router.get('/create', (req, res, next) => {
     else{
       res.redirect('/dashboard');
     }
-  })
+  });
 });
 
 router.post('/', (req, res) => {
@@ -102,16 +102,16 @@ router.post('/', (req, res) => {
         amountDue: 200,
         total:270,
         currency: '£ (GBP)',
-      }
+      };
       // TODO: Push data into database using axios
       axios.post(config.url+'/client/create/',{
           token: user.token,
           accessToken: accessToken,
           client: params,
       }).then(response => {
-          console.log('Client Added')
+          console.log('Client Added');
 
-          res.render('/client')
+          res.render('/client');
           }).catch(err => {
           console.error(err);
           res.render('error', {
@@ -125,7 +125,7 @@ router.post('/', (req, res) => {
     else{
       res.redirect('/dashboard');
     }
-  })
+  });
 });
 
 
@@ -141,7 +141,7 @@ router.get('/:id/edit/', (req, res, next) => {
         res.render('client/edit',{
           client:client,
           countryCode: utilData.country.countryCode,
-        })
+        });
       }).catch(error =>{
         console.log(error);
         res.redirect('error',{message: dbErrorMsg});
@@ -154,10 +154,10 @@ router.get('/:id/edit/', (req, res, next) => {
       // });
     }
     else{
-      res.redirect('/dashboard')
+      res.redirect('/dashboard');
     }
 
-  })
+  });
 });
 
 router.put('/:id',(req,res) => {
@@ -168,7 +168,7 @@ router.put('/:id',(req,res) => {
         token: user.token,
         accessToken: accessToken,
       }).then(res1 =>{
-          res1 = res1.data
+          res1 = res1.data;
           for(var i in res1){
             if(res1[i].id === req.params.id){
               res1[i].firstName = req.body.firstName;
@@ -195,7 +195,7 @@ router.put('/:id',(req,res) => {
             res.render('/client/'+req.params.id);
           }).catch(error => {
             console.log(error);
-            res.render('error',{message:dbErrorMsg})
+            res.render('error',{message:dbErrorMsg});
           });
         });
     }
@@ -217,7 +217,7 @@ router.put('/:id',(req,res) => {
       // }
 
     else{
-      res.redirect('/dashboard')
+      res.redirect('/dashboard');
     }
   });
 });
@@ -296,7 +296,7 @@ router.delete('/delete',(req,res,next) =>{
         client: client
       })
       .then(response => {
-        console.log(response)
+        console.log(response);
       })
       .catch(err => {
         console.log(err);
@@ -313,7 +313,7 @@ router.delete('/delete',(req,res,next) =>{
 router.delete('/:id/delete',(req,res,next) =>{
   util.authCheck(req ,(user) =>{
     if(user){
-      var ids = []
+      var ids = [];
       ids = req.body.row;
 
       axios.post(config.url + 'invoice/delete/', {

@@ -15,13 +15,13 @@ router.get('/', (req, res, next) => {
   util.authCheck(req, (user) => {
     if (user) {
       var total = 0;
-      var exp = []
+      var exp = [];
       axios.post(config.url + '/expense/', {
         token: user.token,
         accessToken: accessToken,
         quantity: 15,
       }).then(response => {
-        expense = response.data.expense
+        expense = response.data.expense;
         expense.forEach((expense) => {
           total += expense.subtotal;
         });
@@ -45,9 +45,9 @@ router.get('/', (req, res, next) => {
       });
 
     } else {
-      res.redirect('/dashboard')
+      res.redirect('/dashboard');
     }
-  })
+  });
 });
 
 router.get('/create', (req, res, next) => {
@@ -61,7 +61,7 @@ router.get('/create', (req, res, next) => {
     } else {
       res.redirect('/dashboard');
     }
-  })
+  });
 });
 
 router.post('/', (req, res) => {
@@ -78,7 +78,7 @@ router.post('/', (req, res) => {
         countryCode: req.body.countryCode,
         description: req.body.description,
         subtotal: req.body.subtotal,
-      }
+      };
       id++;
       // seeds.pseudoExpense.push(params);
 
@@ -99,7 +99,7 @@ router.post('/', (req, res) => {
       });
 
     } else {
-      res.redirect('/dashboard')
+      res.redirect('/dashboard');
     }
   });
 });
@@ -116,7 +116,7 @@ router.get('/:id/edit', (req, res, next) => {
         countryCode: seeds.countryCode,
       });
     } else {
-      res.redirect('/dashboard')
+      res.redirect('/dashboard');
     }
   });
 });
@@ -159,13 +159,13 @@ router.put('/:id', (req, res) => {
 
             res.render('/expense/' + req.params.id);
           }).catch(error => {
-            console.log(error)
+            console.log(error);
             res.render('/error', {
               message: dbErrorMsg
             });
           });
         }).catch(err => {
-          console.log(error)
+          console.log(error);
           res.render('/error', {
             message: dbErrorMsg
           });
@@ -185,7 +185,7 @@ router.put('/:id', (req, res) => {
         //   }
 
       }).catch(err => {
-        console.log(error)
+        console.log(error);
         res.render('/error', {
           message: dbErrorMsg
         });
