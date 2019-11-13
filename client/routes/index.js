@@ -125,63 +125,69 @@ router.post('/signup', (req, res) => {
 
 
 router.get('/dashboard',  (req, res) => {
-    var outstandingRevenue = utilData.outstandingRevenue;
-    var percent = (utilData.outstandingRevenue / 70000.0) * 100.0; 
-    var currency = req.cookies.user.company.currency;
-    var rev_clients = [];
-    var revenue = [];
-    var exp_vendor = [];
-    var expenditure = [];
-    utilData.revenueStream.forEach(rev => {
-        rev_clients.push(rev.client);
-        revenue.push(rev.revenue);
-    });
-
-    utilData.spending.forEach(data => {
-        exp_vendor.push(data.vendor);
-        expenditure.push(data.spent);
-    });
-
-    var totalRev = inKNotation(utilData.totalRevenue);
-
-    
-    var totalExp = inKNotation(utilData.totalSpending);
-
-    var overdue = inKNotation(utilData.overdue);
-
-    var unb_clients = [];
-    var unb_days = [];
-    var unb_dues = [];
-    utilData.unbilledTimes.forEach(unb => {
-        unb_clients.push(unb.client);
-        unb_days.push(unb.time);
-        unb_dues.push(unb.due);
-    });
-
-    res.render('dashboard', {
-        quote: {quote: 'You miss 100 percent of the shots you don’t take.', author: 'Wayne Gretzky'},
-        percent: percent,
-        outstandingRevenue: new Intl.NumberFormat().format(outstandingRevenue),
-        currency: currency.substring(0, 1),
-        profit: utilData.profit,
-        totalProfit: utilData.totalProfit,
-        revStream: {
-            clients: rev_clients,
-            revenue: revenue,
-            total: totalRev
-        },
-        expense: {
-            vendors: exp_vendor,
-            expenditure: expenditure,
-            total: totalExp
-        },
-        unbilled: {
-            clients: unb_clients,
-            days: unb_days,
-            dues: unb_dues,
-            total: overdue
+    util.authCheck(req,user=>{
+        if( !user ){
+            res.redirect('/login');
+            return;
         }
-    });
+        var outstandingRevenue = utilData.outstandingRevenue;
+        var percent = (utilData.outstandingRevenue / 70000.0) * 100.0; 
+        var currency = req.cookies.user.company.currency;
+        var rev_clients = [];
+        var revenue = [];
+        var exp_vendor = [];
+        var expenditure = [];
+        utilData.revenueStream.forEach(rev => {
+            rev_clients.push(rev.client);
+            revenue.push(rev.revenue);
+        });
+    
+        utilData.spending.forEach(data => {
+            exp_vendor.push(data.vendor);
+            expenditure.push(data.spent);
+        });
+    
+        var totalRev = inKNotation(utilData.totalRevenue);
+    
+        
+        var totalExp = inKNotation(utilData.totalSpending);
+    
+        var overdue = inKNotation(utilData.overdue);
+    
+        var unb_clients = [];
+        var unb_days = [];
+        var unb_dues = [];
+        utilData.unbilledTimes.forEach(unb => {
+            unb_clients.push(unb.client);
+            unb_days.push(unb.time);
+            unb_dues.push(unb.due);
+        });
+    
+        res.render('dashboard', {
+            quote: {quote: 'You miss 100 percent of the shots you don’t take.', author: 'Wayne Gretzky'},
+            percent: percent,
+            outstandingRevenue: new Intl.NumberFormat().format(outstandingRevenue),
+            currency: currency.substring(0, 1),
+            profit: utilData.profit,
+            totalProfit: utilData.totalProfit,
+            revStream: {
+                clients: rev_clients,
+                revenue: revenue,
+                total: totalRev
+            },
+            expense: {
+                vendors: exp_vendor,
+                expenditure: expenditure,
+                total: totalExp
+            },
+            unbilled: {
+                clients: unb_clients,
+                days: unb_days,
+                dues: unb_dues,
+                total: overdue
+            }
+        });
+    })
 });
 
 function inKNotation(val) {

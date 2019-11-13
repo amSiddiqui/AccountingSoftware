@@ -5,6 +5,7 @@ const seeds = require('../seeds');
 const bodyParser = require('body-parser');
 const app = express();
 const config = require('../config/config');
+const axios = require('axios')
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -20,12 +21,12 @@ router.get('/', (req, res, next) => {
       var client = [];
       //TODO: fetch total ,outstanding,overdue,draft
       // TODO: Use axios
-      axios.post(config.url + '/client/latest',{
+      axios.post(config.url + '/client/latest/',{
         token:user.token,
         accessToken:accessToken,
         quantity: 15,
       }).then( response => {
-        client = response.data.client;
+        client = response.data.clients;
         client.forEach(function(client){
           outstanding += client.amountDue;
           total += client.total;
@@ -35,7 +36,7 @@ router.get('/', (req, res, next) => {
           totalOutstanding: outstanding,
           totalOverdue: outstanding,
           totalDraft: outstanding,
-          currency: utilData.company.currency,
+          currency: user.company.currency,
           total: total,
         });
       }).catch( err=>{
@@ -67,7 +68,7 @@ router.get('/create', (req, res, next) => {
     if(user){
       //TODO: Fetch all contryCode set from database
       res.render('client/create', {
-        countryCode: utilData.company.countryCode,
+        countryCode: user.company.countryCode,
       });
     }
     else{
@@ -140,7 +141,7 @@ router.get('/:id/edit/', (req, res, next) => {
         var client = response.data.client;
         res.render('client/edit',{
           client:client,
-          countryCode: utilData.country.countryCode,
+          countryCode: user.country.countryCode,
         })
       }).catch(error =>{
         console.log(error);
@@ -230,7 +231,7 @@ router.get('/:id', (req, res, next) => {
       dueSum = 0;
       total = 0;
       //TODO: fetch overdue for of client with clientID
-      axios.post(config.url+ `/client/${req.params.id}`,{
+      axios.post(config.url+ `/client/${req.params.id}/`,{
         accessToken:accessToken,
         token:user.token,
         months:1,
@@ -249,7 +250,7 @@ router.get('/:id', (req, res, next) => {
             invoice: clientInvoice,
             totalDue: dueSum,
             total: total,
-            currency:utilData.company.currency,
+            currency:user.company.currency,
           });
 
       }).catch(err =>{
@@ -338,7 +339,7 @@ router.delete('/:id/delete',(req,res,next) =>{
       //   }
       // }
 
-      // axios.post(config.url + "/client/delete", {
+      // axios.post(config.url + "/client/delete/", {
       //   token: user.token,
       //   accessToken: accessToken,
       //   client: client
