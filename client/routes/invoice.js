@@ -2,7 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 const util = require('../modules/utility');
-
+const config = require('../config/config');
 const seeds = require('../seeds');
 const bodyParser = require('body-parser');
 const app = express();
@@ -14,6 +14,11 @@ router.get('/', (req, res, next) => {
     util.authCheck(req, (user) => {
         if (user) {
             // TODO: use axios
+            // axios.post(config.url + '/invoice/',{
+            //   token:user.token,
+            //   accessToken:accessToken,
+            // }).then( response)
+
             var invoiceData = seeds.invoiceGenData;
             var allInvoices = seeds.invoices;
             var recentInvoices = allInvoices.slice(0, 3);
@@ -48,7 +53,7 @@ router.post('/proceed', (req, res, next) => {
             var clientId = req.body.client;
             // Get client from database
             // TODO: Use axio to fetch data
-            // axios.post(dburl+'client/'+clientId, {
+            // axios.post(config.url+'client/'+clientId, {
             //     token: user.token,
             //     accessToken: accessToken
             // }).then(response => {
@@ -125,7 +130,7 @@ router.post('/create', (req, res, next) => {
             };
 
             // Axios post request to save data
-            axios.post(dburl+'invoice/create', {
+            axios.post(config.url+'invoice/create', {
                 accessToken: accessToken,
                 token: user.token,
                 invoice: invoice
@@ -137,7 +142,7 @@ router.post('/create', (req, res, next) => {
             .error(err => {
                 console.error(err);
                 res.render('error', {
-                    message: dbErrorMsg
+                    message: err.response.data,
                 });
             });
 
@@ -166,7 +171,7 @@ router.post('/create', (req, res, next) => {
 //                 invoices: invoiceIdDeleteion
 //             };
 //
-//             axios.post(dburl+'invoice/delete', payload)
+//             axios.post(config.url+'invoice/delete', payload)
 //             .then(response => {
 //                 res.redirect('/invoice');
 //             })
@@ -187,16 +192,20 @@ router.delete('/delete',(req,res,next) =>{
     if(user){
       var ids = []
       ids = req.body.row;
-      for(var i in ids){
-        for(var j in seeds.invoices){
-          if(ids[i] == seeds.invoices[j].id){
-            seeds.invoices.splice(j,1);
-            break;
-          }
-        }
-      }
 
-      res.redirect('/invoice');
+
+      axios.post(config.url + '/invoice/delete/', {
+          token:user.token,
+          accessToken:accessToken,
+          invoices: ids,
+      }).then( response =>{
+        res.redirect('/invoice');
+      }).catch(err =>{
+        res.render('error',{
+          message:err.response.data,
+        });
+      });
+
     }
     else{
       res.redirect('/dashboard');
@@ -212,19 +221,26 @@ router.get('/:id', (req, res, next) => {
             // Fetch invoice details from the database
             var id = parseInt(req.params.id);
             // TODO: Use axios
+              axios.post(config.url + '/invoice/' +req.params.id,{
+                token:user.token,
+                accessToken:accessToken
+              }).then( response =>{
 
-            // TODO: remove
-            var invoices = seeds.invoices;
-            var invoice;
-            invoices.forEach(invo => {
-                if (invo.id == id) {
+                var invoices = response.data;
+                var invoice;
+                invoices.forEach(invo => {
+                  if (invo.id == id) {
                     invoice = invo;
-                }
-            });
-            res.render('invoice/edit', {
-                currency: user.company.currency.substring(0, 1),
-                invoice: invoice
-            });
+                  }
+                });
+                res.render('invoice/edit', {
+                  currency: user.company.currency.substring(0, 1),
+                  invoice: invoice
+                });
+              }).catch(err =>res.render('error',{
+                message: err.response.data,
+              }))
+            // TODO: remove
         }else{
             res.redirect('/dashboard');
         }

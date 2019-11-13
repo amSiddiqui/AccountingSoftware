@@ -22,9 +22,6 @@ class Authentication{
                 clientId:this.serverConfig.clientID,
                 secret:this.serverConfig.clientSecret,
             };
-            var config = {
-                'content-type': 'application/x-www-form-urlencoded;charset=utf-8'
-            };
             let res = await axios.post(`${this.serverConfig.domain}/init/`, payload);
             this.accessToken = res.data.accessToken;
 

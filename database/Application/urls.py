@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^util/phone_code/$', views.phones, name='phone_code'),
     url(r'^auth/signup/$', views.company, name='company'),
     url(r'^auth/exists/$', views.user_exists, name='user_exists'),
+    url(r'^auth/company/exists/$', views.company_exists, name='company_exists'),
     url(r'^auth/accountant/exists/$', views.accountant_exists, name='accountant_exists'),
 
     # Invoice routes
@@ -49,6 +50,7 @@ urlpatterns = [
     
     
     # Report routes
+    # path('client/', views.report_client ),
     path('report/outstandingRevenue/',views.report_outstandingRevenue),
     path('report/overdue/',views.report_overdue),
     path('report/profit/',views.report_profit),

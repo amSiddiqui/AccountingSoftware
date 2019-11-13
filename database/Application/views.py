@@ -35,10 +35,17 @@ userToken={}
 status=[200,403,404]
 
 def check_user(token):
-	for e,t in userToken:
+	for (e,t) in userToken.items():
 		if t == token:
-			del userToken[e]
-			return True
+			return e
+	return None
+
+def delete_user(token):
+	email = check_user(token)
+	print(userToken,email)
+	if email is not None:
+		del userToken[email]
+		return True
 	return False
 
 def post(*oargs, **okwargs):
@@ -72,21 +79,21 @@ def get_iso_date(date_format, date_data):
 	d = [ x for x in date_data.strip().split() if len( x.strip() ) != 0 ]
 	if len(d) != 3:
 		raise Exception('Invalid date data')
-	if DATE_FORMAT.big_endian == date_format.strip(): # yyyy/mm/dd
+	if DATE_FORMAT['big_endian'] == date_format.strip(): # yyyy/mm/dd
 		return date(d[0],d[1],d[2])
-	elif DATE_FORMAT.little_endian == date_format.strip(): # dd/mm/yyyy
+	elif DATE_FORMAT['little_endian'] == date_format.strip(): # dd/mm/yyyy
 		return date(d[2],d[1],d[0])
-	elif DATE_FORMAT.middle_endian == date_format.strip(): # 'mm/dd/yyyy'
+	elif DATE_FORMAT['middle_endian'] == date_format.strip(): # 'mm/dd/yyyy'
 		return  date(d[2],d[0],d[1])
 	else :
 		raise Exception('Invalid date format')
 
 def get_date(date_format, date_data):
-	if DATE_FORMAT.big_endian == date_format.strip(): # yyyy/mm/dd
+	if DATE_FORMAT['big_endian'] == date_format.strip(): # yyyy/mm/dd
 		return date_data.strftime("%Y/%m/%d")
-	elif DATE_FORMAT.little_endian == date_format.strip(): # dd/mm/yyyy
+	elif DATE_FORMAT['little_endia'] == date_format.strip(): # dd/mm/yyyy
 		return date_data.strftime("%d/%m/%Y")
-	elif DATE_FORMAT.middle_endian == date_format.strip(): # 'mm/dd/yyyy'
+	elif DATE_FORMAT['middle_endian'] == date_format.strip(): # 'mm/dd/yyyy'
 		return date_data.strftime("%m/%d/%Y")
 	else :
 		raise Exception('Invalid date format')
@@ -97,14 +104,14 @@ def get_invoice(client,items,invoice):
 		'id': client['Client_Id'],
 		'firstName': client['Fname'],
 		'lastName': client['Lname'],
-		'countryCode': '+65',
+		'countryCode': client['Country_Code'],
 		'phone': client['Phone'],
 		'email': client['Email'],
 		'address': {
 			'address1': client['Address'],
 			'city': client['City'],
 			'state': client['State'],
-			'country': 'USA',
+			'country': client['Country_Name'],
 			'pincode': client['Pin_Code'],  
 		},
 		'lateFeeRate': client['Late_Fee_Rate']
@@ -112,7 +119,7 @@ def get_invoice(client,items,invoice):
 		'id':invoice['Invoice_Id'],
 		'date': get_date( invoice['datefmt'], invoice['Date'] ),
 		'amountDue': invoice['Amount_Due'],
-		'items' : []
+		'items' : items
 	}
 
 	for itm in items:
@@ -177,7 +184,6 @@ def login_user(request):
 	# if (access_token != value['accessToken']):
 	# 	return HttpResponse("Invalid Authorisation ", status=status[2])
 	users = User.objects.filter(Email=email).values()
-
 	# for e,enc_p in User.objects.all().values_list('Email','Password'):
 	# 	if e == email:
 	if users is not None and len(users) == 1:
@@ -186,11 +192,6 @@ def login_user(request):
 		if companies is None or len(companies) < 1:
 			return HttpResponse('Company is not set', status=406 )
 		
-		currencies = Currency.objects.filter(Id=companies[0]['Base_Currency_id']).values()
-		
-		if currencies is None or len( currencies ) < 1 :
-				return HttpResponse('Currency is not added', status=406 )
-		currency = currencies[0]
 		company = companies[0]
 		if check_password(password,user['Password']):
 			tokenTemp = None
@@ -218,7 +219,7 @@ def login_user(request):
 						'country': company['Country_Name'],
 						'pincode': company['Pin_Code'],
 						},
-					'currency': currency['Code'],
+					'currency': company['Base_Currency'],
 					'datefmt': company['Date_Format'],
 					'taxrate': company['Tax_Rate']
 					},
@@ -240,13 +241,12 @@ def login_user(request):
 def logout(request):
 	if request.method == 'POST':
 		access_token=request.POST['accessToken']
-		uToken=request.POST['token']
-		global userToken						#Use global keyword to access global variable
+		uToken=request.POST['token']						#Use global keyword to access global variable
 
 		if ( access_token != value['accessToken'] ):
 			return HttpResponse("Invalid Authorisation ", status=status[2])
 
-		if check_user(uToken):
+		if delete_user(uToken):
 			return HttpResponse('Logout successful')
 		return HttpResponse('User is not logged in')
 
@@ -289,12 +289,15 @@ def quote(request):
 def currencies(request):
 	currency_code = list()
 	currency_name = list()
-	for cc, c in Currency.objects.all().values_list('Code', 'Name'):
+	currency_sym = list()
+	for cc, c, sy in Currency.objects.all().values_list('Code', 'Name', 'Symbol'):
 		currency_code.append(cc)
 		currency_name.append(c)
+		currency_sym.append(sy)
 	data = {
 		'code': currency_code,
-		'currency': currency_name
+		'currency': currency_name,
+		'symbol': currency_sym
 	}
 	return JsonResponse(data)
 
@@ -320,41 +323,41 @@ def phones(request):
 @csrf_exempt
 @post('accessToken')
 def dates(request):
-	data = [v for _,v in DATE_FORMAT ]
+	data = [v for v in DATE_FORMAT.values() ]
 	return JsonResponse({ 'dateFormat' : data },safe=True)
 
 @csrf_exempt
-@post('accessToken')
+@post('accessToken','company')
 def company(request):
+	request.POST = request.POST.get('company')
 	try:
 		comp=request.POST.get('company')
-		chk = Company.objects.filter(Email=request.POST['email']).values()
-		global userToken
-		
-		if chk is not None:
-			return HttpResponse(" Company Already exists ",status=208) 
+
 		datefmt = comp['datefmt']
 		c1 = Company(Company_Name=comp['name'],Address_Line=comp['address']['address1'],City=comp['address']['city'],
 			Pin_Code=comp['address']['pincode'],Country_Name=comp['address']['country'], Country_Code=comp['countryCode'],
 			State=comp['address']['state'],Email=comp['email'],Phone=comp['phone'],
 			Tax_Rate=comp['taxrate'],Base_Currency=comp['currency'],Date_Format=datefmt)
 		c1.save()
-		comp_id = c1.pk()
-
+		comp_id = c1.pk
+		
 		if 'Head' in comp['accountants']:
 			# x = Company.objects.filter(Company_Name=comp['name']).values_list('Company_Id')
 			head=request.POST.get('headAcc')
 			token = head['email']+str(datetime.now())
 			uToken = make_password(token)
-			
-			userToken[email]=uToken
+
+			global userToken
+			email = head['email']
+			userToken[email] = uToken
 
 			h1 = User(Fname=head['firstName'],Lname=head['lastName'],Address_Line=head['address']['address1'],
 				City=head['address']['city'],Pin_Code=head['address']['pincode'],State=head['address']['state'],
 				Country_Name=head['address']['country'],Country_Code=head['countryCode'],Email=head['email'],
 				Password=make_password(head['password']),Phone=head['phone'],Auth_Level=0,Comp_Id_id=comp_id)
 			h1.save()
-			
+		
+
 		if 'Client' in comp['accountants']:
 			# x=Company.objects.filter(Company_Name=comp['name']).values_list('Company_Id')
 			client=request.POST.get('clientAcc')
@@ -369,6 +372,7 @@ def company(request):
 				Password=make_password(client['password']),Phone=client['phone'],Auth_Level=1,Comp_Id_id=comp_id)
 
 			c1.save()
+
 		if 'Expense' in comp['accountants']:
 			# x=Company.objects.filter(Company_Name=comp['name']).values_list('Company_Id')
 			expense=request.post.get('expenseAcc')
@@ -396,13 +400,32 @@ def company(request):
 				Country_Name=gen['address']['country'],Country_Code=gen['countryCode'],Email=gen['email'],
 				Password=make_password(gen['password']),Phone=gen['phone'],Auth_Level=3,Comp_Id_id=comp_id)
 			g1.save()
+		
+		print('User created ')
+		print('token Created: ', userToken[email])
 		data={
-			'token' : userToken
+			'token' : uToken
 		}
 		return JsonResponse(data)
 
 	except:
-		return HttpResponse(status=404)
+		return HttpResponse('Company Creation error', status=400)
+
+@csrf_exempt
+@post('accessToken','email','phone','name')
+def company_exists(request):
+	email = request.POST['email']
+	phone = request.POST['phone']
+	name = request.POST['name']
+	name_exists = len( Company.objects.filter(Company_Name=name).values() ) > 0
+	email_exists = len( Company.objects.filter(Company_Name=email).values() ) > 0
+	phone_exists = len( Company.objects.filter(Company_Name=phone).values() ) > 0
+
+	return JsonResponse({
+		'nameExists':name_exists,
+		'emailExists':email_exists,
+		'phoneExists':phone_exists
+	},safe=True)
 
 @csrf_exempt
 @post('accessToken','email')
@@ -410,12 +433,13 @@ def user_exists(request):
 	user = User.objects.filter(Email=request.POST['email']).values()
 	if user is not None:
 		return JsonResponse({
-			'exists': 'true' if len(user) != 0 else 'false'
+			'exists': True if len(user) != 0 else False
 		})
 	else :
 		return HttpResponse("Database Error",status=500)
 
 #Creates invoice
+
 @csrf_exempt
 @post('accessToken','token','invoice')
 def create_invoice(request):
@@ -427,11 +451,13 @@ def create_invoice(request):
 					Amount_Paid=data['amountPaid'], Total=data['total'], Balance_Due=data['balanceDue'], Notes=data['notes'],
 					Date_Format=datefmt)
 	invoice.save()
-	invoice_id = invoice.pk()
+	invoice_id = invoice.pk
 
 	for itm in data['items']:
-		item = Item(Name=itm['item'], Description=itm['description'], Rate=itm['rate'], Quantity=itm['quantity'], Price=itm['price'], Invoice_Id=invoice_id)
+		item = Item(Name=itm['item'], Description=itm['description'], Rate=itm['rate'])
 		item.save()
+		item_invoice = Item_Invoice(Item_Id=item.pk, Invoice_Id=invoice_id, Quantity=itm['quantity'], Price=itm['price'])
+		item_invoice.save()
 	return JsonResponse({
 		'invoiceId' : invoice_id
 	})
@@ -446,7 +472,14 @@ def fetch_invoice(request,invoice_id):
 	invoices = Invoice.objects.filter(Invoice_Id=invoice_id).values()
 	if invoices is not None and len(invoices) > 0:
 		invoice = invoices[0]
-		items = Item.objects.filter(Invoice_Id_id=invoice_id).values()
+		item_invoices = Item_Invoice.objects.filter(Invoice_Id_id=invoice['Invoice_Id']).values()
+		items = []
+		for itm in item_invoices:
+			item = Item.objects.filter(Item_Id=itm['Item_Id_id']).value()[0]
+			item['quantity'] = itm['Quantity']
+			item['price'] = itm['Price']
+			items.append(item)
+		
 		clients = Client.objects.filter(Client_Id=invoice['Client_Id_id']).values()
 		if items is None or len(items) <= 0 or clients is None or len(clients) <= 0:
 			return HttpResponse('Client or Items does not exits in database', status=400)
@@ -461,12 +494,22 @@ def fetch_invoice(request,invoice_id):
 def latest_invoice(request):
 	qty = request.POST['quantity']
 	tempInvoices = Invoice.objects.all().order_by('-Invoice_Id').values()
-	if tempInvoices is not None and len(tempInvoices) >= qty:
-		invoices = tempInvoices[:qty]
+	if tempInvoices is not None and len(tempInvoices) > 0:
+		invoices = tempInvoices
 		res = []
 		for inv in invoices:
+			if qty == 0:
+				break
+			qty -= 1
 			client = Client.objects.filter(Client_Id=inv['Client_Id_id']).values()
-			items = Item.objects.filter(Invoice_Id_id=inv['Invoice_Id']).values()
+			items = []
+			item_invoice = Item_Invoice.objects.filter(Invoice_Id_id=inv['Invoice_Id']).values()
+			for itm in item_invoice:
+				item = Item.objects.filter(Item_Id=itm['Item_Id_id']).values()[0]
+				item['quantity'] = itm['Quantity']
+				item['price'] = itm['Price']
+				items.append(item)
+
 			if items is None or len(items) <= 0 or client is None or len(client) <= 0:
 				return HttpResponse('Client or Items does not exits in database', status=400)
 			res.append(get_invoice(client,items,inv))
@@ -509,7 +552,7 @@ def accountant_exists(request):
 	user = User.objects.filter(Email=request.POST['email']).values()
 	if user is not None:
 		return JsonResponse({
-			'exists': 'true' if len(user) != 0 and AUTH_LEVEL[user['Auth_Level']] != None else 'false'
+			'exists': True if len(user) != 0 else False
 		})
 	else :
 		return HttpResponse("Database Error",status=500)
@@ -539,7 +582,7 @@ def category_fetch(request):
 def expense_create(request):
 	exp = request.POST['expense']
 	expense = Expense(Category_Id=Category.objects.filter(Type=exp['category'])[0]['Type'], Date=get_iso_date(request.POST['datefmt'], exp['date']), Vendor_Id=Vendor.objects.filter(Vendor_Name=exp['vendor'])[0].Vendor_Id,Description=exp['description'], Amount=float(exp['amount']))
-	expense.save();
+	expense.save()
 	return HttpResponse('Created Successfully')
 
 
@@ -556,7 +599,7 @@ def _get_expense(expense):
 @csrf_exempt
 @post('accessToken', 'token', 'quantity')
 def expense_latest(request):
-	qty = int(request.POST['quantity'])
+	qty = request.POST['quantity']
 	all_expense = Expense.objects.all().order_by("-Expense_Id").values()
 	if all_expense is not None and len(all_expense) >= qty:
 		expenses = all_expense[:qty]
@@ -620,18 +663,39 @@ def client_create(request):
 	client = Client(Fname=cli['firstName'], Lname=cli['lastName'], Address_Line=cli['address']['address1'],
 	 City=cli['address']['city'], Pin_Code=cli['address']['pincode'], State=cli['address']['state'], Country_Name=cli['address']['country'],
 	Day_Limit=cli['dayLimit'], Email=cli['email'], Phone=cli['phone'], Country_Code=cli['countryCode'], Late_Fee_Rate=cli['lateFeeRate'])
-	client.save();
+	client.save()
 	return HttpResponse('Created Successfully')
 
+def _get_client( client ):
+	return { 
+		'id': client['Client_Id'],
+		'firstName': client['Fname'],
+		'lastName': client['Lname'],
+		'countryCode': client['Country_Code'],
+		'phone': client['Phone'],
+		'email': client['Email'],
+		'address': {
+			'address1': client['Address'],
+			'city': client['City'],
+			'state': client['State'],
+			'country': client['Country_Name'],
+			'pincode': client['Pin_Code'],
+		},
+		'lateFeeRate': client['Late_Fee_Rate']
+	}
 
 @csrf_exempt
 @post('accessToken', 'token', 'quantity')
 def client_latest(request):
-	qty = int(request.POST['quantity'])
+	qty = request.POST['quantity']
 	all_client = Client.objects.all().order_by("-Client_Id").values()
-	if all_client is not None and len(all_client) >= qty:
-		clients = all_client[:qty]
-		res = {'clients': clients}
+	if all_client is not None and len(all_client) > 0:
+		res = {'clients': []}
+		for client in all_client:
+			if qty == 0:
+				break
+			qty -= 1
+			res['clients'].append(_get_client(client))
 		return (JsonResponse(res, safe=True))
 	else:
 		return HttpResponse('Quatity Requested is out of bounds', status=400)
@@ -642,7 +706,7 @@ def client_latest(request):
 def client_fetch(request, client_id):
 	cli = Client.objects.filter(Client_Id=client_id).values()[0]
 	if (cli is not None):
-		res = {'client': cli}
+		res = {'client': _get_client(cli)}
 		return JsonResponse(res, safe=True)
 	else:
 		return HttpResponse('Client does not exists', status=400)
@@ -1003,7 +1067,7 @@ def report_expense(request):
 	
 	exps_y,exps = _get_expense_by_year(expense)
 	curr_year = exps[0]['Date'].year
-	if invs_y == 1 and cycleS and cycleE:
+	if exps_y == 1 and cycleS and cycleE:
 		return HttpResponse('Invalid Arguments',status=400)
 	
 	res = {
