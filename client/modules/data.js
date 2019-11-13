@@ -119,13 +119,26 @@ global.utilData = {
         utilData.currency =  (await axios.post(config.url+'/util/currency/', {
             accessToken
         })).data;
-
-
     }
     catch(err) {
         throw new Error(err.response.data);
     }
 })().then(() => {
+
+    // Preprocess Currency data
+    tempCurrency = utilData.currency;
+    curSymbol = [];
+    for (let index = 0; index < tempCurrency.symbol.length; index++) {
+        const element = tempCurrency.symbol[index];
+        const code = tempCurrency.code[index];
+        curSymbol.push(element+' '+code);
+    }
+    utilData.currency.symbol = curSymbol;
+
+    for (let index = 0; index < utilData.phone_code.ISD.length; index++) {
+        utilData.phone_code.ISD[index] = '+'+utilData.phone_code.ISD[index];   
+    }
+
     console.log('All initialization complete starting server');
     require('../init');
 }).catch(err => {

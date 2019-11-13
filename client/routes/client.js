@@ -17,7 +17,7 @@ router.get('/', (req, res, next) => {
     if(user){
       var outstanding =0;
       var total = 0;
-      var client = []
+      var client = [];
       //TODO: fetch total ,outstanding,overdue,draft
       // TODO: Use axios
       axios.post(config.url + '/client/latest',{
@@ -40,7 +40,7 @@ router.get('/', (req, res, next) => {
         });
       }).catch( err=>{
         console.log(err);
-        res.render('error',message:err.response.data)
+        res.render('error',{message:dbErrorMsg});
       });
 
       // seeds.pseudolient.forEach(function(client){
@@ -112,11 +112,10 @@ router.post('/', (req, res) => {
           console.log('Client Added')
 
           res.render('/client')
-          });
-      }).catch(err => {
+          }).catch(err => {
           console.error(err);
           res.render('error', {
-              message: err.response.data
+              message: dbErrorMsg
           });
       });
       clientID++;//temporary way to increment id
@@ -145,7 +144,7 @@ router.get('/:id/edit/', (req, res, next) => {
         })
       }).catch(error =>{
         console.log(error);
-        res.redirect('error',{message: error});
+        res.redirect('error',{message: dbErrorMsg});
       });
 
       // var client = seeds.pseudoClient.find(client => client.id === parseInt(req.params.id));
@@ -192,10 +191,10 @@ router.put('/:id',(req,res) => {
             accessToken: accessToken,
             client: res1,
           }).then(response =>{
-            console.log(client updated);
+            console.log('client updated');
             res.render('/client/'+req.params.id);
           }).catch(error => {
-            console.log(error)
+            console.log(error);
             res.render('error',{message:dbErrorMsg})
           });
         });
@@ -315,7 +314,7 @@ router.delete('/:id/delete',(req,res,next) =>{
   util.authCheck(req ,(user) =>{
     if(user){
       var ids = []
-      var ids = req.body.row;
+      ids = req.body.row;
 
       axios.post(config.url + 'invoice/delete/', {
           token:user.token,
@@ -325,7 +324,7 @@ router.delete('/:id/delete',(req,res,next) =>{
         res.render('/client' + req.params.id);
       }).catch(err =>{
         res.render('error',{
-          message:err.response.data,
+          message:dbErrorMsg,
         });
       });
 

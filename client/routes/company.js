@@ -181,7 +181,7 @@ router.post('/create', (req, res, next) => {
             pincode: req.body.pincode,
 
         },
-        currency: req.body.currency,
+        currency: req.body.currency.substring(0, 1),
         datefmt: req.body.datefmt,
         taxrate: req.body.taxrate,
     };
@@ -198,9 +198,9 @@ router.post('/create', (req, res, next) => {
             if (data.nameExists || data.phoneExists || data.emailExists) {
                 res.render('company/create', {
                     error: {
-                        nameExists: nameExists,
-                        phoneExists: phoneExists,
-                        emailExists: emailExists
+                        nameExists: data.nameExists,
+                        phoneExists: data.phoneExists,
+                        emailExists: data.emailExists
                     },
                     countryCode: utilData.phone_code.ISD,
                     currency: utilData.currency.symbol,

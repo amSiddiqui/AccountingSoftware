@@ -15,47 +15,47 @@ router.get('/:type', (req , res, next) => {
   user.authCheck(req , user =>{
     if(user){
 
-      let oR = axios.post(config.url, + ,'/report/outstandingRevenue/',{
+      let oR = axios.post(config.url, + '/report/outstandingRevenue/',{
 
         accessToken:accessToken,
         token: user.token,
       });
 
 
-      let oD = axios.post(config.url, + ,'/report/overdue/',{
+      let oD = axios.post(config.url, + '/report/overdue/',{
         accessToken:accessToken,
         token: user.token,
       });
 
 
-      let prof = axios.post(config.url, + ,'/report/profit/',{
+      let prof = axios.post(config.url, + '/report/profit/',{
         accessToken:accessToken,
         token: user.token,
       });
 
 
-      let rev = axios.post(config.url, + ,'/report/revenue/',{
+      let rev = axios.post(config.url, + '/report/revenue/',{
         accessToken:accessToken,
         token: user.token,
       });
 
 
-      let exp = axios.post(config.url, + ,'/report/expense/',{
+      let exp = axios.post(config.url, + '/report/expense/',{
         accessToken:accessToken,
         token: user.token,
       });
-      let inv = axios.post(config.url, + ,'/invoice/',{
+      let inv = axios.post(config.url, + '/invoice/',{
         accessToken:accessToken,
         token: user.token,
         quantity: 4
       });
 
-      let expen = axios.post(config.url, + ,'/expense/',{
+      let expen = axios.post(config.url, + '/expense/',{
         accessToken:accessToken,
         token: user.token,
       });
 
-      let clnt = axios.post(config.url, + ,'/client/',{
+      let clnt = axios.post(config.url, + '/client/',{
         accessToken:accessToken,
         token: user.token,
       });

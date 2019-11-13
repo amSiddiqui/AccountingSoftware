@@ -7,7 +7,6 @@ from django.views.decorators.csrf import csrf_exempt
 from datetime import date, timedelta
 from django.db.models import Sum
 import json
-import sys
 
 '''
 Auth Level 0: Accounting Head 
@@ -36,14 +35,15 @@ userToken={}
 status=[200,403,404]
 
 def check_user(token):
-	for e,t in userToken:
+	for (e,t) in userToken.items():
 		if t == token:
 			return e
 	return None
 
 def delete_user(token):
 	email = check_user(token)
-	if check_user(token) is not None:
+	print(userToken,email)
+	if email is not None:
 		del userToken[email]
 		return True
 	return False
@@ -247,8 +247,7 @@ def login_user(request):
 def logout(request):
 	if request.method == 'POST':
 		access_token=request.POST['accessToken']
-		uToken=request.POST['token']
-		global userToken						#Use global keyword to access global variable
+		uToken=request.POST['token']						#Use global keyword to access global variable
 
 		if ( access_token != value['accessToken'] ):
 			return HttpResponse("Invalid Authorisation ", status=status[2])
@@ -345,23 +344,24 @@ def company(request):
 			State=comp['address']['state'],Email=comp['email'],Phone=comp['phone'],
 			Tax_Rate=comp['taxrate'],Base_Currency=comp['currency'],Date_Format=datefmt)
 		c1.save()
-		comp_id = c1.pk()
-
+		comp_id = c1.pk
+		
 		if 'Head' in comp['accountants']:
 			# x = Company.objects.filter(Company_Name=comp['name']).values_list('Company_Id')
 			head=request.POST.get('headAcc')
 			token = head['email']+str(datetime.now())
 			uToken = make_password(token)
 			global userToken
-			
-			userToken[email]=uToken
+			email = head['email']
+			userToken[email] = uToken
 
 			h1 = User(Fname=head['firstName'],Lname=head['lastName'],Address_Line=head['address']['address1'],
 				City=head['address']['city'],Pin_Code=head['address']['pincode'],State=head['address']['state'],
 				Country_Name=head['address']['country'],Country_Code=head['countryCode'],Email=head['email'],
-				Password=head['password'],Phone=head['phone'],Auth_Level=0,Comp_Id_id=comp_id)
+				Password=uToken,Phone=head['phone'],Auth_Level=0,Comp_Id_id=comp_id)
 			h1.save()
-			
+		
+
 		if 'Client' in comp['accountants']:
 			# x=Company.objects.filter(Company_Name=comp['name']).values_list('Company_Id')
 			client=request.POST.get('clientAcc')
@@ -372,6 +372,7 @@ def company(request):
 				Password=client['password'],Phone=client['phone'],Auth_Level=1,Comp_Id_id=comp_id)
 
 			c1.save()
+
 		if 'Expense' in comp['accountants']:
 			# x=Company.objects.filter(Company_Name=comp['name']).values_list('Company_Id')
 			expense=request.post.get('expenseAcc')
@@ -380,6 +381,7 @@ def company(request):
 				Country_Name=expense['address']['country'],Country_Code=expense['countryCode'],Email=expense['email'],
 				Password=expense['password'],Phone=expense['phone'],Auth_Level=2,Comp_Id_id=comp_id)
 			e1.save()
+
 		if 'Genral' in comp['accountants']:
 			# x=Company.objects.filter(Company_Name=comp['name']).values_list('Company_Id')
 			gen=request.post.get('genralAcc')
@@ -390,14 +392,13 @@ def company(request):
 			g1.save()
 		
 		print('User created ')
-		print('token Created: ', userToken)
+		print('token Created: ', userToken[email])
 		data={
-			'token' : userToken
+			'token' : uToken
 		}
 		return JsonResponse(data)
 
 	except:
-		print('Company creation error: ',sys.exec_info()[0])
 		return HttpResponse('Company Creation error', status=400)
 
 @csrf_exempt
@@ -440,12 +441,12 @@ def create_invoice(request):
 					Amount_Paid=data['amountPaid'], Total=data['total'], Balance_Due=data['balanceDue'], Notes=data['notes'],
 					Date_Format=datefmt)
 	invoice.save()
-	invoice_id = invoice.pk()
+	invoice_id = invoice.pk
 
 	for itm in data['items']:
 		item = Item(Name=itm['item'], Description=itm['description'], Rate=itm['rate'])
 		item.save()
-		item_invoice = Item_Invoice(Item_Id=item.pk(), Invoice_Id=invoice_id, Quantity=itm['quantity'], Price=itm['price'])
+		item_invoice = Item_Invoice(Item_Id=item.pk, Invoice_Id=invoice_id, Quantity=itm['quantity'], Price=itm['price'])
 		item_invoice.save()
 	return JsonResponse({
 		'invoiceId' : invoice_id

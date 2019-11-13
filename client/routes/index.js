@@ -124,35 +124,35 @@ router.post('/signup', (req, res) => {
 });
 
 
-router.get('/dashboard', util.validateUser({}), (req, res) => {
-    var outstandingRevenue = data.outstandingRevenue;
-    var percent = (data.outstandingRevenue / 70000.0) * 100.0; 
+router.get('/dashboard',  (req, res) => {
+    var outstandingRevenue = utilData.outstandingRevenue;
+    var percent = (utilData.outstandingRevenue / 70000.0) * 100.0; 
     var currency = req.cookies.user.company.currency;
     var rev_clients = [];
     var revenue = [];
     var exp_vendor = [];
     var expenditure = [];
-    data.revenueStream.forEach(rev => {
+    utilData.revenueStream.forEach(rev => {
         rev_clients.push(rev.client);
         revenue.push(rev.revenue);
     });
 
-    data.spending.forEach(data => {
+    utilData.spending.forEach(data => {
         exp_vendor.push(data.vendor);
         expenditure.push(data.spent);
     });
 
-    var totalRev = inKNotation(data.totalRevenue);
+    var totalRev = inKNotation(utilData.totalRevenue);
 
     
-    var totalExp = inKNotation(data.totalSpending);
+    var totalExp = inKNotation(utilData.totalSpending);
 
-    var overdue = inKNotation(data.overdue);
+    var overdue = inKNotation(utilData.overdue);
 
     var unb_clients = [];
     var unb_days = [];
     var unb_dues = [];
-    data.unbilledTimes.forEach(unb => {
+    utilData.unbilledTimes.forEach(unb => {
         unb_clients.push(unb.client);
         unb_days.push(unb.time);
         unb_dues.push(unb.due);
@@ -163,8 +163,8 @@ router.get('/dashboard', util.validateUser({}), (req, res) => {
         percent: percent,
         outstandingRevenue: new Intl.NumberFormat().format(outstandingRevenue),
         currency: currency.substring(0, 1),
-        profit: data.profit,
-        totalProfit: data.totalProfit,
+        profit: utilData.profit,
+        totalProfit: utilData.totalProfit,
         revStream: {
             clients: rev_clients,
             revenue: revenue,
