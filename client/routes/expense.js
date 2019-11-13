@@ -13,6 +13,26 @@ router.get('/', (req, res, next)=> {
   util.authCheck(req ,(user) => {
     if(user){
       var total = 0;
+      var exp = []
+      axios.post(config.url+'/expense/',{
+        token:user.token,
+        accessToken: accessToken,
+        quantity:15,
+      }).then(response =>{
+         expense = response.data.expense
+         expense.forEach((expense) =>{
+           total += expense.subtotal;
+         });
+         res.render('expense/expense',{
+           expense: expense,
+           currency: utilData.country.currency,
+           total:total,
+         });
+      }).catch( err =>{
+        res.render('error',{
+          message:err.response.data,
+        });
+      });
       seeds.pseudoExpense.forEach((expense) =>{
         total += expense.subtotal;
       });
@@ -63,7 +83,7 @@ router.post('/',(req , res) => {
       // seeds.pseudoExpense.push(params);
 
       // TODO: Push data into database using axios
-      axios.post(config.url+'/expense/create/', {
+      axios.post(config.url+'/expense/create/',{
           token: user.token,
           accessToken: accessToken,
           expense: params,
@@ -125,12 +145,20 @@ router.put('/:id', (req , res) => {
             }
           }
 
+
+          axios.post(config.url + `/expense/${req.params.id}/update/`,{
+            token: user.token.
+            accessToken: accessToken,
+            client: res1,
+          }).then(response =>{
+            console.log('expense updated');
           axios.post(config.url + `/expense/${req.params.id}/update/`,{
             token: user.token,
             accessToken: accessToken,
             client: res1,
           }).then(response =>{
             console.log('client updated');
+
             res.render('/expense/'+req.params.id);
           }).catch(error => {
             console.log(error)
@@ -164,16 +192,29 @@ router.delete('/delete',(req,res,next) =>{
     if(user){
       ids = [];
       var ids = req.body.row;
-      for(var i in ids){
-        for(var j in seeds.pseudoExpense){
-          if(ids[i] == seeds.pseudoExpense[j].id){
-            seeds.pseudoExpense.splice(j,1);
-            break;
-          }
-        }
-      }
 
-      res.redirect('/expense');
+      axios.post(config.url + 'expense/delete/', {
+          token:user.token,
+          accessToken:accessToken,
+          expense: ids,
+      }).then( response =>{
+        res.render('/expense' + req.params.id);
+      }).catch(err =>{
+        res.render('error',{
+          message:err.response.data,
+        });
+      });
+
+      // for(var i in ids){
+      //   for(var j in seeds.pseudoExpense){
+      //     if(ids[i] == seeds.pseudoExpense[j].id){
+      //       seeds.pseudoExpense.splice(j,1);
+      //       break;
+      //     }
+      //   }
+      // }
+
+      // res.redirect('/expense');
     }
     else{
       res.redirect('/dashboard');

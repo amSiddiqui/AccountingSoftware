@@ -17,20 +17,44 @@ router.get('/', (req, res, next) => {
     if(user){
       var outstanding =0;
       var total = 0;
+      var client = []
       //TODO: fetch total ,outstanding,overdue,draft
-      //TODO: Use axios
-      seeds.pseudoClient.forEach(function(client){
-        outstanding += client.amountDue;
-        total += client.total;
+      // TODO: Use axios
+      axios.post(config.url + '/client/latest',{
+        token:user.token,
+        accessToken:accessToken,
+        quantity: 15,
+      }).then( response => {
+        client = response.data.client;
+        client.forEach(function(client){
+          outstanding += client.amountDue;
+          total += client.total;
+        });
+        res.render('client/client',{
+          clients: client,
+          totalOutstanding: outstanding,
+          totalOverdue: outstanding,
+          totalDraft: outstanding,
+          currency: utilData.company.currency,
+          total: total,
+        });
+      }).catch( err=>{
+        console.log(err);
+        res.render('error',message:err.response.data)
       });
-      res.render('client/client',{
-        clients: seeds.pseudoClient,
-        totalOutstanding: outstanding,
-        totalOverdue: outstanding,
-        totalDraft: outstanding,
-        currency: seeds.currency[2],
-        total: total,
-      });
+
+      // seeds.pseudolient.forEach(function(client){
+      //   outstanding += client.amountDue;
+      //   total += client.total;
+      // });
+      // res.render('client/client',{
+      //   clients: seeds.pseudoClient,
+      //   totalOutstanding: outstanding,
+      //   totalOverdue: outstanding,
+      //   totalDraft: outstanding,
+      //   currency: seeds.currency[2],
+      //   total: total,
+      // });
     }
     else{
       res.redirect('/dashboard');
@@ -43,7 +67,7 @@ router.get('/create', (req, res, next) => {
     if(user){
       //TODO: Fetch all contryCode set from database
       res.render('client/create', {
-        countryCode: seeds.countryCode,
+        countryCode: utilData.company.countryCode,
       });
     }
     else{
@@ -80,15 +104,16 @@ router.post('/', (req, res) => {
         currency: '£ (GBP)',
       }
       // TODO: Push data into database using axios
-      axios.post(config.url+'/client/create/', {
+      axios.post(config.url+'/client/create/',{
           token: user.token,
           accessToken: accessToken,
-          client: params
+          client: params,
       }).then(response => {
           console.log('Client Added')
 
           res.render('/client')
-          }).catch(err => {
+          });
+      }).catch(err => {
           console.error(err);
           res.render('error', {
               message: err.response.data
@@ -101,37 +126,33 @@ router.post('/', (req, res) => {
     else{
       res.redirect('/dashboard');
     }
-  });
+  })
 });
 
 
 router.get('/:id/edit/', (req, res, next) => {
   util.authCheck(req, (user) =>{
     if(user){
-      // TODO:Get request using Axios
-      // axios.get(config.url + '/client/clientID',{
-      //   token: user.token,
-      //   accessToken: accessToken,
-      // }).then(response => {
-      //   var client = response.data.client;
-
-      // TODO: Fetch countryCode associated with the respective clients
-
-      //   var countryCode = response.data.countryCode;
-      //   res.render('client/edit',{
-      //     client:client,
-      //     countryCode: countryCode,
-      //   })
-      // }).catch(error =>{
-      //   console.log(error);
-      //   res.redirect('error',{message: error});
-      // });
-
-      var client = seeds.pseudoClient.find(client => client.id === parseInt(req.params.id));
-      res.render('client/edit', {
-        client: client,
-        countryCode: seeds.countryCode,
+      //TODO:Get request using Axios
+      axios.post(config.url + `/client/${req.params.id}/`,{
+        token: user.token,
+        accessToken: accessToken,
+      }).then(response => {
+        var client = response.data.client;
+        res.render('client/edit',{
+          client:client,
+          countryCode: utilData.country.countryCode,
+        })
+      }).catch(error =>{
+        console.log(error);
+        res.redirect('error',{message: error});
       });
+
+      // var client = seeds.pseudoClient.find(client => client.id === parseInt(req.params.id));
+      // res.render('client/edit', {
+      //   client: client,
+      //   countryCode: seeds.countryCode,
+      // });
     }
     else{
       res.redirect('/dashboard')
@@ -144,11 +165,11 @@ router.put('/:id',(req,res) => {
   util.authCheck(req ,( user )=> {
     if(user){
 
-      axios.post(config.url + `/client/${req.params.id}/`, {
+      axios.post(config.url + `client/${req.params.id}/`,{
         token: user.token,
         accessToken: accessToken,
-      }).then(res1 => {
-          res1 = res1.data;
+      }).then(res1 =>{
+          res1 = res1.data
           for(var i in res1){
             if(res1[i].id === req.params.id){
               res1[i].firstName = req.body.firstName;
@@ -166,20 +187,18 @@ router.put('/:id',(req,res) => {
             }
           }
 
-          axios.post(config.url + `/client/${req.params.id}/update`,{
+          axios.post(config.url + `/client/${req.params.id}/update/`,{
             token: user.token,
             accessToken: accessToken,
             client: res1,
           }).then(response =>{
-            console.log('client updated');
+            console.log(client updated);
             res.render('/client/'+req.params.id);
           }).catch(error => {
-            console.log(error);
-            res.render('/error',{message:dbErrorMsg});
+            console.log(error)
+            res.render('error',{message:dbErrorMsg})
           });
-        }
-
-      );
+        });
     }
       // for(var i in seeds.pseudoClient){
       //   if(seeds.pseudoClient[i].id == req.params.id){
@@ -197,7 +216,6 @@ router.put('/:id',(req,res) => {
       //     break;
       //   }
       // }
-    //  TODO:add axios edit post request
 
     else{
       res.redirect('/dashboard')
@@ -209,23 +227,49 @@ router.get('/:id', (req, res, next) => {
   util.authCheck(req , (user) =>{
     if(user){
       var invoiceArr = [];
+      var clientInvoice = [];
       dueSum = 0;
       total = 0;
       //TODO: fetch overdue for of client with clientID
-      var client = seeds.pseudoClient.find(client => client.id === parseInt(req.params.id));
-      seeds.invoices.forEach(function(invoice){
-        if(invoice.client.id === parseInt(req.params.id)){
-          invoiceArr.push(invoice);
-          dueSum += invoice.balanceDue;
-          total += invoice.total;
-        }
+      axios.post(config.url+ `/client/${req.params.id}`,{
+        accessToken:accessToken,
+        token:user.token,
+        months:1,
+      }).then(response =>{
+          var client = response.data.client;
+          invoiceArr = response.data.client.invoices;
+          invoices.forEach(function(invoice){
+            if(invoice.clientID == req.params.id){
+              clientInvoice.push(invoice);
+              dueSum += invoice.balanceDue;
+              total += invoice.total;
+            }
+          });
+          res.render('client/show', {
+            client: client,
+            invoice: clientInvoice,
+            totalDue: dueSum,
+            total: total,
+            currency:utilData.company.currency,
+          });
+
+      }).catch(err =>{
+
       });
-      res.render('client/show', {
-        client: client,
-        invoice: invoiceArr,
-        totalDue: dueSum,
-        total: total
-      });
+      // var client = seeds.pseudoClient.find(client => client.id === parseInt(req.params.id));
+      // seeds.invoices.forEach(function(invoice){
+      //   if(invoice.client.id === parseInt(req.params.id)){
+      //     invoiceArr.push(invoice);
+      //     dueSum += invoice.balanceDue;
+      //     total += invoice.total;
+      //   }
+      // });
+      // res.render('client/show', {
+      //   client: client,
+      //   invoice: invoiceArr,
+      //   totalDue: dueSum,
+      //   total: total
+      // });
     }
     else {
       res.redirect('/dashboard');
@@ -238,14 +282,14 @@ router.delete('/delete',(req,res,next) =>{
     if(user){
       var ids = [];
       ids = req.body.row;
-      for(var i in ids){
-        for(var j in seeds.pseudoClient){
-          if(ids[i] == seeds.pseudoClient[j].id){
-            seeds.pseudoClient.splice(j,1);
-            break;
-          }
-        }
-      }
+      // for(var i in ids){
+      //   for(var j in seeds.pseudoClient){
+      //     if(ids[i] == seeds.pseudoClient[j].id){
+      //       seeds.pseudoClient.splice(j,1);
+      //       break;
+      //     }
+      //   }
+      // }
 
       axios.post(config.url + "/client/delete/", {
         token: user.token,
@@ -270,21 +314,20 @@ router.delete('/delete',(req,res,next) =>{
 router.delete('/:id/delete',(req,res,next) =>{
   util.authCheck(req ,(user) =>{
     if(user){
-      var ids = [];
-      ids = req.body.row;
+      var ids = []
+      var ids = req.body.row;
 
-      // TODO: Delete from frontend side
-      // axios.post(config.url + 'client/delete', {
-      //     token:user.token,
-      //     accessToken:accessToken,
-      //     invoices: ids,
-      // }).then( response =>{
-      //   res.render('/client' + req.params.id);
-      // }).catch(err =>{
-      //   res.render('error',{
-      //     message:err.response.data,
-      //   });
-      // });
+      axios.post(config.url + 'invoice/delete/', {
+          token:user.token,
+          accessToken:accessToken,
+          invoices: ids,
+      }).then( response =>{
+        res.render('/client' + req.params.id);
+      }).catch(err =>{
+        res.render('error',{
+          message:err.response.data,
+        });
+      });
 
       // for(var i in ids){
       //   for(var j in seeds.invoices){
@@ -308,7 +351,7 @@ router.delete('/:id/delete',(req,res,next) =>{
       //   console.log(err);
       // });
 
-      res.render('/client/' + req.params.id);
+      // res.render('/client/' + req.params.id);
     }
     else{
       res.redirect('/dashboard');

@@ -2,11 +2,10 @@ const express = require("express");
 
 const router = express.Router();
 const util = require('../modules/utility');
-
+const config = require('../config/config');
 const seeds = require('../seeds');
 const bodyParser = require('body-parser');
 const app = express();
-const config = require('../config/config');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -15,6 +14,11 @@ router.get('/', (req, res, next) => {
     util.authCheck(req, (user) => {
         if (user) {
             // TODO: use axios
+            // axios.post(config.url + '/invoice/',{
+            //   token:user.token,
+            //   accessToken:accessToken,
+            // }).then( response)
+
             var invoiceData = seeds.invoiceGenData;
             var allInvoices = seeds.invoices;
             var recentInvoices = allInvoices.slice(0, 3);
@@ -183,7 +187,7 @@ router.post('/create', (req, res, next) => {
 //     });
 // });
 
-router.post('/delete',(req,res,next) =>{
+router.delete('/delete',(req,res,next) =>{
   util.authCheck(req ,(user) =>{
     if(user){
       var ids = []
@@ -195,14 +199,6 @@ router.post('/delete',(req,res,next) =>{
           accessToken:accessToken,
           invoices: ids,
       }).then( response =>{
-        // for(var i in ids){
-        //   for(var j in response.data){
-        //     if(ids[i] == response.data.invoice[j].id){
-        //       response.data.invoice.splice(j,1);
-        //       break;
-        //     }
-        //   }
-        // }
         res.redirect('/invoice');
       }).catch(err =>{
         res.render('error',{

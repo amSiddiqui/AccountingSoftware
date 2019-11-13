@@ -14,56 +14,77 @@ router.get('/:type', (req , res, next) => {
   type = type.replace('-', ' ');
   user.authCheck(req , user =>{
     if(user){
-      let oR = axios.post(config.url +'/report/outstandingRevenue/',{
+
+      let oR = axios.post(config.url, + ,'/report/outstandingRevenue/',{
+
         accessToken:accessToken,
         token: user.token,
       });
 
-      let oD = axios.post(config.url +'/report/overdue/',{
+
+      let oD = axios.post(config.url, + ,'/report/overdue/',{
         accessToken:accessToken,
         token: user.token,
       });
 
-      let prof = axios.post(config.url + '/report/profit/',{
+
+      let prof = axios.post(config.url, + ,'/report/profit/',{
         accessToken:accessToken,
         token: user.token,
       });
 
-      let rev = axios.post(config.url + '/report/revenue/',{
+
+      let rev = axios.post(config.url, + ,'/report/revenue/',{
         accessToken:accessToken,
         token: user.token,
       });
 
-      let exp = axios.post(config.url + '/report/expense/',{
+
+      let exp = axios.post(config.url, + ,'/report/expense/',{
         accessToken:accessToken,
         token: user.token,
       });
-      let inv = axios.post(config.url + '/invoice/',{
+      let inv = axios.post(config.url, + ,'/invoice/',{
         accessToken:accessToken,
         token: user.token,
         quantity: 4
-      })
+      });
 
-      axios.all([oR, oD, prof,rev,exp,inv]).then(axios.spread((...res) => {
-        const resoR = res[0]
-        const resoD = res[1]
-        const resprof = res[2]
-        const resrev = res[3]
-        const resexp = res[4]
-        const resinv = res[5]
+      let expen = axios.post(config.url, + ,'/expense/',{
+        accessToken:accessToken,
+        token: user.token,
+      });
+
+      let clnt = axios.post(config.url, + ,'/client/',{
+        accessToken:accessToken,
+        token: user.token,
+      });
+
+
+      var currency = utilData.country.currency;
+      axios.all([oR, oD, prof,rev,exp,inv,expen,clnt]).then(axios.spread((...res) => {
+        const resoR = res[0];
+        const resoD = res[1];
+        const resprof = res[2];
+        const resrev = res[3];
+        const resexp = res[4];
+        const resinv = res[5];
+        const resexpen = res[6];
+        const resclnt = res[7];
+
         if(type == 'INVOICE DETAIL'){
 
           var totalInvoiced =0;
           var totalPaid =0;
           var totalDue = 0;
-          for(var i in seeds.invoices){
-            totalInvoiced += seeds.invoices[i].total;
-            totalPaid += seeds.invoices[i].amountPaid;
-            totalDue += seeds.invoices[i].balanceDue;
+          for(var i in resinv){
+            totalInvoiced += resinv.total;
+            totalPaid += resinv.amountPaid;
+            totalDue += resinv.balanceDue;
           }
           res.render('report/show',{
-            invoice : seeds.invoices,
-            currency: seeds.currency[2],
+            invoice : resinv,
+            currency: currency,
             totalInvoiced: totalInvoiced,
             totalPaid: totalPaid,
             totalDue: totalDue,
@@ -71,33 +92,33 @@ router.get('/:type', (req , res, next) => {
         }
         else if(type == "CLIENT REPORT"){
           var total =0;
-          for(var i in seeds.pseudoClient){
-            total += seeds.pseudoClient[i].total;
+          for(var i in resclnt){
+            total += resclnt[i].total;
           }
-          res.render('report/show', {type: type, client: seeds.pseudoClient,total:total,currency: seeds.currency[2],});
+          res.render('report/show', {type: type, client: resclnt,total:total,currency: utilData.company.currency,});
         }
         else if(type == "PAYMENT PENDING"){
           var totalDue = 0;
-          for(var i in seeds.invoices){
-            totalDue += seeds.invoices[i].balanceDue;
+          for(var i in resinv){
+            totalDue += resinv[i].balanceDue;
           }
           res.render('report/show',{
             type: type,
-            invoice: seeds.invoices,
-            currency: seeds.currency[2],
+            invoice: resinv,
+            currency: utilData.company.currency,
             total: totalDue,
           });
         }
 
         else if(type == "PAYMENT RECEIVED"){
           var totalPaid = 0;
-          for(var i in seeds.invoices){
-            totalPaid += seeds.invoices[i].amountPaid;
+          for(var i in resinv){
+            totalPaid += resinv[i].amountPaid;
           }
           res.render('report/show',{
             type: type,
-            invoice: seeds.invoices,
-            currency: seeds.currency[2],
+            invoice: resinv,
+            currency: utilData.company.currency,
             total: totalPaid,
           });
         }
@@ -109,13 +130,13 @@ router.get('/:type', (req , res, next) => {
 
           else if(type == 'EXPENSE REPORT'){
             var total =0;
-            for(var i in seeds.pseudoExpense){
-              total += seeds.pseudoExpense[i].subtotal
+            for(var i in resexpen){
+              total += resexpen[i].subtotal
             }
             res.render('report/show', {
               type: type,
-              expense: seeds.pseudoExpense,
-              currency: seeds.currency[2],
+              expense: resexpen,
+              currency: currency,
               total:total,
             });
           }
@@ -123,21 +144,21 @@ router.get('/:type', (req , res, next) => {
             var expenseTotal =0;
             var salesTotal =0;
 
-            for(var i in seeds.pseudoExpense){
-              expenseTotal += seeds.pseudoExpense[i].subtotal
+            for(var i in resexpen){
+              expenseTotal += resexpen[i].subtotal
             }
-            for(var i in seeds.invoices){
-              salesTotal += seeds.invoices[i].total;
+            for(var i in resinv){
+              salesTotal += resinv[i].total;
             }
             var profit = salesTotal-expenseTotal;
 
             res.render('report/show',{
               type: type,
-              expense: seeds.pseudoExpense,
+              expense: resexpen,
               salesTotal:salesTotal,
               expenseTotal:expenseTotal,
               profit:profit,
-              currency: seeds.currency[2],
+              currency: utilData.company.currency,
             });
           }
           // else if(type === 'GENERAL LEDGER'|| type === 'BALANCE SHEET'|| type === 'TRIAL BALANCE'){
@@ -148,7 +169,8 @@ router.get('/:type', (req , res, next) => {
             }
         // use/access the results
       })).catch(errors => {
-        // react on errors.
+        console.log(err);
+        res.render('error',{message:err.response.data})
       })
 
 
