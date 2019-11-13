@@ -404,7 +404,7 @@ def user_exists(request):
 	user = User.objects.filter(Email=request.POST['email']).values()
 	if user is not None:
 		return JsonResponse({
-			'exists': 'true' if len(user) != 0 else 'false'
+			'exists': True if len(user) != 0 else False
 		})
 	else :
 		return HttpResponse("Database Error",status=500)
@@ -523,7 +523,7 @@ def accountant_exists(request):
 	user = User.objects.filter(Email=request.POST['email']).values()
 	if user is not None:
 		return JsonResponse({
-			'exists': 'true' if len(user) != 0 and AUTH_LEVEL[user['Auth_Level']] != None else 'false'
+			'exists': True if len(user) != 0 else False
 		})
 	else :
 		return HttpResponse("Database Error",status=500)

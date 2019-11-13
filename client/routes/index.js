@@ -2,9 +2,10 @@ const express = require("express");
 const router = express.Router();
 const util = require('../modules/utility');
 const axios = require('axios');
-const config = require('../modules/utility');
+const config = require('../config/config');
 
 router.get('/', (req, res, next) => {
+
     res.redirect('/login');
 });
 
@@ -55,15 +56,15 @@ router.post('/login',(req,res)=>{
             };
             axios.post(config.url+'/auth/login/', {
                 accessToken: accessToken,
-                email: email,
-                password: password
+                email: userData.email,
+                password: userData.password
             }).then(res => {
                 res.cookie('user', res.data, cookieOpt);
                 res.redirect('/dashboard');
-            }).error(err => {
+            }).catch(err => {
                 console.error(err);
-                res.render('error', {
-                    message: err.response.data
+                res.render('login', {
+                    error: true
                 });
             });
         }
@@ -81,46 +82,44 @@ router.get('/signup', (req, res, next) => {
     });
 });
 
-router.post('/signup', util.validateUser({}), (req, res) => {
-    var email = req.body.email;
-    var password = req.body.password;
-    var payload = {
-        accessToken: accessToken,
-        email: email
-    };
-
-    tempProfile = {
-        headAcc: {
-            email: email,
-            password: password                    
+router.post('/signup', (req, res) => {
+    util.authCheck(req, user => {
+        if (user) {
+            console.log("User already signed in cannot signup now: ", user);
+            res.redirect('/dashboard');
         }
-    };
-
-    res.redirect('/company/create');
-    
-    axios.post(dburl + 'auth/accountant/exists', payload)
-    .then(response => {
-        var data = JSON.parse(response.data);
-        if (data.exists) {
-            res.render('signup', {
-                userExists: true
-            });
-        }else{
-            // Proceed forward to signup
-            tempProfile = {
-                headAcc: {
-                    email: email,
-                    password: password                    
+        else {
+            var email = req.body.email;
+            var password = req.body.password;
+            var payload = {
+                accessToken: accessToken,
+                email: email
+            };    
+            axios.post(config.url + '/auth/accountant/exists/', payload)
+            .then(response => {
+                var data = response.data;
+                if (data.exists) {
+                    res.render('signup', {
+                        userExists: true
+                    });
+                }else{
+                    // Proceed forward to signup
+                    tempProfile = {
+                        headAcc: {
+                            email: email,
+                            password: password                    
+                        }
+                    };
+                    res.redirect('/company/create');
                 }
-            };
-            res.redirect('/create');
+            })
+            .catch(error => {
+                console.error(error);
+                res.render('error', {
+                    message: dbErrorMsg
+                });
+            });
         }
-    })
-    .catch(error => {
-        console.error(error);
-        res.render('error', {
-            message: dbErrorMsg
-        });
     });
 });
 
