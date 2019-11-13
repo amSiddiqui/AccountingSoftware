@@ -57,5 +57,6 @@ urlpatterns = [
     path('report/profit/',views.report_profit),
     path('report/revenue/',views.report_revenue),
     path('report/expense/',views.report_expense),
+    path('report/unbilled/',views.report_unbilled),
     path('userToken/',views.check_token),
 ]

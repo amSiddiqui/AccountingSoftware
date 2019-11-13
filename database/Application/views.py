@@ -91,7 +91,7 @@ def get_iso_date(date_format, date_data):
 def get_date(date_format, date_data):
 	if DATE_FORMAT['big_endian'] == date_format.strip(): # yyyy/mm/dd
 		return date_data.strftime("%Y/%m/%d")
-	elif DATE_FORMAT['little_endia'] == date_format.strip(): # dd/mm/yyyy
+	elif DATE_FORMAT['little_endian'] == date_format.strip(): # dd/mm/yyyy
 		return date_data.strftime("%d/%m/%Y")
 	elif DATE_FORMAT['middle_endian'] == date_format.strip(): # 'mm/dd/yyyy'
 		return date_data.strftime("%m/%d/%Y")
@@ -99,6 +99,11 @@ def get_date(date_format, date_data):
 		raise Exception('Invalid date format')
 
 def get_invoice(client,items,invoice):
+	tempDate = invoice['Date']
+	diff = (date.today() - tempDate).days
+	dueTime = 0
+	if (invoice['Balance_Due'] > 0 and diff > client['Day_Limit']):
+		dueTime = diff - client['Day_Limit']
 	res = {
 		'client': {
 		'id': client['Client_Id'],
@@ -114,13 +119,20 @@ def get_invoice(client,items,invoice):
 			'country': client['Country_Name'],
 			'pincode': client['Pin_Code'],
 		},
-		'lateFeeRate': client['Late_Fee_Rate']
+		'lateFeeRate': client['Late_Fee_Rate'],
+		'dayLimit': client['Day_Limit'],
 		},
 		'id':invoice['Invoice_Id'],
 		'date': get_date( invoice['datefmt'], invoice['Date'] ),
 		'amountDue': invoice['Amount_Due'],
-		'items' : []
+		'amountPaid': invoice['Amount_Paid'],
+		'balanceDue': invoice['Balance_Due'],
+		'total': invoice['Total'],
+		'notes': invoice['Notes'],
+		'dueTime': dueTime,
+		'items' : items
 	}
+<<<<<<< HEAD
 
 	for itm in items:
 		item = {
@@ -131,6 +143,8 @@ def get_invoice(client,items,invoice):
 			'price': itm['Price']
 		}
 		res['items'].append(item)
+=======
+>>>>>>> 3f2cc9fcccceb185c91c1394ae99f43fd98aa39f
 	return res
 
 @csrf_exempt
@@ -286,7 +300,7 @@ def quote(request):
 		ln.append(l)
 		quotes.append(q)
 	data = {
-		'fNme': fn,
+		'fName': fn,
 		'lName': ln,
 		'quote': quotes
 	}
@@ -503,6 +517,7 @@ def fetch_invoice(request,invoice_id):
 def latest_invoice(request):
 	qty = request.POST['quantity']
 	tempInvoices = Invoice.objects.all().order_by('-Invoice_Id').values()
+<<<<<<< HEAD
 	if tempInvoices is not None and len(tempInvoices) > 0:
 		invoices = tempInvoices
 		res = []
@@ -526,6 +541,27 @@ def latest_invoice(request):
 
 	else:
 		return HttpResponse('Quantity is out of bound',status=400)
+=======
+	invoices = tempInvoices
+	res = []
+	for inv in invoices:
+		if qty == 0:
+			break
+		qty -= 1
+		client = Client.objects.filter(Client_Id=inv['Client_Id_id']).values()
+		items = []
+		item_invoice = Item_Invoice.objects.filter(Invoice_Id_id=inv['Invoice_Id']).values()
+		for itm in item_invoice:
+			item = Item.objects.filter(Item_Id=itm['Item_Id_id']).values()[0]
+			item['quantity'] = itm['Quantity']
+			item['price'] = itm['Price']
+			items.append(item)
+
+		if items is None or len(items) <= 0 or client is None or len(client) <= 0:
+			return HttpResponse('Client or Items does not exits in database', status=400)
+		res.append(get_invoice(client,items,inv))
+	return JsonResponse(res,safe=True)
+>>>>>>> 3f2cc9fcccceb185c91c1394ae99f43fd98aa39f
 
 #Deletes the invoice
 @csrf_exempt
@@ -616,9 +652,15 @@ def expense_create(request):
 
 
 def _get_expense(expense):
+<<<<<<< HEAD
 	categories = Category.objects.filter(Category_Id=expense['Category_Id_id']).values();
 	category = ''
 	if categories is not None and len(categories) > 0:
+=======
+	categories = Category.objects.filter(Category_Id=expense['Category_Id_id']).values()
+	category = ''
+	if categories is not None and len( categories ) > 0:
+>>>>>>> 3f2cc9fcccceb185c91c1394ae99f43fd98aa39f
 		category = categories[0]['Type']
 	return {
 			'category': category,
@@ -635,15 +677,15 @@ def _get_expense(expense):
 def expense_latest(request):
 	qty = request.POST['quantity']
 	all_expense = Expense.objects.all().order_by("-Expense_Id").values()
-	if all_expense is not None and len(all_expense) >= qty:
-		expenses = all_expense[:qty]
-		res = {'expenses': []}
-		for exp in expenses:
-			expense = _get_expense(exp)
-			res['expenses'].append(expense)
-		return (JsonResponse(res, safe=True))
-	else:
-		return HttpResponse('Quatity Requested is out of bounds', status=400)
+	expenses = all_expense
+	res = {'expenses': []}
+	for exp in expenses:
+		if qty == 0:
+			break
+		qty -= 1
+		expense = _get_expense(exp)
+		res['expenses'].append(expense)
+	return (JsonResponse(res, safe=True))
 
 
 @csrf_exempt
@@ -700,6 +742,27 @@ def client_create(request):
 	client.save()
 	return HttpResponse('Created Successfully')
 
+
+def _get_client_stats(client):
+	invoices = Invoice.objects.filter(Client_Id_id = client['Client_Id']).values();
+	res = {}
+	overdue = 0
+	outstanding = 0
+	total = 0
+	totalDueTime = 0
+	for invo in invoices:
+		outstanding += invo['Balance_Due']
+		total += invo['Total']
+		tempDate = invo['Date']
+		diff = (date.today() - tempDate).days
+		if (diff > client['Day_Limit'] and invo['Balance_Due'] > 0):
+			totalDueTime += (diff - client['Day_Limit'])
+			overdue += invo['Balance_Due']
+	
+	return {'outstanding': outstanding, 'overdue': overdue, 'total': total, 'dueTime': totalDueTime}
+
+
+
 def _get_client( client ):
 	return {
 		'id': client['Client_Id'],
@@ -715,7 +778,8 @@ def _get_client( client ):
 			'country': client['Country_Name'],
 			'pincode': client['Pin_Code'],
 		},
-		'lateFeeRate': client['Late_Fee_Rate']
+		'lateFeeRate': client['Late_Fee_Rate'],
+		'dayLimit': client['Day_Limit']
 	}
 
 @csrf_exempt
@@ -729,25 +793,49 @@ def client_latest(request):
 			if qty == 0:
 				break
 			qty -= 1
-			res['clients'].append(_get_client(client))
+			cli = _get_client(client)
+			cli['stats'] = _get_client_stats(client)
+			res['clients'].append(cli)
 		return (JsonResponse(res, safe=True))
 	else:
 		return HttpResponse('Quatity Requested is out of bounds', status=400)
+
+
 
 
 @csrf_exempt
 @post('accessToken', 'token')
 def client_fetch(request, client_id):
 	clis = Client.objects.filter(Client_Id=client_id).values()
+<<<<<<< HEAD
 	invs = Invoice.objects.filter(Client_Id_id=client_id).values()
 	if clis is None or len( cli ) <= 0:
+=======
+	invs = Invoice.objects.filter(Client_Id_id=client_id).values() 
+	if clis is None or len( clis ) <= 0:
+>>>>>>> 3f2cc9fcccceb185c91c1394ae99f43fd98aa39f
 		return HttpResponse('Client does not exists', status=400)
 	cli = clis[0]
 	invoices = []
 	for inv in invs:
-		invoices.append(_get)
+		item_invo = Item_Invoice.objects.filter(Invoice_Id_id=inv['Invoice_Id']).values()
+		print('Invoice with invoice id: ', inv['Invoice_Id'])
+		print('Items: ', item_invo)
+		items = []
+		for itm in item_invo:
+			item = Item.obejcts.filter(Item_Id=itm['Item_Id_id']).values()[0]
+			print('Item corresponding: ', item)
+			item['quantity'] = itm['Quantity']
+			item['price'] = itm['Price']
+			items.append(item)
+		inv['datefmt'] = request.POST['datefmt']
+		invoice = get_invoice(cli, items, inv)
+		invoices.append(invoice)
+
 	if (cli is not None):
-		res = {'client': _get_client(cli)}
+		tempCli = _get_client(cli)
+		tempCli['stats'] = _get_client_stats(cli)
+		res = {'client': tempCli, 'invoices': invoices}
 		return JsonResponse(res, safe=True)
 	else:
 		return HttpResponse('Client does not exists', status=400)
@@ -784,9 +872,7 @@ def client_delete(request):
 	for id in cli_ids:
 		Client.objects.filter(Client_Id=id).delete()
 	return HttpResponse('Successfully Deleted')
-
-
-
+		
 
 def _get_invoices_by_year(invoices):
 	invs_y = [invoices[0]]
@@ -1147,11 +1233,11 @@ def report_expense(request):
 		}
 
 		idx = -1
-		for i in range( 0, len( temp_rev ) ):
-			r = temp_rev[i]
+		for j in range( 0, len( temp_rev ) ):
+			r = temp_rev[j]
 			if r['id'] == rev_pat['id']:
 				rev_pat = r
-				idx = i
+				idx = j
 				break
 		if idx == -1:
 			temp_rev.append(rev_pat)
@@ -1184,3 +1270,120 @@ def report_expense(request):
 		res['expense'].append(rev_pat)
 
 	return JsonResponse(res,safe=True)
+<<<<<<< HEAD
+=======
+
+@csrf_exempt
+@post('accessToken','token','startMonth','endMonth','quantity')
+def report_unbilled(request):
+	rSMonth = request.POST['startMonth']
+	rEMonth = request.POST['endMonth']
+	currMonth = date.today().month
+	qty = request.POST['quantity']
+	
+	cycleS = True if currMonth < rSMonth else False
+	cycleE = True if currMonth < rEMonth else False
+	sMonth = abs( currMonth - rSMonth )
+	eMonth = abs( currMonth - rEMonth )
+
+	invoices = Invoice.objects.all().order_by('-Date').values()
+	if invoices is None or len( invoices ) <= 0 :
+		return HttpResponse('Invoice not found',status=400)
+	
+	invs_y,invs = _get_invoices_by_year(invoices)
+	curr_year = invs[0]['Date'].year
+	
+	if invs_y == 1 and cycleS and cycleE:
+		return HttpResponse('Invalid Arguments',status=400)
+	
+	res = {
+		'expense':[],
+		'totalOverdue': 0
+	}
+
+	'''
+	revPat = {
+		'client':
+		'due':
+		'days':
+	}
+	'''
+
+	check_limit = lambda d, limit: ( date.today() - d ).days > limit 
+	get_limit = lambda d, limit: ( date.today() - d ).days - limit 
+	totalOver = 0
+	for i in range( 0, len(invs)):
+		if qty == 0:
+			break
+		qty -= 1
+
+		inv = invs[i]
+		temp_date = inv['Date']
+		temp_month = temp_date.month
+		temp_year = temp_date.year
+		clients = Client.objects.filter(Client_Id=inv['Client_Id_id'])
+	
+		if clients is None or len(clients) <= 0:
+			return HttpResponse('Database is correpted', status=500)
+
+		client = clients[0]
+		name = f"{client['Fname']} {client['Lname']}"
+		totalOver += inv['Balance_Due']
+		if check_limit(temp_date, client['Day_Limit']):
+			continue
+		rev_pat = {
+			'client': name,
+			'due': 0,
+			'days': get_limit(temp_date, client['Day_Limit']),
+			'id' : client['Client_Id']
+		}
+
+		idx = -1
+		for j in range( 0, len( temp_rev ) ):
+			r = temp_rev[j]
+			if r['id'] == rev_pat['id']:
+				rev_pat = r
+				idx = j
+				break
+		if idx == -1:
+			temp_rev.append(rev_pat)
+			idx = len( temp_rev ) - 1
+
+		if not cycleE and not cycleS:
+			if clients is None or len(clients) <= 0:
+				break 
+			if curr_year != inv['Date'].year :
+				break
+
+			if sMonth <= inv['Date'].month and eMonth >= inv['Date'].month:
+				res['due'] += inv['Balance_Due']
+
+		elif cycleE and not cycleS:
+
+			if clients is None or len(clients) <= 0:
+				break 
+
+			if eMonth >= inv['Date'].month and curr_year == inv['Date'].year:
+				res['due'] += inv['Balance_Due']
+			elif sMonth <= inv['Date'].month and curr_year != inv['Date'].year:
+				res['due'] += inv['Balance_Due']
+		
+		elif cycleS and cycleE:
+
+			if clients is None or len(clients) <= 0:
+				break 
+
+			if sMonth <= inv['Date'].month and curr_year != inv['Date'].year and eMonth >= inv['Date'].month:
+				res['due'] += inv['Balance_Due']
+	
+	res['totalOverdue'] = totalOver
+	for r in temp_rev:
+		rev_pat = {
+			'client': r['client'],
+			'due': r['due'],
+			'days': r['days'],
+		}
+		res['expense'].append(rev_pat)
+
+	return JsonResponse(res,safe=True) 
+>>>>>>> 3f2cc9fcccceb185c91c1394ae99f43fd98aa39f
