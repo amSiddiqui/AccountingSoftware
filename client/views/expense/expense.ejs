@@ -44,7 +44,7 @@
             <hr class="tile-design">
             <div class="level">
               <div class=" column level-left">
-                <p class = "title is-2"><%= expense.vendor%></p>
+                <p class = "title is-2"><%= expense.vendor.Vendor_Name %></p>
                 <p class = "content is-6">
                   <div class="columns is-vcentered">
                     <div class="column is-2 has-text-centered"><span class="icon"><i class="fas fa-envelope-open-text fa-fw"></i></span></div>
@@ -67,10 +67,10 @@
             </div>
             <hr>
             <div class="level-right">
-              <% if(expense.subtotal > 1000){%>
-                <h2 class = "is-size-2"><%= currency.substring(0,1) + ' '+expense.subtotal/1000%> K</h2>
+              <% if(expense.amount > 1000){%>
+                <h2 class = "is-size-2"><%= currency.substring(0,1) + ' '+expense.amount/1000%> K</h2>
               <%}  else{ %>
-                <h2 class = "is-size-2"><%= currency.substring(0,1) + ' '+ expense.subtotal%></h2>
+                <h2 class = "is-size-2"><%= currency.substring(0,1) + ' '+ expense.amount%></h2>
                 <% } %>
             </div>
 
@@ -139,7 +139,7 @@
           <tr class="searchableParent">
             <td>
               <div class="pretty p-svg p-curve">
-                <input type="checkbox" id = "select-checkbox" value = "<%= expense.id%>" name = "row"/>
+                <input type="checkbox" id = "select-checkbox" value = "<%= expense.category %>" name = "row"/>
                 <div class="state p-success">
                   <!-- svg path -->
                   <svg class="svg svg-icon" viewBox="0 0 20 20">
@@ -150,11 +150,11 @@
               </div>
             </td>
             <label for="select-checkbox">
-              <td class="searchable"><%= expense.vendor%></td>
+              <td class="searchable"><%= expense.vendor.Vendor_Name%></td>
               <td><%= expense.date%></td>
-              <td><%= expense.countryCode%> <%= expense.phone%></td>
+              <td><%= expense.countryCode%> <%= expense.vendor.Phone%></td>
               <td><%= expense.category%></td>
-              <td> <%=currency.substring(0,1) +' '+expense.subtotal%></td>
+              <td> <%=currency.substring(0,1) +' '+expense.amount%></td>
             </label>
           </tr>
           <%});%>

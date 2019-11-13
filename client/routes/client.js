@@ -5,11 +5,8 @@ const seeds = require('../seeds');
 const bodyParser = require('body-parser');
 const app = express();
 const config = require('../config/config');
-<<<<<<< HEAD
 const axios = require('axios');
-=======
-const axios = require('axios')
->>>>>>> a359a8341adb01294dc1b40ba155f2aad192099e
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

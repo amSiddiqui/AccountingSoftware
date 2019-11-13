@@ -29,6 +29,7 @@ urlpatterns = [
     # Vendor routes
     path('vendor/create/', views.create_vendor ),
     path('vendor/', views.fetch_vendor),
+    path('vendorID/', views.fetch_vendor_Id),
 
     # Category routes
     path('category/create/', views.category_create),
@@ -40,15 +41,15 @@ urlpatterns = [
     path('expense/<int:expense_id>/', views.expense_fetch),
     path('expense/<int:expense_id>/update/', views.expense_update),
     path('expense/delete/', views.expense_delete),
-    
+
     #Client Routes
     path('client/create/', views.client_create),
     path('client/latest/', views.client_latest),
     path('client/<int:client_id>/', views.client_fetch),
     path('client/<int:client_id>/update/', views.client_update),
     path('client/delete/', views.client_delete),
-    
-    
+
+
     # Report routes
     # path('client/', views.report_client ),
     path('report/outstandingRevenue/',views.report_outstandingRevenue),

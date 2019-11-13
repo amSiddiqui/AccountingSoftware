@@ -16,15 +16,18 @@ router.get('/', (req, res, next) => {
     if (user) {
       var total = 0;
       var expenses = [];
+      var expensetab = [];
       axios.post(config.url + '/expense/latest/', {
         token: user.token,
         accessToken: accessToken,
-        quantity: 15,
+        quantity: 3,
       }).then(response => {
-        expenses = response.data.expense;
+        expenses = response.data.expenses;
+        console.log("Expense Array:")
         console.log(expenses);
+
         expenses.forEach( expense  => {
-          total += expense.subtotal;
+          total += expense.amount;
         });
         res.render('expense/expense', {
           expense: expenses,
@@ -81,16 +84,19 @@ router.post('/', (req, res) => {
     if (user) {
       //TODO: fetch auto-generated id
       id = 2;
+      // axios.post(config.url+'/vendorID/',{
+      //   accessToken:accessToken,
+      //   token:user.token,
+      // }).then()
       var params = {
         id: id,
         category: req.body.category,
         date: req.body.date,
-        vendor: req.body.vendor,
-
-        phone: req.body.phone,
-        countryCode: req.body.countryCode,
+        // vendor: req.body.vendor.Vendor_Name
+        phone: req.body.Phone,
+        Country_Code: req.body.countryCode,
         description: req.body.description,
-        subtotal: req.body.subtotal,
+        amount: req.body.subtotal,
       };
       id++;
       // seeds.pseudoExpense.push(params);
@@ -167,10 +173,8 @@ router.put('/:id', (req, res) => {
             res1[i].category = req.body.category;
             res1[i].date = req.body.date;
             res1[i].vendor = req.body.vendor;
-            res1[i].phone = req.body.phone;
-            res1[i].countryCode = req.body.countryCode;
             res1[i].description = req.body.description;
-            res1[i].subtotal = req.body.subtotal;
+            res1[i].amount = req.body.subtotal;
             break;
           }
         }
@@ -181,15 +185,8 @@ router.put('/:id', (req, res) => {
           accessToken: accessToken,
           expense: res1,
         }).then(response => {
-          console.log('expense updated');
-          axios.post(config.url + `/expense/${req.params.id}/update/`, {
-            token: user.token,
-            accessToken: accessToken,
-            client: res1,
-          }).then(response => {
-            console.log('client updated');
-
-            res.render('/expense/' + req.params.id);
+            console.log('expense updated');
+            res.redirect('/expense/' + req.params.id);
           }).catch(error => {
             console.log(error);
             res.render('error', {
