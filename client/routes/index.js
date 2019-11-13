@@ -44,7 +44,7 @@ router.get('/logout', (req, res) => {
     });
 });
 
-router.post('/login',(req,res)=>{
+router.post('/login',(req,res, next)=>{
     util.authCheck(req, user => {
         if (user) {
             res.redirect('/dashboard');
@@ -58,8 +58,8 @@ router.post('/login',(req,res)=>{
                 accessToken: accessToken,
                 email: userData.email,
                 password: userData.password
-            }).then(res => {
-                res.cookie('user', res.data, cookieOpt);
+            }).then(response => {
+                res.cookie('user',response.data,cookieOpt);
                 res.redirect('/dashboard');
             }).catch(err => {
                 console.error(err);
