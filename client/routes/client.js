@@ -5,6 +5,7 @@ const seeds = require('../seeds');
 const bodyParser = require('body-parser');
 const app = express();
 const config = require('../config/config');
+const axios = require('axios');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -20,7 +21,7 @@ router.get('/', (req, res, next) => {
       var client = [];
       //TODO: fetch total ,outstanding,overdue,draft
       // TODO: Use axios
-      axios.post(config.url + '/client/latest',{
+      axios.post(config.url + '/client/latest/',{
         token:user.token,
         accessToken:accessToken,
         quantity: 15,
@@ -40,7 +41,7 @@ router.get('/', (req, res, next) => {
         });
       }).catch( err=>{
         console.log(err);
-        res.render('error',{message:dbErrorMsg});
+        res.render('/error',{message:dbErrorMsg});
       });
 
       // seeds.pseudolient.forEach(function(client){
@@ -82,7 +83,7 @@ router.post('/', (req, res) => {
 
 
       //TODO: fetch auto-generate ID
-      var clientID=4;
+      var clientID=1;
       var params = {
         id: clientID,
         firstName: req.body.firstName,
@@ -114,13 +115,13 @@ router.post('/', (req, res) => {
           res.render('/client');
           }).catch(err => {
           console.error(err);
-          res.render('error', {
+          res.render('/error', {
               message: dbErrorMsg
           });
       });
       clientID++;//temporary way to increment id
-      seeds.pseudoClient.push(params);
-      res.redirect('/client');
+      // seeds.pseudoClient.push(params);
+      // res.redirect('/client');
     }
     else{
       res.redirect('/dashboard');
@@ -144,7 +145,7 @@ router.get('/:id/edit/', (req, res, next) => {
         });
       }).catch(error =>{
         console.log(error);
-        res.redirect('error',{message: dbErrorMsg});
+        res.render('error',{message: dbErrorMsg});
       });
 
       // var client = seeds.pseudoClient.find(client => client.id === parseInt(req.params.id));
@@ -195,7 +196,7 @@ router.put('/:id',(req,res) => {
             res.render('/client/'+req.params.id);
           }).catch(error => {
             console.log(error);
-            res.render('error',{message:dbErrorMsg});
+            res.render('/error',{message:dbErrorMsg});
           });
         });
     }
@@ -253,7 +254,9 @@ router.get('/:id', (req, res, next) => {
           });
 
       }).catch(err =>{
-
+          res.render('err'=>{
+            res.render('error',{message:dbErrorMsg});
+          });
       });
       // var client = seeds.pseudoClient.find(client => client.id === parseInt(req.params.id));
       // seeds.invoices.forEach(function(invoice){
@@ -323,7 +326,7 @@ router.delete('/:id/delete',(req,res,next) =>{
       }).then( response =>{
         res.render('/client' + req.params.id);
       }).catch(err =>{
-        res.render('error',{
+        res.render('/error',{
           message:dbErrorMsg,
         });
       });

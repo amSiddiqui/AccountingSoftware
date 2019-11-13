@@ -1,0 +1,66 @@
+->Get request at /invoice/
+statement coverage:
+
+totalLines: 30
+
+user input -> pseudoUser
+    coverage: 25 / 30 => 83%
+    invoice input -> invoices
+        coverage: 8 / 30 => 26%
+    invoice input -> []
+        coverage: 2 / 30 => 6%
+    expected output: render invoice
+
+user input -> null
+    coverage: 10%
+    expected output: redirect to dashboard
+
+->Post request at /invoice/create
+statement coverage:
+
+totalLines: 58
+
+user input -> pseudoUser
+    coverage: 52 / 58 => 89%
+    nRows input -> 1
+        coverage: 9 / 58 => 15%
+    nRows input -> 0
+        coverage: 2 / 58 => 3%
+    accessToken input -> '1234'
+        token input -> '1234'
+            invoice input -> invoices
+                coverage: 4 / 58 = 6%
+                expected output: redirect to invoice
+            invoice input -> []
+                coverage: 6 / 58 = 10%
+                expected output: render error page
+        token input -> ''
+            invoice input -> invoices
+                coverage: 6 / 58 = 10%
+                expected output: render error page
+            invoice input -> []
+                coverage: 6 / 58 = 10%
+                expected output: render error page
+    accessToken input -> ''
+        token input -> '1234'
+            invoice input -> invoices
+                coverage: 6 / 58 = 10%
+                expected output: render error page
+            invoice input -> []
+                coverage: 6 / 58 = 10%
+                expected output: render error page
+        token input -> ''
+            invoice input -> invoices
+                coverage: 6 / 58 = 10%
+                expected output: render error page
+            invoice input -> []
+                coverage: 6 / 58 = 10%
+                expected output: render error page
+
+    expected output: sends message for successfull
+
+user input -> null
+    coverage: 5%
+    expected output: redirect to dashboard
+
+
