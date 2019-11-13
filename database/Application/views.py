@@ -108,7 +108,7 @@ def get_invoice(client,items,invoice):
 		'phone': client['Phone'],
 		'email': client['Email'],
 		'address': {
-			'address1': client['Address'],
+			'address1': client['Address_Line'],
 			'city': client['City'],
 			'state': client['State'],
 			'country': client['Country_Name'],
@@ -133,6 +133,15 @@ def get_invoice(client,items,invoice):
 		res['items'].append(item)
 	return res
 
+@csrf_exempt
+@post('accessToken')
+def check_token(request):
+	try:
+		return JsonResponse({
+			'valid': check_user(request.POST['token'])
+		},safe=True)
+	except :
+		return HttpResponse('Please provide user token',status=400)
 #Create Initial init Request:
 @csrf_exempt
 @post('clientId','secret')
@@ -332,6 +341,7 @@ def company(request):
 	request.POST = request.POST.get('company')
 	try:
 		comp=request.POST.get('company')
+
 		datefmt = comp['datefmt']
 		c1 = Company(Company_Name=comp['name'],Address_Line=comp['address']['address1'],City=comp['address']['city'],
 			Pin_Code=comp['address']['pincode'],Country_Name=comp['address']['country'], Country_Code=comp['countryCode'],
@@ -345,6 +355,7 @@ def company(request):
 			head=request.POST.get('headAcc')
 			token = head['email']+str(datetime.now())
 			uToken = make_password(token)
+
 			global userToken
 			email = head['email']
 			userToken[email] = uToken
@@ -359,30 +370,44 @@ def company(request):
 		if 'Client' in comp['accountants']:
 			# x=Company.objects.filter(Company_Name=comp['name']).values_list('Company_Id')
 			client=request.POST.get('clientAcc')
+			token = client['email']+str(datetime.now())
+			uToken=make_password(token)
+
+			userToken[email]=uToken
 
 			c1 = User(Fname=client['firstName'],Lname=client['lastName'],Address_Line=client['address']['address1'],
 				City=client['address']['city'],Pin_Code=client['address']['pincode'],State=client['address']['state'],
 				Country_Name=client['address']['country'],Country_Code=client['countryCode'],Email=client['email'],
-				Password=client['password'],Phone=client['phone'],Auth_Level=1,Comp_Id_id=comp_id)
+				Password=make_password(client['password']),Phone=client['phone'],Auth_Level=1,Comp_Id_id=comp_id)
 
 			c1.save()
 
 		if 'Expense' in comp['accountants']:
 			# x=Company.objects.filter(Company_Name=comp['name']).values_list('Company_Id')
 			expense=request.post.get('expenseAcc')
+			token=expense['email']+str(datetime.now())
+			uToken=make_password(token)
+
+			userToken[email]=uToken
+
 			e1 = User(Fname=expense['firstName'],Lname=expense['lastName'],Address_Line=expense['address']['address1'],
 				City=expense['address']['city'],Pin_Code=expense['address']['pincode'],State=expense['address']['state'],
 				Country_Name=expense['address']['country'],Country_Code=expense['countryCode'],Email=expense['email'],
-				Password=expense['password'],Phone=expense['phone'],Auth_Level=2,Comp_Id_id=comp_id)
+				Password=make_password(expense['password']),Phone=expense['phone'],Auth_Level=2,Comp_Id_id=comp_id)
 			e1.save()
 
 		if 'Genral' in comp['accountants']:
 			# x=Company.objects.filter(Company_Name=comp['name']).values_list('Company_Id')
 			gen=request.post.get('genralAcc')
+			token=gen['email']+str(datetime.now())
+			uToken=make_password(token)
+
+			userToken[email]=uToken
+
 			g1 = User(Fname=gen['firstName'],Lname=gen['lastName'],Address_Line=gen['address']['address1'],
 				City=gen['address']['city'],Pin_Code=gen['address']['pincode'],State=gen['address']['state'],
 				Country_Name=gen['address']['country'],Country_Code=gen['countryCode'],Email=gen['email'],
-				Password=gen['password'],Phone=gen['phone'],Auth_Level=3,Comp_Id_id=comp_id)
+				Password=make_password(gen['password']),Phone=gen['phone'],Auth_Level=3,Comp_Id_id=comp_id)
 			g1.save()
 		
 		print('User created ')
@@ -517,7 +542,7 @@ def delete_invoice(request):
 def create_vendor(request):
 	ven = request.POST['vendor']
 	add = ven['addresss']
-	vendor = Vendor(Vendor_Name=ven['name'],Email=ven['email'],Phone=ven['phone'],Address=add['address1'],City=add['city'],State=ven['state'],
+	vendor = Vendor(Vendor_Name=ven['name'],Email=ven['email'],Phone=ven['phone'],Address_Line=add['address1'],City=add['city'],State=ven['state'],
 				Pin_Code=ven['pincode'], Country_Name=add['country'], Country_Code=ven['countryCode'])
 	vendor.save()
 	return HttpResponse('Created successfully')
@@ -659,7 +684,7 @@ def _get_client( client ):
 		'phone': client['Phone'],
 		'email': client['Email'],
 		'address': {
-			'address1': client['Address'],
+			'address1': client['Address_Line'],
 			'city': client['City'],
 			'state': client['State'],
 			'country': client['Country_Name'],
