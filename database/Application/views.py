@@ -399,6 +399,22 @@ def company(request):
 		return HttpResponse(status=404)
 
 @csrf_exempt
+@post('accessToken','email','phone','name')
+def company_exists(request):
+	email = request.POST['email']
+	phone = request.POST['phone']
+	name = request.POST['name']
+	name_exists = len( Company.Objects.filter(Company_Name=name).values() ) > 0
+	email_exists = len( Company.Objects.filter(Company_Name=email).values() ) > 0
+	phone_exists = len( Company.Objects.filter(Company_Name=phone).values() ) > 0
+
+	return JsonResponse({
+		'nameExists':name_exists,
+		'emailExists':email_exists,
+		'phoneExists':phone_exists
+	},safe=True)
+
+@csrf_exempt
 @post('accessToken','email')
 def user_exists(request):
 	user = User.objects.filter(Email=request.POST['email']).values()
@@ -465,8 +481,8 @@ def fetch_invoice(request,invoice_id):
 def latest_invoice(request):
 	qty = request.POST['quantity']
 	tempInvoices = Invoice.objects.all().order_by('-Invoice_Id').values()
-	if tempInvoices is not None and len(tempInvoices) >= qty:
-		invoices = tempInvoices[:qty]
+	if tempInvoices is not None and len(tempInvoices) > 0:
+		invoices = tempInvoices
 		res = []
 		for inv in invoices:
 			if qty == 0:
@@ -570,7 +586,7 @@ def _get_expense(expense):
 @csrf_exempt
 @post('accessToken', 'token', 'quantity')
 def expense_latest(request):
-	qty = int(request.POST['quantity'])
+	qty = request.POST['quantity']
 	all_expense = Expense.objects.all().order_by("-Expense_Id").values()
 	if all_expense is not None and len(all_expense) >= qty:
 		expenses = all_expense[:qty]
@@ -637,15 +653,36 @@ def client_create(request):
 	client.save()
 	return HttpResponse('Created Successfully')
 
+def _get_client( client ):
+	return { 
+		'id': client['Client_Id'],
+		'firstName': client['Fname'],
+		'lastName': client['Lname'],
+		'countryCode': client['Country_Code'],
+		'phone': client['Phone'],
+		'email': client['Email'],
+		'address': {
+			'address1': client['Address'],
+			'city': client['City'],
+			'state': client['State'],
+			'country': client['Country_Name'],
+			'pincode': client['Pin_Code'],
+		},
+		'lateFeeRate': client['Late_Fee_Rate']
+	}
 
 @csrf_exempt
 @post('accessToken', 'token', 'quantity')
 def client_latest(request):
-	qty = int(request.POST['quantity'])
+	qty = request.POST['quantity']
 	all_client = Client.objects.all().order_by("-Client_Id").values()
-	if all_client is not None and len(all_client) >= qty:
-		clients = all_client[:qty]
-		res = {'clients': clients}
+	if all_client is not None and len(all_client) > 0:
+		res = {'clients': []}
+		for client in all_client:
+			if qty == 0:
+				break
+			qty -= 1
+			res['clients'].append(_get_client(client))
 		return (JsonResponse(res, safe=True))
 	else:
 		return HttpResponse('Quatity Requested is out of bounds', status=400)
@@ -656,7 +693,7 @@ def client_latest(request):
 def client_fetch(request, client_id):
 	cli = Client.objects.filter(Client_Id=client_id).values()[0]
 	if (cli is not None):
-		res = {'client': cli}
+		res = {'client': _get_client(cli)}
 		return JsonResponse(res, safe=True)
 	else:
 		return HttpResponse('Client does not exists', status=400)
@@ -1017,7 +1054,7 @@ def report_expense(request):
 	
 	exps_y,exps = _get_expense_by_year(expense)
 	curr_year = exps[0]['Date'].year
-	if invs_y == 1 and cycleS and cycleE:
+	if exps_y == 1 and cycleS and cycleE:
 		return HttpResponse('Invalid Arguments',status=400)
 	
 	res = {
