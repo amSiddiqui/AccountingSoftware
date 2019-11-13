@@ -223,12 +223,16 @@ router.get('/dashboard', (req, res) => {
                     unb_days.push(unb.time);
                     unb_dues.push(unb.due);
                 });
-    
+                
+                const quoteLen = utilData.quotes.quote.length
+                const random_idx = Math.floor( quoteLen * Math.random() )
+                const rawQuote = {...utilData.quotes}
+                const quote = {
+                    quote: rawQuote['quote'][random_idx],
+                    author: `${rawQuote['fName'][random_idx]} ${rawQuote['lName'][random_idx]}`
+                }
                 res.render('dashboard', {
-                    quote: {
-                        quote: 'You miss 100 percent of the shots you don’t take.',
-                        author: 'Wayne Gretzky'
-                    },
+                    quote,
                     percent: percent,
                     outstandingRevenue: new Intl.NumberFormat().format(outstandingRevenue),
                     currency: currency.substring(0, 1),
