@@ -41,7 +41,7 @@ router.get('/', (req, res, next) => {
         });
       }).catch( err=>{
         console.log(err);
-        res.render('/error',{message:dbErrorMsg});
+        res.render('error',{message:dbErrorMsg});
       });
 
       // seeds.pseudolient.forEach(function(client){
@@ -115,7 +115,7 @@ router.post('/', (req, res) => {
           res.render('/client');
           }).catch(err => {
           console.error(err);
-          res.render('/error', {
+          res.render('error', {
               message: dbErrorMsg
           });
       });
@@ -196,7 +196,7 @@ router.put('/:id',(req,res) => {
             res.render('/client/'+req.params.id);
           }).catch(error => {
             console.log(error);
-            res.render('/error',{message:dbErrorMsg});
+            res.render('error',{message:dbErrorMsg});
           });
         });
     }
@@ -254,10 +254,8 @@ router.get('/:id', (req, res, next) => {
           });
 
       }).catch(err =>{
-          res.render('err'=>{
             res.render('error',{message:dbErrorMsg});
           });
-      });
       // var client = seeds.pseudoClient.find(client => client.id === parseInt(req.params.id));
       // seeds.invoices.forEach(function(invoice){
       //   if(invoice.client.id === parseInt(req.params.id)){
@@ -326,7 +324,7 @@ router.delete('/:id/delete',(req,res,next) =>{
       }).then( response =>{
         res.render('/client' + req.params.id);
       }).catch(err =>{
-        res.render('/error',{
+        res.render('error',{
           message:dbErrorMsg,
         });
       });
