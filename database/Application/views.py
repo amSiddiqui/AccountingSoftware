@@ -409,7 +409,7 @@ def company_exists(request):
 	phone_exists = len( Company.Objects.filter(Company_Name=phone).values() ) > 0
 
 	return JsonResponse({
-		'nameExist':name_exists,
+		'nameExists':name_exists,
 		'emailExists':email_exists,
 		'phoneExists':phone_exists
 	},safe=True)
