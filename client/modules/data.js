@@ -4,66 +4,6 @@ const axios = require('axios');
 console.log('Access Token in data.js: ', accessToken);
 
 global.utilData = {
-    outstandingRevenue: 20000,
-    overdue: 4000,
-    profit: [
-        1200,
-        4000,
-        -500,
-        100,
-        2000,
-        100,
-    ],
-    totalProfit: 5700,
-    revenueStream: [
-        {
-            client: "Someone1",
-            revenue: 2000
-        },
-        {
-            client: "Someone2",
-            revenue: 4000
-        },
-        {
-            client: "Someone3",
-            revenue: 3000
-        },
-        {
-            client: "Someone4",
-            revenue: 2500
-        },
-        {
-            client: "Someone5",
-            revenue: 4200
-        }
-    ],
-    totalRevenue: 200000,
-    spending: [
-        {
-            vendor: "Who1",
-            spent: 5000
-        },
-
-        {
-            vendor: "Who2",
-            spent: 4000
-        },
-        {
-            vendor: "Who3",
-            spent: 2000
-        },
-        {
-            vendor: "Who4",
-            spent: 200
-        },
-
-        {
-            vendor: "Who5",
-            spent: 2400
-        },
-
-    ],
-    totalSpending: 10000,
     unbilledTimes: [
         {
             client: "late1",
@@ -119,6 +59,9 @@ global.utilData = {
         utilData.currency =  (await axios.post(config.url+'/util/currency/', {
             accessToken
         })).data;
+
+        
+
     }
     catch(err) {
         throw new Error(err.response.data);
@@ -130,8 +73,8 @@ global.utilData = {
     curSymbol = [];
     for (let index = 0; index < tempCurrency.symbol.length; index++) {
         const element = tempCurrency.symbol[index];
-        const code = tempCurrency.code[index];
-        curSymbol.push(element+' '+code);
+        const currency = tempCurrency.currency[index];
+        curSymbol.push(element+' '+currency);
     }
     utilData.currency.symbol = curSymbol;
 

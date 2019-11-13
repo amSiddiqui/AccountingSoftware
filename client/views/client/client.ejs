@@ -166,10 +166,10 @@
                 </td>
                 <td><%= client.phone%></td>
                 <td>
-                  <%= client.currency.substring(0,1) + client.amountDue%>
+                  <%= currency.substring(0,1) + client.amountDue%>
                 </td>
                 <td>
-                  <%= client.currency.substring(0,1) + client.total%>
+                  <%= currency.substring(0,1) + client.total%>
                   <span class="is-pulled-right">
                     <a href="client/<%= client.id %>" class="button is-success is-small is-rounded">Open</a>
                   </span>

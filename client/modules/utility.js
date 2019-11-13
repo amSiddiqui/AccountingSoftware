@@ -1,5 +1,8 @@
+const axios = require('axios')
+const url = require('../config/config').url
 module.exports = {
     validateUser : (opt)=>{
+
         let currOpt = {
             failedRedirect: 'http://127.0.0.1:3000/login',
             successRedirect: 'http://127.0.0.1:3000/dashboard',
@@ -15,6 +18,8 @@ module.exports = {
             currOpt['next'] = opt['next'];
         }
         return function( req, res, next ){
+
+
             if( currOpt['next'] ){
                 next();
             }
@@ -23,17 +28,26 @@ module.exports = {
                 return;
             }
             const user = req.cookies['user'];
-            // console.log(req.)
-            if(typeof(user) == 'object' && typeof(user.token) == 'string' && typeof(user.company) == 'object'){
-                if( currOpt['successRedirect'] ){
-                    res.redirect(`${currOpt['successRedirect']}`);
-                }else{
+            axios.post(`${url}/userToken/`, {
+                accessToken,
+                token : user.token
+            }).then(resp=>resp.data)
+            .then(resp => {
+                if ( resp.valid ){
+                    if(typeof(user) == 'object' && typeof(user.token) == 'string' && typeof(user.company) == 'object'){
+                        if( currOpt['successRedirect'] ){
+                            res.redirect(`${currOpt['successRedirect']}`);
+                        }
+                    }else {
+                        res.redirect(`${currOpt['failedRedirect']}`);
+                    }
                     next();
+                }else{
+                    res.clearCookie('user')
                 }
-            }else {
-                res.redirect(`${currOpt['failedRedirect']}`);
-            }
-        };
+            }).catch(err=>res.clearCookie('user'))
+
+        }
     },
 
     validateObj : (obj, param)=>{
@@ -54,10 +68,21 @@ module.exports = {
     },
     authCheck: (req, callback)=>{
         const user = req.cookies['user'];
-        if(typeof(user) == 'object' && typeof(user.token) == 'string' && typeof(user.company) == 'object'){
-            callback(user);
-        }else{
-            callback(null);
-        }
+        if(typeof(user) != 'object' || typeof(user.token) != 'string' || typeof(user.company) != 'object') return callback(null)
+        axios.post(`${url}/userToken/`, {
+            accessToken,
+            token : user.token
+        }).then(resp=>resp.data)
+        .then(resp => {
+            if( resp.valid ){
+                if(typeof(user) == 'object' && typeof(user.token) == 'string' && typeof(user.company) == 'object'){
+                    callback(user);
+                }else{
+                    callback(null);
+                }
+            }else{
+                callback(null);
+            }
+        }).catch(err=>callback(null))
     },
 };

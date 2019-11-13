@@ -15,18 +15,19 @@ router.get('/', (req, res, next) => {
   util.authCheck(req, (user) => {
     if (user) {
       var total = 0;
-      var exp = [];
+      var expenses = [];
       axios.post(config.url + '/expense/latest/', {
         token: user.token,
         accessToken: accessToken,
         quantity: 15,
       }).then(response => {
-        expense = response.data.expense;
-        expense.forEach((expense) => {
+        expenses = response.data.expense;
+        console.log(expenses);
+        expenses.forEach( expense  => {
           total += expense.subtotal;
         });
         res.render('expense/expense', {
-          expense: expense,
+          expense: expenses,
           currency: user.company.currency,
           total: total,
         });
