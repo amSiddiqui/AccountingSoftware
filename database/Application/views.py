@@ -184,7 +184,6 @@ def login_user(request):
 	# if (access_token != value['accessToken']):
 	# 	return HttpResponse("Invalid Authorisation ", status=status[2])
 	users = User.objects.filter(Email=email).values()
-
 	# for e,enc_p in User.objects.all().values_list('Email','Password'):
 	# 	if e == email:
 	if users is not None and len(users) == 1:
@@ -193,11 +192,6 @@ def login_user(request):
 		if companies is None or len(companies) < 1:
 			return HttpResponse('Company is not set', status=406 )
 		
-		currencies = Currency.objects.filter(Id=companies[0]['Base_Currency']).values()
-		
-		if currencies is None or len( currencies ) < 1 :
-				return HttpResponse('Currency is not added', status=406 )
-		currency = currencies[0]
 		company = companies[0]
 		if check_password(password,user['Password']):
 			tokenTemp = None
@@ -225,7 +219,7 @@ def login_user(request):
 						'country': company['Country_Name'],
 						'pincode': company['Pin_Code'],
 						},
-					'currency': currency['Symbol'],
+					'currency': company['Base_Currency'],
 					'datefmt': company['Date_Format'],
 					'taxrate': company['Tax_Rate']
 					},
