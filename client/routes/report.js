@@ -92,10 +92,10 @@ router.get('/:type', (req , res, next) => {
         }
         else if(type == "CLIENT REPORT"){
           var total =0;
-          for(var i in seeds.pseudoClient){
-            total += seeds.pseudoClient[i].total;
+          for(var i in resclnt){
+            total += resclnt[i].total;
           }
-          res.render('report/show', {type: type, client: seeds.pseudoClient,total:total,currency: currency,});
+          res.render('report/show', {type: type, client: resclnt,total:total,currency: utilData.company.currency,});
         }
         else if(type == "PAYMENT PENDING"){
           var totalDue = 0;
@@ -105,7 +105,7 @@ router.get('/:type', (req , res, next) => {
           res.render('report/show',{
             type: type,
             invoice: resinv,
-            currency: utilData.currency,
+            currency: utilData.company.currency,
             total: totalDue,
           });
         }
@@ -118,7 +118,7 @@ router.get('/:type', (req , res, next) => {
           res.render('report/show',{
             type: type,
             invoice: resinv,
-            currency: currency,
+            currency: utilData.company.currency,
             total: totalPaid,
           });
         }
@@ -130,12 +130,12 @@ router.get('/:type', (req , res, next) => {
 
           else if(type == 'EXPENSE REPORT'){
             var total =0;
-            for(var i in seeds.pseudoExpense){
-              total += seeds.pseudoExpense[i].subtotal
+            for(var i in resexpen){
+              total += resexpen[i].subtotal
             }
             res.render('report/show', {
               type: type,
-              expense: seeds.pseudoExpense,
+              expense: resexpen,
               currency: currency,
               total:total,
             });
@@ -144,8 +144,8 @@ router.get('/:type', (req , res, next) => {
             var expenseTotal =0;
             var salesTotal =0;
 
-            for(var i in seeds.pseudoExpense){
-              expenseTotal += seeds.pseudoExpense[i].subtotal
+            for(var i in resexpen){
+              expenseTotal += resexpen[i].subtotal
             }
             for(var i in resinv){
               salesTotal += resinv[i].total;
@@ -154,11 +154,11 @@ router.get('/:type', (req , res, next) => {
 
             res.render('report/show',{
               type: type,
-              expense: seeds.pseudoExpense,
+              expense: resexpen,
               salesTotal:salesTotal,
               expenseTotal:expenseTotal,
               profit:profit,
-              currency: currency,
+              currency: utilData.company.currency,
             });
           }
           // else if(type === 'GENERAL LEDGER'|| type === 'BALANCE SHEET'|| type === 'TRIAL BALANCE'){
@@ -169,7 +169,8 @@ router.get('/:type', (req , res, next) => {
             }
         // use/access the results
       })).catch(errors => {
-        // react on errors.
+        console.log(err);
+        res.render('error',{message:err.response.data})
       })
 
 

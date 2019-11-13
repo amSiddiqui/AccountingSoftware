@@ -14,6 +14,11 @@ router.get('/', (req, res, next) => {
     util.authCheck(req, (user) => {
         if (user) {
             // TODO: use axios
+            // axios.post(config.url + '/invoice/',{
+            //   token:user.token,
+            //   accessToken:accessToken,
+            // }).then( response)
+
             var invoiceData = seeds.invoiceGenData;
             var allInvoices = seeds.invoices;
             var recentInvoices = allInvoices.slice(0, 3);

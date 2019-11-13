@@ -17,20 +17,44 @@ router.get('/', (req, res, next) => {
     if(user){
       var outstanding =0;
       var total = 0;
+      var client = []
       //TODO: fetch total ,outstanding,overdue,draft
-      //TODO: Use axios
-      seeds.pseudoClient.forEach(function(client){
-        outstanding += client.amountDue;
-        total += client.total;
+      // TODO: Use axios
+      axios.post(config.url + '/client/latest',{
+        token:user.token,
+        accessToken:accessToken,
+        quantity: 15,
+      }).then( response => {
+        client = response.data.client;
+        client.forEach(function(client){
+          outstanding += client.amountDue;
+          total += client.total;
+        });
+        res.render('client/client',{
+          clients: client,
+          totalOutstanding: outstanding,
+          totalOverdue: outstanding,
+          totalDraft: outstanding,
+          currency: utilData.company.currency,
+          total: total,
+        });
+      }).catch( err=>{
+        console.log(err);
+        res.render('error',message:err.response.data)
       });
-      res.render('client/client',{
-        clients: seeds.pseudoClient,
-        totalOutstanding: outstanding,
-        totalOverdue: outstanding,
-        totalDraft: outstanding,
-        currency: seeds.currency[2],
-        total: total,
-      });
+
+      // seeds.pseudolient.forEach(function(client){
+      //   outstanding += client.amountDue;
+      //   total += client.total;
+      // });
+      // res.render('client/client',{
+      //   clients: seeds.pseudoClient,
+      //   totalOutstanding: outstanding,
+      //   totalOverdue: outstanding,
+      //   totalDraft: outstanding,
+      //   currency: seeds.currency[2],
+      //   total: total,
+      // });
     }
     else{
       res.redirect('/dashboard');
@@ -43,7 +67,7 @@ router.get('/create', (req, res, next) => {
     if(user){
       //TODO: Fetch all contryCode set from database
       res.render('client/create', {
-        countryCode: seeds.countryCode,
+        countryCode: utilData.company.countryCode,
       });
     }
     else{
@@ -109,30 +133,26 @@ router.post('/', (req, res) => {
 router.get('/:id/edit/', (req, res, next) => {
   util.authCheck(req, (user) =>{
     if(user){
-      // TODO:Get request using Axios
-      // axios.get(config.url + '/client/clientID',{
-      //   token: user.token,
-      //   accessToken: accessToken,
-      // }).then(response => {
-      //   var client = response.data.client;
-
-      // TODO: Fetch countryCode associated with the respective clients
-
-      //   var countryCode = response.data.countryCode;
-      //   res.render('client/edit',{
-      //     client:client,
-      //     countryCode: countryCode,
-      //   })
-      // }).catch(error =>{
-      //   console.log(error);
-      //   res.redirect('error',{message: error});
-      // });
-
-      var client = seeds.pseudoClient.find(client => client.id === parseInt(req.params.id));
-      res.render('client/edit', {
-        client: client,
-        countryCode: seeds.countryCode,
+      //TODO:Get request using Axios
+      axios.post(config.url + `/client/${req.params.id}/`,{
+        token: user.token,
+        accessToken: accessToken,
+      }).then(response => {
+        var client = response.data.client;
+        res.render('client/edit',{
+          client:client,
+          countryCode: utilData.country.countryCode,
+        })
+      }).catch(error =>{
+        console.log(error);
+        res.redirect('error',{message: error});
       });
+
+      // var client = seeds.pseudoClient.find(client => client.id === parseInt(req.params.id));
+      // res.render('client/edit', {
+      //   client: client,
+      //   countryCode: seeds.countryCode,
+      // });
     }
     else{
       res.redirect('/dashboard')
@@ -176,7 +196,7 @@ router.put('/:id',(req,res) => {
             res.render('/client/'+req.params.id);
           }).catch(error => {
             console.log(error)
-            res.render('/error',{message:dbErrorMsg})
+            res.render('error',{message:dbErrorMsg})
           });
         });
     }
@@ -207,23 +227,49 @@ router.get('/:id', (req, res, next) => {
   util.authCheck(req , (user) =>{
     if(user){
       var invoiceArr = [];
+      var clientInvoice = [];
       dueSum = 0;
       total = 0;
       //TODO: fetch overdue for of client with clientID
-      var client = seeds.pseudoClient.find(client => client.id === parseInt(req.params.id));
-      seeds.invoices.forEach(function(invoice){
-        if(invoice.client.id === parseInt(req.params.id)){
-          invoiceArr.push(invoice);
-          dueSum += invoice.balanceDue;
-          total += invoice.total;
-        }
+      axios.post(config.url+ `/client/${req.params.id}`,{
+        accessToken:accessToken,
+        token:user.token,
+        months:1,
+      }).then(response =>{
+          var client = response.data.client;
+          invoiceArr = response.data.client.invoices;
+          invoices.forEach(function(invoice){
+            if(invoice.clientID == req.params.id){
+              clientInvoice.push(invoice);
+              dueSum += invoice.balanceDue;
+              total += invoice.total;
+            }
+          });
+          res.render('client/show', {
+            client: client,
+            invoice: clientInvoice,
+            totalDue: dueSum,
+            total: total,
+            currency:utilData.company.currency,
+          });
+
+      }).catch(err =>{
+
       });
-      res.render('client/show', {
-        client: client,
-        invoice: invoiceArr,
-        totalDue: dueSum,
-        total: total
-      });
+      // var client = seeds.pseudoClient.find(client => client.id === parseInt(req.params.id));
+      // seeds.invoices.forEach(function(invoice){
+      //   if(invoice.client.id === parseInt(req.params.id)){
+      //     invoiceArr.push(invoice);
+      //     dueSum += invoice.balanceDue;
+      //     total += invoice.total;
+      //   }
+      // });
+      // res.render('client/show', {
+      //   client: client,
+      //   invoice: invoiceArr,
+      //   totalDue: dueSum,
+      //   total: total
+      // });
     }
     else {
       res.redirect('/dashboard');

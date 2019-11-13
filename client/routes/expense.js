@@ -13,6 +13,26 @@ router.get('/', (req, res, next)=> {
   util.authCheck(req ,(user) => {
     if(user){
       var total = 0;
+      var exp = []
+      axios.post(config.url+'/expense/',{
+        token:user.token,
+        accessToken: accessToken,
+        quantity:15,
+      }).then(response =>{
+         expense = response.data.expense
+         expense.forEach((expense) =>{
+           total += expense.subtotal;
+         });
+         res.render('expense/expense',{
+           expense: expense,
+           currency: utilData.country.currency,
+           total:total,
+         });
+      }).catch( err =>{
+        res.render('error',{
+          message:err.response.data,
+        });
+      });
       seeds.pseudoExpense.forEach((expense) =>{
         total += expense.subtotal;
       });
@@ -126,7 +146,7 @@ router.put('/:id', (req , res) => {
           }
 
 
-          axios.post(dburl + `/expense/${req.params.id}/update/`,{
+          axios.post(config.url + `/expense/${req.params.id}/update/`,{
             token: user.token.
             accessToken: accessToken,
             client: res1,
@@ -173,7 +193,7 @@ router.delete('/delete',(req,res,next) =>{
       ids = [];
       var ids = req.body.row;
 
-      axios.post(dburl + 'expense/delete/', {
+      axios.post(config.url + 'expense/delete/', {
           token:user.token,
           accessToken:accessToken,
           expense: ids,
