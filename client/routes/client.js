@@ -4,6 +4,7 @@ const util = require('../modules/utility');
 const seeds = require('../seeds');
 const bodyParser = require('body-parser');
 const app = express();
+const config = require('../config/config');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -20,7 +21,7 @@ router.get('/', (req, res, next) => {
       //TODO: Use axios
       seeds.pseudoClient.forEach(function(client){
         outstanding += client.amountDue;
-        total += client.total
+        total += client.total;
       });
       res.render('client/client',{
         clients: seeds.pseudoClient,
@@ -79,16 +80,15 @@ router.post('/', (req, res) => {
         currency: '£ (GBP)',
       }
       // TODO: Push data into database using axios
-      axios.post(dburl+'/client/create/'{
+      axios.post(config.url+'/client/create/', {
           token: user.token,
           accessToken: accessToken,
           client: params
       }).then(response => {
-          console.log(Client Added)
+          console.log('Client Added')
 
           res.render('/client')
-          });
-      }).catch(err => {
+          }).catch(err => {
           console.error(err);
           res.render('error', {
               message: err.response.data
@@ -101,8 +101,7 @@ router.post('/', (req, res) => {
     else{
       res.redirect('/dashboard');
     }
-  })
-
+  });
 });
 
 
@@ -110,7 +109,7 @@ router.get('/:id/edit/', (req, res, next) => {
   util.authCheck(req, (user) =>{
     if(user){
       // TODO:Get request using Axios
-      // axios.get(dburl + '/client/clientID',{
+      // axios.get(config.url + '/client/clientID',{
       //   token: user.token,
       //   accessToken: accessToken,
       // }).then(response => {
@@ -145,11 +144,11 @@ router.put('/:id',(req,res) => {
   util.authCheck(req ,( user )=> {
     if(user){
 
-      axios.post(dburl + `client/${req.params.id}/`{
-        token: user.token.
+      axios.post(config.url + `/client/${req.params.id}/`, {
+        token: user.token,
         accessToken: accessToken,
-      }).then(res1 =>res1.data)
-        .then(res1){
+      }).then(res1 => {
+          res1 = res1.data;
           for(var i in res1){
             if(res1[i].id === req.params.id){
               res1[i].firstName = req.body.firstName;
@@ -167,20 +166,20 @@ router.put('/:id',(req,res) => {
             }
           }
 
-          axios.post(dburl + `/client/${req.params.id}/update`,{
-            token: user.token.
+          axios.post(config.url + `/client/${req.params.id}/update`,{
+            token: user.token,
             accessToken: accessToken,
             client: res1,
           }).then(response =>{
-            console.log(client updated);
+            console.log('client updated');
             res.render('/client/'+req.params.id);
           }).catch(error => {
-            console.log(error)
-            res.render('/error',{error:error})
+            console.log(error);
+            res.render('/error',{message:dbErrorMsg});
           });
         }
 
-      });
+      );
     }
       // for(var i in seeds.pseudoClient){
       //   if(seeds.pseudoClient[i].id == req.params.id){
@@ -203,7 +202,7 @@ router.put('/:id',(req,res) => {
     else{
       res.redirect('/dashboard')
     }
-  })
+  });
 });
 
 router.get('/:id', (req, res, next) => {
@@ -231,14 +230,14 @@ router.get('/:id', (req, res, next) => {
     else {
       res.redirect('/dashboard');
     }
-  })
-})
+  });
+});
 
 router.delete('/delete',(req,res,next) =>{
   util.authCheck(req ,(user) =>{
     if(user){
-      var ids = []
-      var ids = req.body.row;
+      var ids = [];
+      ids = req.body.row;
       for(var i in ids){
         for(var j in seeds.pseudoClient){
           if(ids[i] == seeds.pseudoClient[j].id){
@@ -248,7 +247,7 @@ router.delete('/delete',(req,res,next) =>{
         }
       }
 
-      axios.post(dburl + "/client/delete/", {
+      axios.post(config.url + "/client/delete/", {
         token: user.token,
         accessToken: accessToken,
         client: client
@@ -271,11 +270,11 @@ router.delete('/delete',(req,res,next) =>{
 router.delete('/:id/delete',(req,res,next) =>{
   util.authCheck(req ,(user) =>{
     if(user){
-      var ids = []
-      var ids = req.body.row;
+      var ids = [];
+      ids = req.body.row;
 
       // TODO: Delete from frontend side
-      // axios.post(dburl + 'client/delete', {
+      // axios.post(config.url + 'client/delete', {
       //     token:user.token,
       //     accessToken:accessToken,
       //     invoices: ids,
@@ -297,7 +296,7 @@ router.delete('/:id/delete',(req,res,next) =>{
       //   }
       // }
 
-      // axios.post(dburl + "/client/delete", {
+      // axios.post(config.url + "/client/delete", {
       //   token: user.token,
       //   accessToken: accessToken,
       //   client: client

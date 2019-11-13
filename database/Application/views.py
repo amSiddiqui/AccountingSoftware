@@ -329,7 +329,7 @@ def phones(request):
 @csrf_exempt
 @post('accessToken')
 def dates(request):
-	data = [v for _,v in DATE_FORMAT ]
+	data = [v for v in DATE_FORMAT.values() ]
 	return JsonResponse({ 'dateFormat' : data },safe=True)
 
 @csrf_exempt

@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 const seeds = require('../seeds');
+const config = require('../config/config');
 
 router.get('/', (req,res,next) => {
   res.render('report/report');
@@ -13,31 +14,31 @@ router.get('/:type', (req , res, next) => {
   type = type.replace('-', ' ');
   user.authCheck(req , user =>{
     if(user){
-      let oR = axios.post(dburl + ,'/report/outstandingRevenue/',{
+      let oR = axios.post(config.url +'/report/outstandingRevenue/',{
         accessToken:accessToken,
         token: user.token,
       });
 
-      let oD = axios.post(dburl + ,'/report/overdue/',{
+      let oD = axios.post(config.url +'/report/overdue/',{
         accessToken:accessToken,
         token: user.token,
       });
 
-      let prof = axios.post(dburl + ,'/report/profit/',{
+      let prof = axios.post(config.url + '/report/profit/',{
         accessToken:accessToken,
         token: user.token,
       });
 
-      let rev = axios.post(dburl + ,'/report/revenue/',{
+      let rev = axios.post(config.url + '/report/revenue/',{
         accessToken:accessToken,
         token: user.token,
       });
 
-      let exp = axios.post(dburl + ,'/report/expense/',{
+      let exp = axios.post(config.url + '/report/expense/',{
         accessToken:accessToken,
         token: user.token,
       });
-      let inv = axios.post(dburl + ,'/invoice/',{
+      let inv = axios.post(config.url + '/invoice/',{
         accessToken:accessToken,
         token: user.token,
         quantity: 4

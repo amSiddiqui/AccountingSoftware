@@ -130,5 +130,5 @@ global.utilData = {
     require('../init');
 }).catch(err => {
     console.error("Error while loading util data");
-    throw new Error(err);
+    console.log(err);
 });
