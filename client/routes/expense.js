@@ -63,7 +63,7 @@ router.post('/',(req , res) => {
       // seeds.pseudoExpense.push(params);
 
       // TODO: Push data into database using axios
-      axios.post(config.url+'/expense/create/', {
+      axios.post(config.url+'/expense/create/',{
           token: user.token,
           accessToken: accessToken,
           expense: params,
@@ -125,21 +125,20 @@ router.put('/:id', (req , res) => {
             }
           }
 
-<<<<<<< HEAD
+
           axios.post(dburl + `/expense/${req.params.id}/update/`,{
             token: user.token.
             accessToken: accessToken,
             client: res1,
           }).then(response =>{
             console.log('expense updated');
-=======
           axios.post(config.url + `/expense/${req.params.id}/update/`,{
             token: user.token,
             accessToken: accessToken,
             client: res1,
           }).then(response =>{
             console.log('client updated');
->>>>>>> 3acd894862038264e12e01f637cc98b723366103
+
             res.render('/expense/'+req.params.id);
           }).catch(error => {
             console.log(error)

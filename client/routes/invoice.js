@@ -2,11 +2,10 @@ const express = require("express");
 
 const router = express.Router();
 const util = require('../modules/utility');
-
+const config = require('../config/config');
 const seeds = require('../seeds');
 const bodyParser = require('body-parser');
 const app = express();
-const config = require('../config/config');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -190,11 +189,7 @@ router.delete('/delete',(req,res,next) =>{
       ids = req.body.row;
 
 
-<<<<<<< HEAD
-      axios.post(dburl + 'invoice/delete/', {
-=======
       axios.post(config.url + '/invoice/delete/', {
->>>>>>> 3acd894862038264e12e01f637cc98b723366103
           token:user.token,
           accessToken:accessToken,
           invoices: ids,

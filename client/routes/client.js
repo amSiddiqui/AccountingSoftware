@@ -80,15 +80,16 @@ router.post('/', (req, res) => {
         currency: '£ (GBP)',
       }
       // TODO: Push data into database using axios
-      axios.post(config.url+'/client/create/', {
+      axios.post(config.url+'/client/create/',{
           token: user.token,
           accessToken: accessToken,
-          client: params
+          client: params,
       }).then(response => {
           console.log('Client Added')
 
           res.render('/client')
-          }).catch(err => {
+          });
+      }).catch(err => {
           console.error(err);
           res.render('error', {
               message: err.response.data
@@ -101,7 +102,7 @@ router.post('/', (req, res) => {
     else{
       res.redirect('/dashboard');
     }
-  });
+  })
 });
 
 
@@ -144,11 +145,11 @@ router.put('/:id',(req,res) => {
   util.authCheck(req ,( user )=> {
     if(user){
 
-      axios.post(config.url + `/client/${req.params.id}/`, {
+      axios.post(config.url + `client/${req.params.id}/`,{
         token: user.token,
         accessToken: accessToken,
-      }).then(res1 => {
-          res1 = res1.data;
+      }).then(res1 =>{
+          res1 = res1.data
           for(var i in res1){
             if(res1[i].id === req.params.id){
               res1[i].firstName = req.body.firstName;
@@ -166,25 +167,18 @@ router.put('/:id',(req,res) => {
             }
           }
 
-<<<<<<< HEAD
-          axios.post(dburl + `/client/${req.params.id}/update/`,{
-            token: user.token.
-=======
-          axios.post(config.url + `/client/${req.params.id}/update`,{
+          axios.post(config.url + `/client/${req.params.id}/update/`,{
             token: user.token,
->>>>>>> 3acd894862038264e12e01f637cc98b723366103
             accessToken: accessToken,
             client: res1,
           }).then(response =>{
-            console.log('client updated');
+            console.log(client updated);
             res.render('/client/'+req.params.id);
           }).catch(error => {
-            console.log(error);
-            res.render('/error',{message:dbErrorMsg});
+            console.log(error)
+            res.render('/error',{message:dbErrorMsg})
           });
-        }
-
-      );
+        });
     }
       // for(var i in seeds.pseudoClient){
       //   if(seeds.pseudoClient[i].id == req.params.id){
@@ -240,9 +234,8 @@ router.get('/:id', (req, res, next) => {
 router.delete('/delete',(req,res,next) =>{
   util.authCheck(req ,(user) =>{
     if(user){
-<<<<<<< HEAD
-      var ids = []
-      var ids = req.body.row;
+      var ids = [];
+      ids = req.body.row;
       // for(var i in ids){
       //   for(var j in seeds.pseudoClient){
       //     if(ids[i] == seeds.pseudoClient[j].id){
@@ -251,18 +244,6 @@ router.delete('/delete',(req,res,next) =>{
       //     }
       //   }
       // }
-=======
-      var ids = [];
-      ids = req.body.row;
-      for(var i in ids){
-        for(var j in seeds.pseudoClient){
-          if(ids[i] == seeds.pseudoClient[j].id){
-            seeds.pseudoClient.splice(j,1);
-            break;
-          }
-        }
-      }
->>>>>>> 3acd894862038264e12e01f637cc98b723366103
 
       axios.post(config.url + "/client/delete/", {
         token: user.token,
@@ -287,11 +268,10 @@ router.delete('/delete',(req,res,next) =>{
 router.delete('/:id/delete',(req,res,next) =>{
   util.authCheck(req ,(user) =>{
     if(user){
-      var ids = [];
-      ids = req.body.row;
+      var ids = []
+      var ids = req.body.row;
 
-<<<<<<< HEAD
-      axios.post(dburl + 'invoice/delete/', {
+      axios.post(config.url + 'invoice/delete/', {
           token:user.token,
           accessToken:accessToken,
           invoices: ids,
@@ -302,20 +282,6 @@ router.delete('/:id/delete',(req,res,next) =>{
           message:err.response.data,
         });
       });
-=======
-      // TODO: Delete from frontend side
-      // axios.post(config.url + 'client/delete', {
-      //     token:user.token,
-      //     accessToken:accessToken,
-      //     invoices: ids,
-      // }).then( response =>{
-      //   res.render('/client' + req.params.id);
-      // }).catch(err =>{
-      //   res.render('error',{
-      //     message:err.response.data,
-      //   });
-      // });
->>>>>>> 3acd894862038264e12e01f637cc98b723366103
 
       // for(var i in ids){
       //   for(var j in seeds.invoices){

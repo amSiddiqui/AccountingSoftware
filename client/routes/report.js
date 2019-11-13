@@ -14,55 +14,37 @@ router.get('/:type', (req , res, next) => {
   type = type.replace('-', ' ');
   user.authCheck(req , user =>{
     if(user){
-<<<<<<< HEAD
+
       let oR = axios.post(config.url, + ,'/report/outstandingRevenue/',{
-=======
-      let oR = axios.post(config.url +'/report/outstandingRevenue/',{
->>>>>>> 3acd894862038264e12e01f637cc98b723366103
+
         accessToken:accessToken,
         token: user.token,
       });
 
-<<<<<<< HEAD
+
       let oD = axios.post(config.url, + ,'/report/overdue/',{
-=======
-      let oD = axios.post(config.url +'/report/overdue/',{
->>>>>>> 3acd894862038264e12e01f637cc98b723366103
         accessToken:accessToken,
         token: user.token,
       });
 
-<<<<<<< HEAD
+
       let prof = axios.post(config.url, + ,'/report/profit/',{
-=======
-      let prof = axios.post(config.url + '/report/profit/',{
->>>>>>> 3acd894862038264e12e01f637cc98b723366103
         accessToken:accessToken,
         token: user.token,
       });
 
-<<<<<<< HEAD
+
       let rev = axios.post(config.url, + ,'/report/revenue/',{
-=======
-      let rev = axios.post(config.url + '/report/revenue/',{
->>>>>>> 3acd894862038264e12e01f637cc98b723366103
         accessToken:accessToken,
         token: user.token,
       });
 
-<<<<<<< HEAD
+
       let exp = axios.post(config.url, + ,'/report/expense/',{
         accessToken:accessToken,
         token: user.token,
       });
       let inv = axios.post(config.url, + ,'/invoice/',{
-=======
-      let exp = axios.post(config.url + '/report/expense/',{
-        accessToken:accessToken,
-        token: user.token,
-      });
-      let inv = axios.post(config.url + '/invoice/',{
->>>>>>> 3acd894862038264e12e01f637cc98b723366103
         accessToken:accessToken,
         token: user.token,
         quantity: 4
