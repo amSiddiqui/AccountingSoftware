@@ -125,12 +125,12 @@ router.put('/:id', (req , res) => {
             }
           }
 
-          axios.post(dburl + `/expense/${req.params.id}/update`,{
+          axios.post(dburl + `/expense/${req.params.id}/update/`,{
             token: user.token.
             accessToken: accessToken,
             client: res1,
           }).then(response =>{
-            console.log(client updated);
+            console.log('expense updated');
             res.render('/expense/'+req.params.id);
           }).catch(error => {
             console.log(error)
@@ -167,16 +167,29 @@ router.delete('/delete',(req,res,next) =>{
     if(user){
       var ids = []
       var ids = req.body.row;
-      for(var i in ids){
-        for(var j in seeds.pseudoExpense){
-          if(ids[i] == seeds.pseudoExpense[j].id){
-            seeds.pseudoExpense.splice(j,1);
-            break;
-          }
-        }
-      }
 
-      res.redirect('/expense');
+      axios.post(dburl + 'expense/delete/', {
+          token:user.token,
+          accessToken:accessToken,
+          expense: ids,
+      }).then( response =>{
+        res.render('/expense' + req.params.id);
+      }).catch(err =>{
+        res.render('error',{
+          message:err.response.data,
+        });
+      });
+
+      // for(var i in ids){
+      //   for(var j in seeds.pseudoExpense){
+      //     if(ids[i] == seeds.pseudoExpense[j].id){
+      //       seeds.pseudoExpense.splice(j,1);
+      //       break;
+      //     }
+      //   }
+      // }
+
+      // res.redirect('/expense');
     }
     else{
       res.redirect('/dashboard');

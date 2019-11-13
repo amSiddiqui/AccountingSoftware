@@ -167,7 +167,7 @@ router.put('/:id',(req,res) => {
             }
           }
 
-          axios.post(dburl + `/client/${req.params.id}/update`,{
+          axios.post(dburl + `/client/${req.params.id}/update/`,{
             token: user.token.
             accessToken: accessToken,
             client: res1,
@@ -198,7 +198,6 @@ router.put('/:id',(req,res) => {
       //     break;
       //   }
       // }
-    //  TODO:add axios edit post request
 
     else{
       res.redirect('/dashboard')
@@ -239,14 +238,14 @@ router.delete('/delete',(req,res,next) =>{
     if(user){
       var ids = []
       var ids = req.body.row;
-      for(var i in ids){
-        for(var j in seeds.pseudoClient){
-          if(ids[i] == seeds.pseudoClient[j].id){
-            seeds.pseudoClient.splice(j,1);
-            break;
-          }
-        }
-      }
+      // for(var i in ids){
+      //   for(var j in seeds.pseudoClient){
+      //     if(ids[i] == seeds.pseudoClient[j].id){
+      //       seeds.pseudoClient.splice(j,1);
+      //       break;
+      //     }
+      //   }
+      // }
 
       axios.post(dburl + "/client/delete/", {
         token: user.token,
@@ -274,18 +273,17 @@ router.delete('/:id/delete',(req,res,next) =>{
       var ids = []
       var ids = req.body.row;
 
-      // TODO: Delete from frontend side
-      // axios.post(dburl + 'client/delete', {
-      //     token:user.token,
-      //     accessToken:accessToken,
-      //     invoices: ids,
-      // }).then( response =>{
-      //   res.render('/client' + req.params.id);
-      // }).catch(err =>{
-      //   res.render('error',{
-      //     message:err.response.data,
-      //   });
-      // });
+      axios.post(dburl + 'invoice/delete/', {
+          token:user.token,
+          accessToken:accessToken,
+          invoices: ids,
+      }).then( response =>{
+        res.render('/client' + req.params.id);
+      }).catch(err =>{
+        res.render('error',{
+          message:err.response.data,
+        });
+      });
 
       // for(var i in ids){
       //   for(var j in seeds.invoices){
@@ -309,7 +307,7 @@ router.delete('/:id/delete',(req,res,next) =>{
       //   console.log(err);
       // });
 
-      res.render('/client/' + req.params.id);
+      // res.render('/client/' + req.params.id);
     }
     else{
       res.redirect('/dashboard');

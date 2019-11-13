@@ -182,26 +182,18 @@ router.post('/create', (req, res, next) => {
 //     });
 // });
 
-router.post('/delete',(req,res,next) =>{
+router.delete('/delete',(req,res,next) =>{
   util.authCheck(req ,(user) =>{
     if(user){
       var ids = []
       ids = req.body.row;
 
 
-      axios.post(dburl + 'invoice/delete', {
+      axios.post(dburl + 'invoice/delete/', {
           token:user.token,
           accessToken:accessToken,
           invoices: ids,
       }).then( response =>{
-        // for(var i in ids){
-        //   for(var j in response.data){
-        //     if(ids[i] == response.data.invoice[j].id){
-        //       response.data.invoice.splice(j,1);
-        //       break;
-        //     }
-        //   }
-        // }
         res.redirect('/invoice');
       }).catch(err =>{
         res.render('error',{
