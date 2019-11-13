@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from datetime import date, timedelta
 from django.db.models import Sum
 import json
+import sys
 
 '''
 Auth Level 0: Accounting Head 
@@ -335,12 +336,9 @@ def dates(request):
 @csrf_exempt
 @post('accessToken','company')
 def company(request):
+	request.POST = request.POST.get('company')
 	try:
 		comp=request.POST.get('company')
-		chk = Company.objects.filter(Email=request.POST['email']).values()
-		
-		if chk is not None:
-			return HttpResponse(" Company Already exists ",status=208) 
 		datefmt = comp['datefmt']
 		c1 = Company(Company_Name=comp['name'],Address_Line=comp['address']['address1'],City=comp['address']['city'],
 			Pin_Code=comp['address']['pincode'],Country_Name=comp['address']['country'], Country_Code=comp['countryCode'],
@@ -390,13 +388,17 @@ def company(request):
 				Country_Name=gen['address']['country'],Country_Code=gen['countryCode'],Email=gen['email'],
 				Password=gen['password'],Phone=gen['phone'],Auth_Level=3,Comp_Id_id=comp_id)
 			g1.save()
+		
+		print('User created ')
+		print('token Created: ', userToken)
 		data={
 			'token' : userToken
 		}
 		return JsonResponse(data)
 
 	except:
-		return HttpResponse(status=404)
+		print('Company creation error: ',sys.exec_info()[0])
+		return HttpResponse('Company Creation error', status=400)
 
 @csrf_exempt
 @post('accessToken','email','phone','name')
@@ -404,9 +406,9 @@ def company_exists(request):
 	email = request.POST['email']
 	phone = request.POST['phone']
 	name = request.POST['name']
-	name_exists = len( Company.Objects.filter(Company_Name=name).values() ) > 0
-	email_exists = len( Company.Objects.filter(Company_Name=email).values() ) > 0
-	phone_exists = len( Company.Objects.filter(Company_Name=phone).values() ) > 0
+	name_exists = len( Company.objects.filter(Company_Name=name).values() ) > 0
+	email_exists = len( Company.objects.filter(Company_Name=email).values() ) > 0
+	phone_exists = len( Company.objects.filter(Company_Name=phone).values() ) > 0
 
 	return JsonResponse({
 		'nameExists':name_exists,

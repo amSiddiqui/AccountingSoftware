@@ -50,7 +50,7 @@ urlpatterns = [
     
     
     # Report routes
-    path('client/', views.report_client ),
+    # path('client/', views.report_client ),
     path('report/outstandingRevenue/',views.report_outstandingRevenue),
     path('report/overdue/',views.report_overdue),
     path('report/profit/',views.report_profit),

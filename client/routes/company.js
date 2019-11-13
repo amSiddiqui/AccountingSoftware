@@ -66,9 +66,9 @@ router.post('/accountant/create', (req, res, next) => {
                 accessToken: accessToken
             };
         
-            axios.post(dburl + '/auth/accountant/exists/', payload)
+            axios.post(config.url + '/auth/accountant/exists/', payload)
                 .then(response => {
-                    var data = JSON.parse(response.data);
+                    var data = response.data;
                     if (!data.exists) {
                         accountantType = tempProfile.company.accountants[tempProfile.company.profilesCreated - 1];
                         switch (accountantType) {
@@ -92,7 +92,7 @@ router.post('/accountant/create', (req, res, next) => {
                                 company: tempProfile,
                                 accessToken: accessToken
                             };
-                            axios.post(config.url+'/signup/', payload)
+                            axios.post(config.url+'/auth/signup/', payload)
                                 .then(response => {
                                     var data = response.data;
                                     const user = {
@@ -101,6 +101,8 @@ router.post('/accountant/create', (req, res, next) => {
                                         company: tempProfile.company,
                                         token: data.token
                                     };
+                                    console.log('User created: ');
+                                    console.log('user token: ', user.token);
                                     res.cookie('user',user,cookieOpt);
                                     tempProfile = null;
                                     res.redirect('/dashboard');

@@ -36,7 +36,7 @@ class Company(models.Model):
 	Email=models.EmailField()
 	Phone=models.PositiveIntegerField()
 	Tax_Rate=models.FloatField()
-	Base_Currency=models.ForeignKey(Currency,on_delete=models.CASCADE,default="")
+	Base_Currency=models.CharField(max_length=10)
 	Date_Format=models.CharField(max_length=10)
 
 	def __str__(self):
