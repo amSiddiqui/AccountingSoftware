@@ -25,7 +25,7 @@
     <li class="tab">
       <a>
         <div class="column has-text-centered">
-          <h1 class="is-size-1"><%= currency.substring(0,1) + ' ' + totalOutstanding%></h1>
+          <h1 class="is-size-1"><%= currency.substring(0,1) + ' ' + totalOverdue%></h1>
           <span>Overdue</span>
         </div>
       </a>
@@ -41,7 +41,7 @@
     <li class="tab">
       <a>
         <div class="column has-text-centered">
-          <h2 class="is-size-1"><%= currency.substring(0,1) + ' ' + totalOutstanding%></h2>
+          <h2 class="is-size-1"><%= currency.substring(0,1) + ' ' + totalDraft%></h2>
           <span>Draft</span>
         </div>
       </a>
@@ -67,8 +67,7 @@
 
     </div>
 
-
-    <% clients.forEach(function(client){ %>
+    <% smallClient.forEach(function(client){ %>
       <div class="tile is-parent">
         <a class="tile" href="client/<%=client.id %>">
           <article class="tile is-child box has-background-white">
@@ -166,10 +165,10 @@
                 </td>
                 <td><%= client.phone%></td>
                 <td>
-                  <%= currency.substring(0,1) + client.amountDue%>
+                  <%= currency.substring(0,1) + client.stats.outstanding%>
                 </td>
                 <td>
-                  <%= currency.substring(0,1) + client.total%>
+                  <%= currency.substring(0,1) + client.stats.total%>
                   <span class="is-pulled-right">
                     <a href="client/<%= client.id %>" class="button is-success is-small is-rounded">Open</a>
                   </span>
@@ -188,7 +187,7 @@
       <th></th>
       <th></th>
       <th></th>
-  		<th><span class = "is-size-3">Total : <%= currency.substring(0,1) + ' ' + total%></span></th>
+  		<th><span class = "is-size-4">Total : <%= currency.substring(0,1) + ' ' + total%></span></th>
   	</tfoot>
   </table>
   </div>

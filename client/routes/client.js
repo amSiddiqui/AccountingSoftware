@@ -8,90 +8,85 @@ const config = require('../config/config');
 const axios = require('axios')
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 
 
 
 router.get('/', (req, res, next) => {
-  util.authCheck(req, (user) =>{
+  util.authCheck(req, (user) => {
 
-    if(user){
-      var outstanding =0;
+    if (user) {
+      var outstanding = 0;
       var total = 0;
-      var client = [];
+      var overdue = 0;
+      var draft = 0;
+      var clients = [];
       //TODO: fetch total ,outstanding,overdue,draft
       // TODO: Use axios
-      axios.post(config.url + '/client/latest/',{
-        token:user.token,
-        accessToken:accessToken,
+      axios.post(config.url + '/client/latest/', {
+        token: user.token,
+        accessToken: accessToken,
         quantity: 15,
-      }).then( response => {
-        client = response.data.clients;
-        client.forEach(function(client){
-          outstanding += client.amountDue;
-          total += client.total;
+      }).then(response => {
+        clients = response.data.clients;
+        var smallClient = [];
+        var i = 0;
+        clients.forEach(function (client) {
+          if (i++ < 3) {
+            smallClient.push(client);
+          }
+          outstanding += parseFloat(client.stats.outstanding);
+          total += parseFloat(client.stats.total);
+          draft += parseFloat(client.stats.overdue);
         });
-        res.render('client/client',{
-          clients: client,
+        res.render('client/client', {
+          clients: clients,
+          smallClient: smallClient,
           totalOutstanding: outstanding,
-          totalOverdue: outstanding,
-          totalDraft: outstanding,
+          totalOverdue: draft,
+          totalDraft: draft,
           currency: user.company.currency,
           total: total,
         });
-      }).catch( err=>{
+      }).catch(err => {
         console.log(err);
-        res.render('error',{message:dbErrorMsg});
+        res.render('error', {
+          message: dbErrorMsg
+        });
       });
 
-      // seeds.pseudolient.forEach(function(client){
-      //   outstanding += client.amountDue;
-      //   total += client.total;
-      // });
-      // res.render('client/client',{
-      //   clients: seeds.pseudoClient,
-      //   totalOutstanding: outstanding,
-      //   totalOverdue: outstanding,
-      //   totalDraft: outstanding,
-      //   currency: seeds.currency[2],
-      //   total: total,
-      // });
-    }
-    else{
+    } else {
       res.redirect('/dashboard');
     }
   });
 });
 
+
 router.get('/create', (req, res, next) => {
-  util.authCheck(req , (user) =>{
-    if(user){
-      //TODO: Fetch all contryCode set from database
+  util.authCheck(req, (user) => {
+    if (user) {
       res.render('client/create', {
-        countryCode: user.company.countryCode,
+        countryCode: utilData.phone_code.ISD,
       });
-    }
-    else{
+    } else {
       res.redirect('/dashboard');
     }
-  })
+  });
 });
 
 router.post('/', (req, res) => {
-  util.authCheck(req , (user) =>{
-    if(user){
-
-
+  util.authCheck(req, (user) => {
+    if (user) {
       //TODO: fetch auto-generate ID
-      var clientID=4;
       var params = {
-        id: clientID,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         countryCode: req.body.countryCode,
         phone: req.body.phone,
         email: req.body.email,
-        address : {
+        address: {
           address1: req.body.address1,
           city: req.body.city,
           state: req.body.state,
@@ -99,266 +94,166 @@ router.post('/', (req, res) => {
           pincode: req.body.pincode,
         },
         lateFeeRate: req.body.lateFeeRate,
-        //TODO: Fetch amount due , total and currency from invoice
-        amountDue: 200,
-        total:270,
-        currency: '£ (GBP)',
+        dayLimit: req.body.dayLimit,
       }
       // TODO: Push data into database using axios
-      axios.post(config.url+'/client/create/',{
-          token: user.token,
-          accessToken: accessToken,
-          client: params,
+      axios.post(config.url + '/client/create/', {
+        token: user.token,
+        accessToken: accessToken,
+        client: params,
       }).then(response => {
-          console.log('Client Added')
-
-          res.render('/client')
-          }).catch(err => {
-          console.error(err);
-          res.render('error', {
-              message: dbErrorMsg
-          });
+        console.log('Client Added');
+        res.redirect('/client');
+      }).catch(err => {
+        console.error(err);
+        res.render('error', {
+          message: dbErrorMsg
+        });
       });
-      clientID++;//temporary way to increment id
-      seeds.pseudoClient.push(params);
-      res.redirect('/client');
-    }
-    else{
+    } else {
       res.redirect('/dashboard');
     }
-  })
+  });
 });
 
 
-router.get('/:id/edit/', (req, res, next) => {
-  util.authCheck(req, (user) =>{
-    if(user){
-      //TODO:Get request using Axios
-      axios.post(config.url + `/client/${req.params.id}/`,{
+
+router.put('/:id', (req, res) => {
+  util.authCheck(req, (user) => {
+    if (user) {
+
+      axios.post(config.url + `/client/${req.params.id}/`, {
         token: user.token,
         accessToken: accessToken,
-      }).then(response => {
-        var client = response.data.client;
-        res.render('client/edit',{
-          client:client,
-          countryCode: user.country.countryCode,
-        })
-      }).catch(error =>{
-        console.log(error);
-        res.redirect('error',{message: dbErrorMsg});
-      });
+      }).then(res1 => {
+        old_client = res1.data.client;
+        
+        old_client.firstName = req.body.firstName;
+        old_client.lastName = req.body.lastName;
+        old_client.countryCode = req.body.countryCode;
+        old_client.phone = req.body.phone;
+        old_client.email = req.body.email;
+        old_client.address.address1 = req.body.address1;
+        old_client.address.city = req.body.city;
+        old_client.address.state = req.body.state;
+        old_client.address.country = req.body.country;
+        old_client.address.pincode = req.body.pincode;
+        old_client.lateFeeRate = req.body.lateFeeRate;
+        old_client.dayLimit = req.body.dayLimit;
+        
 
-      // var client = seeds.pseudoClient.find(client => client.id === parseInt(req.params.id));
-      // res.render('client/edit', {
-      //   client: client,
-      //   countryCode: seeds.countryCode,
-      // });
-    }
-    else{
-      res.redirect('/dashboard')
-    }
-
-  })
-});
-
-router.put('/:id',(req,res) => {
-  util.authCheck(req ,( user )=> {
-    if(user){
-
-      axios.post(config.url + `client/${req.params.id}/`,{
-        token: user.token,
-        accessToken: accessToken,
-      }).then(res1 =>{
-          res1 = res1.data
-          for(var i in res1){
-            if(res1[i].id === req.params.id){
-              res1[i].firstName = req.body.firstName;
-              res1[i].lastName= req.body.lastName;
-              res1[i].countryCode= req.body.countryCode;
-              res1[i].phone= req.body.phone;
-              res1[i].email= req.body.email;
-              res1[i].address.address1= req.body.address1;
-              res1[i].address.city= req.body.city;
-              res1[i].address.state= req.body.state;
-              res1[i].address.country= req.body.country;
-              res1[i].address.pincode= req.body.pincode;
-              res1[i].lateFeeRate= req.body.lateFeeRate;
-              break;
-            }
-          }
-
-          axios.post(config.url + `/client/${req.params.id}/update/`,{
-            token: user.token,
-            accessToken: accessToken,
-            client: res1,
-          }).then(response =>{
-            console.log('client updated');
-            res.render('/client/'+req.params.id);
-          }).catch(error => {
-            console.log(error);
-            res.render('error',{message:dbErrorMsg})
-          });
+        axios.post(config.url + `/client/${req.params.id}/update/`, {
+          token: user.token,
+          accessToken: accessToken,
+          client: old_client,
+        }).then(response => {
+          console.log('client updated');
+          res.redirect('/client');
+        }).catch(error => {
+          console.log(error);
+          res.render('error', {
+            message: dbErrorMsg
+          })
         });
+      });
     }
-      // for(var i in seeds.pseudoClient){
-      //   if(seeds.pseudoClient[i].id == req.params.id){
-      //     seeds.pseudoClient[i].firstName = req.body.firstName;
-      //     seeds.pseudoClient[i].lastName= req.body.lastName;
-      //     seeds.pseudoClient[i].countryCode= req.body.countryCode;
-      //     seeds.pseudoClient[i].phone= req.body.phone;
-      //     seeds.pseudoClient[i].email= req.body.email;
-      //     seeds.pseudoClient[i].address.address1= req.body.address1;
-      //     seeds.pseudoClient[i].address.city= req.body.city;
-      //     seeds.pseudoClient[i].address.state= req.body.state;
-      //     seeds.pseudoClient[i].address.country= req.body.country;
-      //     seeds.pseudoClient[i].address.pincode= req.body.pincode;
-      //     seeds.pseudoClient[i].lateFeeRate= req.body.lateFeeRate;
-      //     break;
-      //   }
-      // }
-
-    else{
+    else {
       res.redirect('/dashboard')
     }
   });
 });
 
 router.get('/:id', (req, res, next) => {
-  util.authCheck(req , (user) =>{
-    if(user){
+  util.authCheck(req, (user) => {
+    if (user) {
       var invoiceArr = [];
       var clientInvoice = [];
       dueSum = 0;
       total = 0;
-      //TODO: fetch overdue for of client with clientID
-      axios.post(config.url+ `/client/${req.params.id}/`,{
-        accessToken:accessToken,
-        token:user.token,
-        months:1,
-      }).then(response =>{
-          var client = response.data.client;
-          invoiceArr = response.data.client.invoices;
-          invoices.forEach(function(invoice){
-            if(invoice.clientID == req.params.id){
-              clientInvoice.push(invoice);
-              dueSum += invoice.balanceDue;
-              total += invoice.total;
-            }
-          });
-          res.render('client/show', {
-            client: client,
-            invoice: clientInvoice,
-            totalDue: dueSum,
-            total: total,
-            currency:user.company.currency,
-          });
+      axios.post(config.url + `/client/${req.params.id}/`, {
+        accessToken: accessToken,
+        token: user.token,
+        months: 3,
+        datefmt: user.company.datefmt
+      }).then(response => {
+        console.log('Client with id '+req.params.id+' recieved is: ', response.data);
+        var client = response.data.client;
+        invoiceArr = response.data.invoices;
+        invoiceArr.forEach(function (invoice) {
+          if (invoice.client.id == req.params.id) {
+            clientInvoice.push(invoice);
+            dueSum += parseFloat(invoice.balanceDue);
+            total += parseFloat(invoice.total);
+          }
+        });
+        res.render('client/show', {
+          client: client,
+          invoice: clientInvoice,
+          totalDue: dueSum,
+          total: total,
+          currency: user.company.currency,
+        });
 
-      }).catch(err =>{
-
+      }).catch(err => {
+        console.log(err);
+        res.render('error', {
+          message: dbErrorMsg
+        });
       });
-      // var client = seeds.pseudoClient.find(client => client.id === parseInt(req.params.id));
-      // seeds.invoices.forEach(function(invoice){
-      //   if(invoice.client.id === parseInt(req.params.id)){
-      //     invoiceArr.push(invoice);
-      //     dueSum += invoice.balanceDue;
-      //     total += invoice.total;
-      //   }
-      // });
-      // res.render('client/show', {
-      //   client: client,
-      //   invoice: invoiceArr,
-      //   totalDue: dueSum,
-      //   total: total
-      // });
-    }
-    else {
+    } else {
       res.redirect('/dashboard');
     }
   });
 });
 
-router.delete('/delete',(req,res,next) =>{
-  util.authCheck(req ,(user) =>{
-    if(user){
-      var ids = [];
-      ids = req.body.row;
-      // for(var i in ids){
-      //   for(var j in seeds.pseudoClient){
-      //     if(ids[i] == seeds.pseudoClient[j].id){
-      //       seeds.pseudoClient.splice(j,1);
-      //       break;
-      //     }
-      //   }
-      // }
 
-      axios.post(config.url + "/client/delete/", {
+router.get('/:id/edit/', (req, res, next) => {
+  util.authCheck(req, (user) => {
+    if (user) {
+      axios.post(config.url + `/client/${req.params.id}/`, {
         token: user.token,
         accessToken: accessToken,
-        client: client
-      })
-      .then(response => {
-        console.log(response)
-      })
-      .catch(err => {
-        console.log(err);
-      });
-
-      res.redirect('/client');
-    }
-    else{
-      res.redirect('/dashboard');
-    }
-  });
-});
-
-router.delete('/:id/delete',(req,res,next) =>{
-  util.authCheck(req ,(user) =>{
-    if(user){
-      var ids = []
-      ids = req.body.row;
-
-      axios.post(config.url + 'invoice/delete/', {
-          token:user.token,
-          accessToken:accessToken,
-          invoices: ids,
-      }).then( response =>{
-        res.render('/client' + req.params.id);
-      }).catch(err =>{
-        res.render('error',{
-          message:dbErrorMsg,
+      }).then(response => {
+        var client = response.data.client;
+        res.render('client/edit', {
+          client: client,
+          countryCode: utilData.phone_code.ISD,
+        });
+      }).catch(error => {
+        console.log(error);
+        res.render('error', {
+          message: dbErrorMsg
         });
       });
 
-      // for(var i in ids){
-      //   for(var j in seeds.invoices){
-      //     if(seeds.invoices[j].client.id == req.params.id)
-      //       if(ids[i] == seeds.invoices[j].id){
-      //         seeds.invoices.splice(j,1);
-      //         break;
-      //       }
-      //   }
-      // }
-
-      // axios.post(config.url + "/client/delete/", {
-      //   token: user.token,
-      //   accessToken: accessToken,
-      //   client: client
-      // })
-      // .then(response => {
-      //   console.log(response)
-      // })
-      // .catch(err => {
-      //   console.log(err);
-      // });
-
-      // res.render('/client/' + req.params.id);
+    } else {
+      res.redirect('/dashboard')
     }
-    else{
+
+  });
+});
+
+router.delete('/delete', (req, res, next) => {
+  util.authCheck(req, (user) => {
+    if (user) {
+      var ids = [];
+      ids = req.body.row;
+      axios.post(config.url + "/client/delete/", {
+          token: user.token,
+          accessToken: accessToken,
+          clients: ids
+        })
+        .then(response => {
+          console.log(response);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      res.redirect('/client');
+    } else {
       res.redirect('/dashboard');
     }
   });
 });
-
-
 
 module.exports = router;
