@@ -358,7 +358,7 @@ def company(request):
 			h1 = User(Fname=head['firstName'],Lname=head['lastName'],Address_Line=head['address']['address1'],
 				City=head['address']['city'],Pin_Code=head['address']['pincode'],State=head['address']['state'],
 				Country_Name=head['address']['country'],Country_Code=head['countryCode'],Email=head['email'],
-				Password=uToken,Phone=head['phone'],Auth_Level=0,Comp_Id_id=comp_id)
+				Password=make_password(head['password']),Phone=head['phone'],Auth_Level=0,Comp_Id_id=comp_id)
 			h1.save()
 		
 
