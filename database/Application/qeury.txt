@@ -124,3 +124,26 @@ insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,No
 
 
 insert into Application_invoice(Date,Amount_Due,Amount_Paid,Total,Balance_Due,Notes,Date_Fomat,Client_Id_id) values('2019-10-05',18000.45,23000,41000.45,18000.45,"Neptune","yyyy-mm-dd",6);
+
+
+
+insert into Application_vendor(Vendor_Name,Vendor_Category,Address_Line,City,Pin_Code,Country_Name,Country_Code,State,Email,Phone) values("Tooth Brush","Utilities","118 , Mistry Industrial Complex, M.i.d.c Cross Road, Andheri(e)","Mumbai",400093,"India","+91","Maharashtra","toothbrush@gmail.com",987634236);
+
+
+insert into Application_vendor(Vendor_Name,Vendor_Category,Address_Line,City,Pin_Code,Country_Name,Country_Code,State,Email,Phone) values("Astro Inc.","IT","130 , B, Govt. Ind. Estate, Opp.ganesh Nagar, Kandivali (west)","Mumbai",400067,"India","+91","Maharashtra","astro@gmail.com",786634236);
+
+
+insert into Application_vendor(Vendor_Name,Vendor_Category,Address_Line,City,Pin_Code,Country_Name,Country_Code,State,Email,Phone) values("Simon Industries.","Supplies","476 , Nazerat House, Chembur (east)","Mumbai",400071,"India","+91","Maharashtra","simon@gmail.com",798744236);
+
+
+insert into Application_vendor(Vendor_Name,Vendor_Category,Address_Line,City,Pin_Code,Country_Name,Country_Code,State,Email,Phone) values("Sri Vinayak Industries.","Supplies","322  Sheikh Memon Street, Kalbadevi","Mumbai",400002,"India","+91","Maharashtra","srivinayak@gmail.com",666744236);
+
+
+insert into Application_vendor(Vendor_Name,Vendor_Category,Address_Line,City,Pin_Code,Country_Name,Country_Code,State,Email,Phone) values("Regan PVT. LTD.","Stationary","38  Anuradha Bldg., Chandawarkar Road, Borivali (west)","Mumbai",400092,"India","+91","Maharashtra","reg@gmail.com",654744236);
+
+
+insert into Application_vendor(Vendor_Name,Vendor_Category,Address_Line,City,Pin_Code,Country_Name,Country_Code,State,Email,Phone) values("Rohan PVT. LTD.","Appliances","Jn-1/41, A-3, Sector 3, Near Shabri Hotel, Vashi, Navi Mumbai","Mumbai",400703,"India","+91","Maharashtra","reg@gmail.com",694744236);
+
+insert into Application_category(Type) values("Utilities"),("IT"),("Supplies"),("Stationary"),("Appliances");
+
+insert into Application_expenses(Date,Description,Amount,Category_Id_id,Vendor_Id_id) values('2019-05-12',"Office expenses",15000,1,2),('2019-05-29',"Stationary expenses",15000,2,4),('2019-06-12',"Random expenses",15000,1,2),('2019-06-19',"Office expenses",15000,1,2),('2019-06-29',"Office expenses",15000,1,2),('2019-07-12',"Office expenses",15000,1,2),('2019-08-12',"Office expenses",15000,1,2),('2019-09-12',"Office expenses",15000,1,2)
