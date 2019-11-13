@@ -329,6 +329,7 @@ def company(request):
 	try:
 		comp=request.POST.get('company')
 		chk = Company.objects.filter(Email=request.POST['email']).values()
+		global userToken
 		
 		if chk is not None:
 			return HttpResponse(" Company Already exists ",status=208) 
@@ -345,41 +346,55 @@ def company(request):
 			head=request.POST.get('headAcc')
 			token = head['email']+str(datetime.now())
 			uToken = make_password(token)
-			global userToken
 			
 			userToken[email]=uToken
 
 			h1 = User(Fname=head['firstName'],Lname=head['lastName'],Address_Line=head['address']['address1'],
 				City=head['address']['city'],Pin_Code=head['address']['pincode'],State=head['address']['state'],
 				Country_Name=head['address']['country'],Country_Code=head['countryCode'],Email=head['email'],
-				Password=head['password'],Phone=head['phone'],Auth_Level=0,Comp_Id_id=comp_id)
+				Password=make_password(head['password']),Phone=head['phone'],Auth_Level=0,Comp_Id_id=comp_id)
 			h1.save()
 			
 		if 'Client' in comp['accountants']:
 			# x=Company.objects.filter(Company_Name=comp['name']).values_list('Company_Id')
 			client=request.POST.get('clientAcc')
+			token = client['email']+str(datetime.now())
+			uToken=make_password(token)
+
+			userToken[email]=uToken
 
 			c1 = User(Fname=client['firstName'],Lname=client['lastName'],Address_Line=client['address']['address1'],
 				City=client['address']['city'],Pin_Code=client['address']['pincode'],State=client['address']['state'],
 				Country_Name=client['address']['country'],Country_Code=client['countryCode'],Email=client['email'],
-				Password=client['password'],Phone=client['phone'],Auth_Level=1,Comp_Id_id=comp_id)
+				Password=make_password(client['password']),Phone=client['phone'],Auth_Level=1,Comp_Id_id=comp_id)
 
 			c1.save()
 		if 'Expense' in comp['accountants']:
 			# x=Company.objects.filter(Company_Name=comp['name']).values_list('Company_Id')
 			expense=request.post.get('expenseAcc')
+			token=expense['email']+str(datetime.now())
+			uToken=make_password(token)
+
+			userToken[email]=uToken
+
 			e1 = User(Fname=expense['firstName'],Lname=expense['lastName'],Address_Line=expense['address']['address1'],
 				City=expense['address']['city'],Pin_Code=expense['address']['pincode'],State=expense['address']['state'],
 				Country_Name=expense['address']['country'],Country_Code=expense['countryCode'],Email=expense['email'],
-				Password=expense['password'],Phone=expense['phone'],Auth_Level=2,Comp_Id_id=comp_id)
+				Password=make_password(expense['password']),Phone=expense['phone'],Auth_Level=2,Comp_Id_id=comp_id)
 			e1.save()
+
 		if 'Genral' in comp['accountants']:
 			# x=Company.objects.filter(Company_Name=comp['name']).values_list('Company_Id')
 			gen=request.post.get('genralAcc')
+			token=gen['email']+str(datetime.now())
+			uToken=make_password(token)
+
+			userToken[email]=uToken
+
 			g1 = User(Fname=gen['firstName'],Lname=gen['lastName'],Address_Line=gen['address']['address1'],
 				City=gen['address']['city'],Pin_Code=gen['address']['pincode'],State=gen['address']['state'],
 				Country_Name=gen['address']['country'],Country_Code=gen['countryCode'],Email=gen['email'],
-				Password=gen['password'],Phone=gen['phone'],Auth_Level=3,Comp_Id_id=comp_id)
+				Password=make_password(gen['password']),Phone=gen['phone'],Auth_Level=3,Comp_Id_id=comp_id)
 			g1.save()
 		data={
 			'token' : userToken
