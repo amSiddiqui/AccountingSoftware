@@ -108,7 +108,7 @@ def get_invoice(client,items,invoice):
 		'phone': client['Phone'],
 		'email': client['Email'],
 		'address': {
-			'address1': client['Address'],
+			'address1': client['Address_Line'],
 			'city': client['City'],
 			'state': client['State'],
 			'country': client['Country_Name'],
@@ -133,6 +133,15 @@ def get_invoice(client,items,invoice):
 		res['items'].append(item)
 	return res
 
+@csrf_exempt
+@post('accessToken')
+def check_token(request):
+	try:
+		return JsonResponse({
+			'valid': check_user(request.POST['token'])
+		},safe=True)
+	except :
+		return HttpResponse('Please provide user token',status=400)
 #Create Initial init Request:
 @csrf_exempt
 @post('clientId','secret')
@@ -517,7 +526,7 @@ def delete_invoice(request):
 def create_vendor(request):
 	ven = request.POST['vendor']
 	add = ven['addresss']
-	vendor = Vendor(Vendor_Name=ven['name'],Email=ven['email'],Phone=ven['phone'],Address=add['address1'],City=add['city'],State=ven['state'],
+	vendor = Vendor(Vendor_Name=ven['name'],Email=ven['email'],Phone=ven['phone'],Address_Line=add['address1'],City=add['city'],State=ven['state'],
 				Pin_Code=ven['pincode'], Country_Name=add['country'], Country_Code=ven['countryCode'])
 	vendor.save()
 	return HttpResponse('Created successfully')
@@ -659,7 +668,7 @@ def _get_client( client ):
 		'phone': client['Phone'],
 		'email': client['Email'],
 		'address': {
-			'address1': client['Address'],
+			'address1': client['Address_Line'],
 			'city': client['City'],
 			'state': client['State'],
 			'country': client['Country_Name'],
