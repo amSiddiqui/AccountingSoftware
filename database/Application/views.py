@@ -119,7 +119,7 @@ def get_invoice(client,items,invoice):
 		'id':invoice['Invoice_Id'],
 		'date': get_date( invoice['datefmt'], invoice['Date'] ),
 		'amountDue': invoice['Amount_Due'],
-		'items' : items
+		'items' : []
 	}
 
 	for itm in items:
@@ -713,7 +713,14 @@ def client_latest(request):
 @csrf_exempt
 @post('accessToken', 'token')
 def client_fetch(request, client_id):
-	cli = Client.objects.filter(Client_Id=client_id).values()[0]
+	clis = Client.objects.filter(Client_Id=client_id).values()
+	invs = Invoice.objects.filter(Client_Id_id=client_id).values() 
+	if clis is None or len( cli ) <= 0:
+		return HttpResponse('Client does not exists', status=400)
+	cli = clis[0]
+	invoices = []
+	for inv in invs:
+		invoices.append(_get)
 	if (cli is not None):
 		res = {'client': _get_client(cli)}
 		return JsonResponse(res, safe=True)
