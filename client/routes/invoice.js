@@ -6,6 +6,7 @@ const util = require('../modules/utility');
 const seeds = require('../seeds');
 const bodyParser = require('body-parser');
 const app = express();
+const config = require('../config/config');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -48,7 +49,7 @@ router.post('/proceed', (req, res, next) => {
             var clientId = req.body.client;
             // Get client from database
             // TODO: Use axio to fetch data
-            // axios.post(dburl+'client/'+clientId, {
+            // axios.post(config.url+'client/'+clientId, {
             //     token: user.token,
             //     accessToken: accessToken
             // }).then(response => {
@@ -125,7 +126,7 @@ router.post('/create', (req, res, next) => {
             };
 
             // Axios post request to save data
-            axios.post(dburl+'invoice/create', {
+            axios.post(config.url+'invoice/create', {
                 accessToken: accessToken,
                 token: user.token,
                 invoice: invoice
@@ -166,7 +167,7 @@ router.post('/create', (req, res, next) => {
 //                 invoices: invoiceIdDeleteion
 //             };
 //
-//             axios.post(dburl+'invoice/delete', payload)
+//             axios.post(config.url+'invoice/delete', payload)
 //             .then(response => {
 //                 res.redirect('/invoice');
 //             })
@@ -189,7 +190,11 @@ router.delete('/delete',(req,res,next) =>{
       ids = req.body.row;
 
 
+<<<<<<< HEAD
       axios.post(dburl + 'invoice/delete/', {
+=======
+      axios.post(config.url + '/invoice/delete/', {
+>>>>>>> 3acd894862038264e12e01f637cc98b723366103
           token:user.token,
           accessToken:accessToken,
           invoices: ids,
@@ -216,7 +221,7 @@ router.get('/:id', (req, res, next) => {
             // Fetch invoice details from the database
             var id = parseInt(req.params.id);
             // TODO: Use axios
-              axios.post(dburl + '/invoice/' +req.params.id,{
+              axios.post(config.url + '/invoice/' +req.params.id,{
                 token:user.token,
                 accessToken:accessToken
               }).then( response =>{

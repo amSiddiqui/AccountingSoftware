@@ -2,7 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 const util = require('../modules/utility');
-
+const config = require('../config/config');
 const seeds = require('../seeds');
 
 router.get('/create', (req, res, next) => {
@@ -40,15 +40,13 @@ router.post('/',(req , res,next) =>{
       // seeds.vendor.push(vendor);
 
       // TODO: Push data into database using axios
-      axios.post(dburl+'/client/create/'{
+      axios.post(config.url+'/client/create/',{
           token: user.token,
           accessToken: accessToken,
           vendor: vendor
       }).then(response => {
-
-          res.render('back')
-          });
-      }).catch(err => {
+          res.render('vendor');
+          }).catch(err => {
           // console.error(err);
           res.render('error', {
               message: err.response.data
@@ -59,7 +57,7 @@ router.post('/',(req , res,next) =>{
     else {
       res.redirect('/dashboard')
     }
-  })
-})
+  });
+});
 
 module.exports = router;

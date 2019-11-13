@@ -4,6 +4,7 @@ const util = require('../modules/utility');
 const seeds = require('../seeds');
 const bodyParser = require('body-parser');
 const app = express();
+const config = require('../config/config');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -62,16 +63,15 @@ router.post('/',(req , res) => {
       // seeds.pseudoExpense.push(params);
 
       // TODO: Push data into database using axios
-      axios.post(dburl+'/expense/create/'{
+      axios.post(config.url+'/expense/create/', {
           token: user.token,
           accessToken: accessToken,
           expense: params,
       }).then(response => {
-          console.log(Expense Added);
+          console.log('Expense Added');
 
           res.render('/expense');
-          });
-      }).catch(err => {
+          }).catch(err => {
           console.error(err);
           res.render('error', {
               message: err.response.data
@@ -107,11 +107,11 @@ router.put('/:id', (req , res) => {
   util.authCheck(req , (user) =>{
     if(user){
 
-      axios.post(dburl + `expense/${req.params.id}/`{
-        token: user.token.
+      axios.post(config.url + `/expense/${req.params.id}/`, {
+        token: user.token,
         accessToken: accessToken,
-      }).then(res1 =>res1.data)
-        .then(res1){
+      }).then(res1 => {
+          res1 = res1.data;
           for(var i in res1){
             if(res1[i].id === req.params.id){
               res1[i].category= req.body.category;
@@ -125,20 +125,27 @@ router.put('/:id', (req , res) => {
             }
           }
 
+<<<<<<< HEAD
           axios.post(dburl + `/expense/${req.params.id}/update/`,{
             token: user.token.
             accessToken: accessToken,
             client: res1,
           }).then(response =>{
             console.log('expense updated');
+=======
+          axios.post(config.url + `/expense/${req.params.id}/update/`,{
+            token: user.token,
+            accessToken: accessToken,
+            client: res1,
+          }).then(response =>{
+            console.log('client updated');
+>>>>>>> 3acd894862038264e12e01f637cc98b723366103
             res.render('/expense/'+req.params.id);
           }).catch(error => {
             console.log(error)
-            res.render('/error',{error:error})
+            res.render('/error',{message:dbErrorMsg})
           });
-        }
-
-      });
+        });
 
 
       // for(var i in seeds.pseudoExpense){
@@ -153,7 +160,6 @@ router.put('/:id', (req , res) => {
       //     break;
       //   }
     }
-  }
     else{
       res.redirect('/dashboard');
     }
@@ -165,7 +171,7 @@ router.put('/:id', (req , res) => {
 router.delete('/delete',(req,res,next) =>{
   util.authCheck(req , (user) =>{
     if(user){
-      var ids = []
+      ids = [];
       var ids = req.body.row;
 
       axios.post(dburl + 'expense/delete/', {

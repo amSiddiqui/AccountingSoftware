@@ -5,6 +5,7 @@ const axios = require('axios');
 const router = express.Router();
 const util = require('../modules/utility');
 const seeds = require('../seeds');
+const config = require('../config/config');
 
 
 router.get('/accountant/create', (req, res, next) => {
@@ -86,14 +87,14 @@ router.post('/accountant/create', (req, res, next) => {
                         company: tempProfile,
                         accessToken: accessToken
                     };
-                    axios.post(dburl, 'signup', payload)
+                    axios.post(config.url+'/signup/', payload)
                         .then(response => {
-                            var data = JSON.parse(response.data);
+                            var data = response.data;
                             const user = {
                                 name: tempProfile.headAcc.firstName.substring(0, 1)+'. '+tempProfile.headAcc.lastName,
                                 email: tempProfile.headAcc.email,
                                 company: tempProfile.company,
-                                token: data.userToken
+                                token: data.token
                             };
                             res.cookie('user',user,cookieOpt);
                             tempProfile = null;
