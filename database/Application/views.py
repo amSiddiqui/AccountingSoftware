@@ -193,7 +193,7 @@ def login_user(request):
 		if companies is None or len(companies) < 1:
 			return HttpResponse('Company is not set', status=406 )
 		
-		currencies = Currency.objects.filter(Id=companies[0]['Base_Currency_id']).values()
+		currencies = Currency.objects.filter(Id=companies[0]['Base_Currency']).values()
 		
 		if currencies is None or len( currencies ) < 1 :
 				return HttpResponse('Currency is not added', status=406 )
