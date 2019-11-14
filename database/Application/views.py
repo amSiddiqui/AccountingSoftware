@@ -562,8 +562,8 @@ def fetch_vendor_Id(request):
 		return HttpResponse('Invalid Payload',status=400)
 	for name in request.POST['vendors']:
 		res_pat = {
-			'name':name
-			'id':-1
+			'name':name,
+			'id': 1
 		}
 		for ven in vendors:
 			if name == ven['Vendor_Name']:
@@ -754,7 +754,7 @@ def client_latest(request):
 			res['clients'].append(cli)
 		return (JsonResponse(res, safe=True))
 	else:
-		return HttpResponse('Quatity Requested is out of bounds', status=400)
+		return HttpResponse('Quantity Requested is out of bounds', status=400)
 
 
 
@@ -1221,7 +1221,6 @@ def report_expense(request):
 		res['expense'].append(rev_pat)
 
 	return JsonResponse(res,safe=True)
-
 
 @csrf_exempt
 @post('accessToken','token','startMonth','endMonth','quantity')

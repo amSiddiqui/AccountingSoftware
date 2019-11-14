@@ -1,90 +1,70 @@
 const express = require('express');
-
 const router = express.Router();
-
+const util = require('../modules/utility');
 const seeds = require('../seeds');
 const config = require('../config/config');
+const axios = require('axios');
 
 router.get('/', (req,res,next) => {
-  res.render('report/report');
+  util.authCheck(req , user =>{
+    if(user){
+      res.render('report/report');
+    }
+    else{
+      res.redirect('/dashboard');
+    }
+
+  });
 });
 
 router.get('/:type', (req , res, next) => {
   type = req.params.type.toUpperCase();
   type = type.replace('-', ' ');
-  user.authCheck(req , user =>{
+  util.authCheck(req , user =>{
     if(user){
 
-      let oR = axios.post(config.url, + '/report/outstandingRevenue/',{
 
+      let inv = axios.post(config.url, + 'invoice/latest/',{
         accessToken:accessToken,
         token: user.token,
+        quantity: 5,
       });
 
-
-      let oD = axios.post(config.url, + '/report/overdue/',{
+      let expen = axios.post(config.url, + 'expense/latest/',{
         accessToken:accessToken,
         token: user.token,
+        quantity: 5,
       });
 
-
-      let prof = axios.post(config.url, + '/report/profit/',{
+      let clnt = axios.post(config.url, + 'client/latest/',{
         accessToken:accessToken,
         token: user.token,
+        quantity: 5,
       });
-
-
-      let rev = axios.post(config.url, + '/report/revenue/',{
-        accessToken:accessToken,
-        token: user.token,
-      });
-
-
-      let exp = axios.post(config.url, + '/report/expense/',{
-        accessToken:accessToken,
-        token: user.token,
-      });
-      let inv = axios.post(config.url, + '/invoice/',{
-        accessToken:accessToken,
-        token: user.token,
-        quantity: 4
-      });
-
-      let expen = axios.post(config.url, + '/expense/',{
-        accessToken:accessToken,
-        token: user.token,
-      });
-
-      let clnt = axios.post(config.url, + '/client/',{
-        accessToken:accessToken,
-        token: user.token,
-      });
-
-
-      var currency = utilData.country.currency;
-      axios.all([oR, oD, prof,rev,exp,inv,expen,clnt]).then(axios.spread((...res) => {
-        const resoR = res[0];
-        const resoD = res[1];
-        const resprof = res[2];
-        const resrev = res[3];
-        const resexp = res[4];
-        const resinv = res[5];
-        const resexpen = res[6];
-        const resclnt = res[7];
-
+      var currency = user.company.currency;
+      axios.all([inv,expen,clnt]).then(axios.spread((...res) => {
+        // const resoR = res[0].data.;
+        // const resoD = res[1];
+        // const resprof = res[2];
+        // const resrev = res[3];
+        // const resexp = res[4];
+        const resinv = res[0].data.invoices;
+        const resexpen = res[1].data.expenses;
+        const resclnt = res[2].data.clients;
+        console.log(resinv);
         if(type == 'INVOICE DETAIL'){
 
           var totalInvoiced =0;
           var totalPaid =0;
           var totalDue = 0;
           for(var i in resinv){
-            totalInvoiced += resinv.total;
-            totalPaid += resinv.amountPaid;
-            totalDue += resinv.balanceDue;
+            totalInvoiced += resinv[i].total;
+            totalPaid += resinv[i].amountPaid;
+            totalDue += resinv[i].balanceDue;
           }
           res.render('report/show',{
             invoice : resinv,
-            currency: currency,
+            currency: user.company.currency,
             totalInvoiced: totalInvoiced,
             totalPaid: totalPaid,
             totalDue: totalDue,
@@ -93,9 +73,9 @@ router.get('/:type', (req , res, next) => {
         else if(type == "CLIENT REPORT"){
           var total =0;
           for(var i in resclnt){
-            total += resclnt[i].total;
+            total += resclnt[i].stats.total;
           }
-          res.render('report/show', {type: type, client: resclnt,total:total,currency: utilData.company.currency,});
+          res.render('report/show', {type: type, client: resclnt,total:total,currency: user.company.currency,});
         }
         else if(type == "PAYMENT PENDING"){
           var totalDue = 0;
@@ -105,7 +85,7 @@ router.get('/:type', (req , res, next) => {
           res.render('report/show',{
             type: type,
             invoice: resinv,
-            currency: utilData.company.currency,
+            currency: user.company.currency,
             total: totalDue,
           });
         }
@@ -118,7 +98,7 @@ router.get('/:type', (req , res, next) => {
           res.render('report/show',{
             type: type,
             invoice: resinv,
-            currency: utilData.company.currency,
+            currency: user.company.currency,
             total: totalPaid,
           });
         }
@@ -145,7 +125,7 @@ router.get('/:type', (req , res, next) => {
             var salesTotal =0;
 
             for(var i in resexpen){
-              expenseTotal += resexpen[i].subtotal
+              expenseTotal += resexpen[i].amount
             }
             for(var i in resinv){
               salesTotal += resinv[i].total;
@@ -158,7 +138,7 @@ router.get('/:type', (req , res, next) => {
               salesTotal:salesTotal,
               expenseTotal:expenseTotal,
               profit:profit,
-              currency: utilData.company.currency,
+              currency: user.company.currency,
             });
           }
           // else if(type === 'GENERAL LEDGER'|| type === 'BALANCE SHEET'|| type === 'TRIAL BALANCE'){
@@ -168,12 +148,10 @@ router.get('/:type', (req , res, next) => {
               res.send('ERROR:PAGE NOT FOUND');
             }
         // use/access the results
-      })).catch(errors => {
+      })).catch(err => {
         console.log(err);
-        res.render('error',{message:err.response.data})
-      })
-
-
+        res.render('error',{message:dbErrorMsg});
+      });
 
     }
     else{

@@ -213,12 +213,6 @@ router.put('/:id', (req, res) => {
         //     break;
         //   }
 
-      }).catch(err => {
-        console.log(error);
-        res.render('error', {
-          message: dbErrorMsg,
-        });
-      });
 
     } else {
       res.redirect('/dashboard');

@@ -230,7 +230,7 @@
                 <% client.forEach((client) =>{ %>
                   <tr>
                     <td> <%= client.firstName.substring(0.1) + '.' + client.lastName%></td>
-                    <td><span class="is-pulled-right"><%= client.currency.substring(0,1) + ' ' + client.total%></span></td>
+                    <td><span class="is-pulled-right"><%= currency.substring(0,1) + ' ' + client.stats.total%></span></td>
                   </tr>
                 <% })%>
               </tbody>
@@ -335,7 +335,7 @@
                 <% expense.forEach((expense) =>{%>
                   <tr>
                     <th><%= expense.category%></th>
-                    <td><span class="is-pulled-right"><%= currency.substring(0,1)+ ' ' + expense.subtotal%></span></td>
+                    <td><span class="is-pulled-right"><%= currency.substring(0,1)+ ' ' + expense.amount%></span></td>
                   </tr>
                 <%})%>
               </tbody>
