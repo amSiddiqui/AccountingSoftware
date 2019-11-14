@@ -132,19 +132,6 @@ def get_invoice(client,items,invoice):
 		'dueTime': dueTime,
 		'items' : items
 	}
-<<<<<<< HEAD
-
-	for itm in items:
-		item = {
-			'item': itm['Name'],
-			'description': itm['Description'],
-			'rate': itm['Rate'],
-			'quantity': itm['Quantity'],
-			'price': itm['Price']
-		}
-		res['items'].append(item)
-=======
->>>>>>> 3f2cc9fcccceb185c91c1394ae99f43fd98aa39f
 	return res
 
 @csrf_exempt
@@ -517,31 +504,6 @@ def fetch_invoice(request,invoice_id):
 def latest_invoice(request):
 	qty = request.POST['quantity']
 	tempInvoices = Invoice.objects.all().order_by('-Invoice_Id').values()
-<<<<<<< HEAD
-	if tempInvoices is not None and len(tempInvoices) > 0:
-		invoices = tempInvoices
-		res = []
-		for inv in invoices:
-			if qty == 0:
-				break
-			qty -= 1
-			client = Client.objects.filter(Client_Id=inv['Client_Id_id']).values()
-			items = []
-			item_invoice = Item_Invoice.objects.filter(Invoice_Id_id=inv['Invoice_Id']).values()
-			for itm in item_invoice:
-				item = Item.objects.filter(Item_Id=itm['Item_Id_id']).values()[0]
-				item['quantity'] = itm['Quantity']
-				item['price'] = itm['Price']
-				items.append(item)
-
-			if items is None or len(items) <= 0 or client is None or len(client) <= 0:
-				return HttpResponse('Client or Items does not exits in database', status=400)
-			res.append(get_invoice(client,items,inv))
-		return JsonResponse(res,safe=True)
-
-	else:
-		return HttpResponse('Quantity is out of bound',status=400)
-=======
 	invoices = tempInvoices
 	res = []
 	for inv in invoices:
@@ -561,7 +523,7 @@ def latest_invoice(request):
 			return HttpResponse('Client or Items does not exits in database', status=400)
 		res.append(get_invoice(client,items,inv))
 	return JsonResponse(res,safe=True)
->>>>>>> 3f2cc9fcccceb185c91c1394ae99f43fd98aa39f
+
 
 #Deletes the invoice
 @csrf_exempt
@@ -652,15 +614,9 @@ def expense_create(request):
 
 
 def _get_expense(expense):
-<<<<<<< HEAD
-	categories = Category.objects.filter(Category_Id=expense['Category_Id_id']).values();
-	category = ''
-	if categories is not None and len(categories) > 0:
-=======
 	categories = Category.objects.filter(Category_Id=expense['Category_Id_id']).values()
 	category = ''
 	if categories is not None and len( categories ) > 0:
->>>>>>> 3f2cc9fcccceb185c91c1394ae99f43fd98aa39f
 		category = categories[0]['Type']
 	return {
 			'category': category,
@@ -807,13 +763,8 @@ def client_latest(request):
 @post('accessToken', 'token')
 def client_fetch(request, client_id):
 	clis = Client.objects.filter(Client_Id=client_id).values()
-<<<<<<< HEAD
-	invs = Invoice.objects.filter(Client_Id_id=client_id).values()
-	if clis is None or len( cli ) <= 0:
-=======
 	invs = Invoice.objects.filter(Client_Id_id=client_id).values() 
 	if clis is None or len( clis ) <= 0:
->>>>>>> 3f2cc9fcccceb185c91c1394ae99f43fd98aa39f
 		return HttpResponse('Client does not exists', status=400)
 	cli = clis[0]
 	invoices = []
@@ -1270,8 +1221,6 @@ def report_expense(request):
 		res['expense'].append(rev_pat)
 
 	return JsonResponse(res,safe=True)
-<<<<<<< HEAD
-=======
 
 @csrf_exempt
 @post('accessToken','token','startMonth','endMonth','quantity')
@@ -1386,4 +1335,3 @@ def report_unbilled(request):
 		res['expense'].append(rev_pat)
 
 	return JsonResponse(res,safe=True) 
->>>>>>> 3f2cc9fcccceb185c91c1394ae99f43fd98aa39f
