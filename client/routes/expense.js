@@ -206,12 +206,15 @@ router.put('/:id', (req, res) => {
 router.delete('/delete', (req, res, next) => {
   util.authCheck(req, (user) => {
     if (user) {
-      ids = [];
       var ids = req.body.row;
+      console.log('Expense delete row: ', ids);
+      if (typeof ids != Array) {
+        ids = [ids];
+      }
       axios.post(config.url + '/expense/delete/', {
         token: user.token,
         accessToken: accessToken,
-        expense: ids,
+        expenses: ids,
       }).then(response => {
         res.redirect('/expense');
       }).catch(err => {

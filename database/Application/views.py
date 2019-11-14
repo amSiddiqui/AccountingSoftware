@@ -682,8 +682,8 @@ def expense_update(request, expense_id):
 @post('accessToken', 'token', 'expenses')
 def expense_delete(request):
 	exp_ids = request.POST['expenses']
-	for id in exp_ids:
-		Expense.objects.filter(Expense_Id=id).delete()
+	for ids in exp_ids:
+		Expense.objects.get(Expense_Id=ids).delete()
 	return HttpResponse('Successfully Deleted')
 
 
@@ -820,8 +820,8 @@ def client_update(request, client_id):
 @post('accessToken', 'token', 'clients')
 def client_delete(request):
 	cli_ids = request.POST['clients']
-	for id in cli_ids:
-		Client.objects.filter(Client_Id=id).delete()
+	for ids in cli_ids:
+		Client.objects.get(Client_Id=ids).delete()
 	return HttpResponse('Successfully Deleted')
 		
 
