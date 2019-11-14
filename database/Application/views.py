@@ -557,7 +557,7 @@ def fetch_vendor(request):
 @post('accessToken','token','vendors')
 def fetch_vendor_Id(request):
 	res = []
-	vendors = Vendor.objects.all().values();
+	vendors = Vendor.objects.all().values()
 	if vendors is None or len(vendors) <= 0:
 		return HttpResponse('Invalid Payload',status=400)
 	for name in request.POST['vendors']:
@@ -982,29 +982,46 @@ def report_profit(request):
 	res = {
 		'profit': []
 	}
+	
+	temp_prof = []
 
 	for i in range( 0, len(invs)):
-		rev = 0
+		prof_pat = {
+			'id': '',
+			'prof': 0
+		}
 		inv = invs[i]
 		temp_date = inv['Date']
 		temp_month = temp_date.month
 		temp_year = temp_date.year
+		temp_key = f"{temp_month}/{temp_year}"
 
+		idx = -1
+		for j in range(0, len(temp_prof)):
+			if temp_prof[j]['id'] == temp_key:
+				idx = j
+				break
+		if idx == -1:
+			prof_pat['id'] = temp_key
+			temp_prof.append(prof_pat)
+			idx = len(temp_prof) - 1
+			
 		if not cycleE and not cycleS:
 			if curr_year != temp_year :
 				break
 			if sMonth <= temp_month and eMonth >= temp_month:
-				rev += inv['Balance_Due']
+				temp_prof[idx]['prof'] += inv['Balance_Due']
 		elif cycleE and not cycleS:
 			if eMonth >= temp_month and curr_year == temp_year:
-				rev += inv['Balance_Due']
+				temp_prof[idx]['prof'] += inv['Balance_Due']
 			elif sMonth <= temp_month and curr_year != temp_year:
-				rev += inv['Balance_Due']
+				temp_prof[idx]['prof'] += inv['Balance_Due']
 		elif cycleS and cycleE:
 			if sMonth <= temp_month and curr_year != temp_year and eMonth >= temp_month:
-				rev += inv['Balance_Due']
-		res['profit'].append( total_sum - rev )
+				temp_prof[idx]['prof'] += inv['Balance_Due']
 
+	for prof in temp_prof:
+		res['profit'].append( total_sum - prof['prof'])
 	return JsonResponse(res,safe=True)
 
 @csrf_exempt

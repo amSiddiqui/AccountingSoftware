@@ -4,6 +4,7 @@ const router = express.Router();
 
 const seeds = require('../seeds');
 const config = require('../config/config');
+const util = require('../modules/utility')
 
 router.get('/', (req,res,next) => {
   res.render('report/report');
@@ -12,7 +13,7 @@ router.get('/', (req,res,next) => {
 router.get('/:type', (req , res, next) => {
   type = req.params.type.toUpperCase();
   type = type.replace('-', ' ');
-  user.authCheck(req , user =>{
+  util.authCheck(req , user =>{
     if(user){
 
       let oR = axios.post(config.url, + '/report/outstandingRevenue/',{
