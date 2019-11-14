@@ -5,9 +5,6 @@ const axios = require('axios');
 const config = require('../config/config');
 
 router.get('/', (req, res, next) => {
-    if (req.cookies.user != undefined) {
-        res.clearCookie('user');
-    }
     res.redirect('/login');
 });
 
