@@ -5,7 +5,8 @@ const seeds = require('../seeds');
 const bodyParser = require('body-parser');
 const app = express();
 const config = require('../config/config');
-const axios = require('axios')
+const axios = require('axios');
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -127,7 +128,7 @@ router.put('/:id', (req, res) => {
         accessToken: accessToken,
       }).then(res1 => {
         old_client = res1.data.client;
-        
+
         old_client.firstName = req.body.firstName;
         old_client.lastName = req.body.lastName;
         old_client.countryCode = req.body.countryCode;
@@ -140,7 +141,7 @@ router.put('/:id', (req, res) => {
         old_client.address.pincode = req.body.pincode;
         old_client.lateFeeRate = req.body.lateFeeRate;
         old_client.dayLimit = req.body.dayLimit;
-        
+
 
         axios.post(config.url + `/client/${req.params.id}/update/`, {
           token: user.token,

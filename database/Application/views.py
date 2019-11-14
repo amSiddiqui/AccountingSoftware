@@ -9,7 +9,7 @@ from django.db.models import Sum
 import json
 
 '''
-Auth Level 0: Accounting Head 
+Auth Level 0: Accounting Head
 Auth Level 1: General Accountant
 Auth Level 2: Expense Accountant
 Auth Level 3: Client Accountant
@@ -117,7 +117,7 @@ def get_invoice(client,items,invoice):
 			'city': client['City'],
 			'state': client['State'],
 			'country': client['Country_Name'],
-			'pincode': client['Pin_Code'],  
+			'pincode': client['Pin_Code'],
 		},
 		'lateFeeRate': client['Late_Fee_Rate'],
 		'dayLimit': client['Day_Limit'],
@@ -151,7 +151,7 @@ def init(request):
 	secret=request.POST['secret']
 
 	if value['clientId'] is None:
-    
+
 		value['clientId'] = clientId
 		value['secret'] = secret
 		token=clientId+str(datetime.now())
@@ -164,7 +164,7 @@ def init(request):
 			value['accessToken']=make_password(token)
 		else:
 			return HttpResponse("Invalid Authorisation", status=status[2])
-	
+
 	lastClientId = Client.objects.all().order_by('-Client_Id')
 	lastExpenseId = Expense.objects.all().order_by('-Expense_Id')
 	lastInvoiceId = Invoice.objects.all().order_by('-Invoice_Id')
@@ -201,7 +201,7 @@ def login_user(request):
 		companies = Company.objects.filter(Company_Id=user['Comp_Id_id']).values()
 		if companies is None or len(companies) < 1:
 			return HttpResponse('Company is not set', status=406 )
-		
+
 		company = companies[0]
 		if check_password(password,user['Password']):
 			tokenTemp = None
@@ -350,7 +350,7 @@ def company(request):
 			Tax_Rate=comp['taxrate'],Base_Currency=comp['currency'],Date_Format=datefmt)
 		c1.save()
 		comp_id = c1.pk
-		
+
 		if 'Head' in comp['accountants']:
 			# x = Company.objects.filter(Company_Name=comp['name']).values_list('Company_Id')
 			head=request.POST.get('headAcc')
@@ -366,7 +366,7 @@ def company(request):
 				Country_Name=head['address']['country'],Country_Code=head['countryCode'],Email=head['email'],
 				Password=make_password(head['password']),Phone=head['phone'],Auth_Level=0,Comp_Id_id=comp_id)
 			h1.save()
-		
+
 
 		if 'Client' in comp['accountants']:
 			# x=Company.objects.filter(Company_Name=comp['name']).values_list('Company_Id')
@@ -410,7 +410,7 @@ def company(request):
 				Country_Name=gen['address']['country'],Country_Code=gen['countryCode'],Email=gen['email'],
 				Password=make_password(gen['password']),Phone=gen['phone'],Auth_Level=3,Comp_Id_id=comp_id)
 			g1.save()
-		
+
 		print('User created ')
 		print('token Created: ', userToken[email])
 		data={
@@ -457,7 +457,7 @@ def create_invoice(request):
 	# 	return HttpResponse('Invalid access token',status=401)
 	data = request.POST['invoice']
 	datefmt = data['datefmt']
-	invoice = Invoice(Client_Id=data['clientId'], Date=get_iso_date(datefmt, data['date']), Amount_Due=data['amountDue'], 
+	invoice = Invoice(Client_Id=data['clientId'], Date=get_iso_date(datefmt, data['date']), Amount_Due=data['amountDue'],
 					Amount_Paid=data['amountPaid'], Total=data['total'], Balance_Due=data['balanceDue'], Notes=data['notes'],
 					Date_Format=datefmt)
 	invoice.save()
@@ -478,7 +478,7 @@ def create_invoice(request):
 def fetch_invoice(request,invoice_id):
 	if value['accessToken'] != request.POST['accessToken']:
 		return HttpResponse('Invalid access token',status=401)
-	
+
 	invoices = Invoice.objects.filter(Invoice_Id=invoice_id).values()
 	if invoices is not None and len(invoices) > 0:
 		invoice = invoices[0]
@@ -489,7 +489,7 @@ def fetch_invoice(request,invoice_id):
 			item['quantity'] = itm['Quantity']
 			item['price'] = itm['Price']
 			items.append(item)
-		
+
 		clients = Client.objects.filter(Client_Id=invoice['Client_Id_id']).values()
 		if items is None or len(items) <= 0 or clients is None or len(clients) <= 0:
 			return HttpResponse('Client or Items does not exits in database', status=400)
@@ -498,7 +498,7 @@ def fetch_invoice(request,invoice_id):
 	else:
 		return HttpResponse('Invalid invoice Id',status=400)
 
-#Get latest invoice	
+#Get latest invoice
 @csrf_exempt
 @post('accessToken','token','quantity')
 def latest_invoice(request):
@@ -524,7 +524,8 @@ def latest_invoice(request):
 		res.append(get_invoice(client,items,inv))
 	return JsonResponse(res,safe=True)
 
-#Deletes the invoice	
+
+#Deletes the invoice
 @csrf_exempt
 @post('accessToken','token','invoices')
 def delete_invoice(request):
@@ -549,6 +550,26 @@ def create_vendor(request):
 @post('accessToken','token')
 def fetch_vendor(request):
 	res = { 'vendor': [name for name in Vendor.objects.all().values_list('Vendor_Name')] }
+	return JsonResponse(res,safe=True)
+
+#Fetch Vendor
+@csrf_exempt
+@post('accessToken','token','vendors')
+def fetch_vendor_Id(request):
+	res = []
+	vendors = Vendor.objects.all().values();
+	if vendors is None or len(vendors) <= 0:
+		return HttpResponse('Invalid Payload',status=400)
+	for name in request.POST['vendors']:
+		res_pat = {
+			'name':name
+			'id':-1
+		}
+		for ven in vendors:
+			if name == ven['Vendor_Name']:
+				res_pat['id'] = ven['Vendor_Id']
+				res.append(res_pat)
+
 	return JsonResponse(res,safe=True)
 
 #Fetch Vendor
@@ -602,7 +623,8 @@ def _get_expense(expense):
 			'date': expense['Date'],
 			'description': expense['Description'],
 			'amount': expense['Amount'],
-			'vendor': Vendor.objects.filter(pk=expense['Vendor_Id']).values()[0]
+			'vendor': Vendor.objects.filter(pk=expense['Vendor_Id_id']).values()[0],
+			'id': expense['Expense_Id']
 		}
 
 # fetch_latest
@@ -698,7 +720,7 @@ def _get_client_stats(client):
 
 
 def _get_client( client ):
-	return { 
+	return {
 		'id': client['Client_Id'],
 		'firstName': client['Fname'],
 		'lastName': client['Lname'],
@@ -827,7 +849,7 @@ def report_outstandingRevenue(request):
 	rSMonth = request.POST['startMonth']
 	rEMonth = request.POST['endMonth']
 	currMonth = date.today().month
-	
+
 	cycleS = True if currMonth < rSMonth else False
 	cycleE = True if currMonth < rEMonth else False
 	sMonth = abs( currMonth - rSMonth )
@@ -836,13 +858,13 @@ def report_outstandingRevenue(request):
 	invoices = Invoice.objects.all().order_by('-Date').values()
 	if invoices is None or len( invoices ) <= 0 :
 		return HttpResponse('Invoice not found',status=400)
-	
+
 	invs_y,invs = _get_invoices_by_year(invoices)
 	curr_year = invs[0]['Date'].year
-	
+
 	if invs_y == 1 and cycleS and cycleE:
 		return HttpResponse('Invalid Arguments',status=400)
-	
+
 	res = {
 		'revenue': 0
 	}
@@ -875,7 +897,7 @@ def report_overdue(request):
 	rSMonth = request.POST['startMonth']
 	rEMonth = request.POST['endMonth']
 	currMonth = date.today().month
-	
+
 	cycleS = True if currMonth < rSMonth else False
 	cycleE = True if currMonth < rEMonth else False
 	sMonth = abs( currMonth - rSMonth )
@@ -884,25 +906,25 @@ def report_overdue(request):
 	invoices = Invoice.objects.all().order_by('-Date').values()
 	if invoices is None or len( invoices ) <= 0 :
 		return HttpResponse('Invoice not found',status=400)
-	
+
 	invs_y,invs = _get_invoices_by_year(invoices)
 	curr_year = invs[0]['Date'].year
-	
+
 	if invs_y == 1 and cycleS and cycleE:
 		return HttpResponse('Invalid Arguments',status=400)
-	
+
 	res = {
 		'overdue': 0
 	}
 
-	check_limit = lambda d, limit: ( date.today() - d ).days > limit 
+	check_limit = lambda d, limit: ( date.today() - d ).days > limit
 
 	if not cycleE and not cycleS:
 		for i in range( 0, len(invs)):
 			inv = invs[i]
 			clients = Client.objects.filter(Client_Id=inv['Client_Id_id']).values()
 			if clients is None or len(clients) <= 0:
-				break 
+				break
 			if curr_year != inv['Date'].year :
 				break
 
@@ -911,10 +933,10 @@ def report_overdue(request):
 	elif cycleE and not cycleS:
 		for i in range( 0 , len( invs ) ):
 			inv = invs[i]
-			
+
 			clients = Client.object().filter(Client_Id=inv['Client_Id_id'])
 			if clients is None or len(clients) <= 0:
-				break 
+				break
 
 			if eMonth >= inv['Date'].month and curr_year == inv['Date'].year and check_limit(inv['Date'], clients[0]['Day_Limit']):
 				res['overdue'] += inv['Balance_Due']
@@ -923,10 +945,10 @@ def report_overdue(request):
 	elif cycleS and cycleE:
 		for i in range( 0 , len( invs ) ):
 			inv = invs[i]
-			
+
 			clients = Client.object().filter(Client_Id=inv['Client_Id_id'])
 			if clients is None or len(clients) <= 0:
-				break 
+				break
 
 			if sMonth <= inv['Date'].month and curr_year != inv['Date'].year and eMonth >= inv['Date'].month and check_limit(inv['Date'], clients[0]['Day_Limit']):
 				res['overdue'] += inv['Balance_Due']
@@ -940,7 +962,7 @@ def report_profit(request):
 	rSMonth = request.POST['startMonth']
 	rEMonth = request.POST['endMonth']
 	currMonth = date.today().month
-	
+
 	cycleS = True if currMonth < rSMonth else False
 	cycleE = True if currMonth < rEMonth else False
 	sMonth = abs( currMonth - rSMonth )
@@ -951,12 +973,12 @@ def report_profit(request):
 
 	if invoices is None or len( invoices ) <= 0 :
 		return HttpResponse('Invoice not found',status=400)
-	
+
 	invs_y,invs = _get_invoices_by_year(invoices)
 	curr_year = invs[0]['Date'].year
 	if invs_y == 1 and cycleS and cycleE:
 		return HttpResponse('Invalid Arguments',status=400)
-	
+
 	res = {
 		'profit': []
 	}
@@ -967,7 +989,7 @@ def report_profit(request):
 		temp_date = inv['Date']
 		temp_month = temp_date.month
 		temp_year = temp_date.year
-		
+
 		if not cycleE and not cycleS:
 			if curr_year != temp_year :
 				break
@@ -993,7 +1015,7 @@ def report_revenue(request):
 	rEMonth = request.POST['endMonth']
 	qty = request.POST['quantity']
 	currMonth = date.today().month
-	
+
 	cycleS = True if currMonth < rSMonth else False
 	cycleE = True if currMonth < rEMonth else False
 	sMonth = abs( currMonth - rSMonth )
@@ -1003,12 +1025,12 @@ def report_revenue(request):
 
 	if invoices is None or len( invoices ) <= 0 :
 		return HttpResponse('Invoice not found',status=400)
-	
+
 	invs_y,invs = _get_invoices_by_year(invoices)
 	curr_year = invs[0]['Date'].year
 	if invs_y == 1 and cycleS and cycleE:
 		return HttpResponse('Invalid Arguments',status=400)
-	
+
 	res = {
 		'revenue':[],
 		'totalRevenue': 0
@@ -1041,7 +1063,7 @@ def report_revenue(request):
 			'client': name,
 			'revenue': 0,
 			'id' : clients[0]['Client_Id']
-		} 
+		}
 
 		idx = -1
 		for j in range( 0, len( temp_rev ) ):
@@ -1053,7 +1075,7 @@ def report_revenue(request):
 		if idx == -1:
 			temp_rev.append(rev_pat)
 			idx = len( temp_rev ) - 1
-			
+
 		if not cycleE and not cycleS:
 			if curr_year != temp_year :
 				break
@@ -1110,7 +1132,7 @@ def report_expense(request):
 	rEMonth = request.POST['endMonth']
 	qty = request.POST['quantity']
 	currMonth = date.today().month
-	
+
 	cycleS = True if currMonth < rSMonth else False
 	cycleE = True if currMonth < rEMonth else False
 	sMonth = abs( currMonth - rSMonth )
@@ -1120,12 +1142,12 @@ def report_expense(request):
 
 	if expense is None or len( expense ) <= 0 :
 		return HttpResponse('Expense not found',status=400)
-	
+
 	exps_y,exps = _get_expense_by_year(expense)
 	curr_year = exps[0]['Date'].year
 	if exps_y == 1 and cycleS and cycleE:
 		return HttpResponse('Invalid Arguments',status=400)
-	
+
 	res = {
 		'expense':[],
 		'totalExpense': 0
@@ -1171,7 +1193,7 @@ def report_expense(request):
 		if idx == -1:
 			temp_rev.append(rev_pat)
 			idx = len( temp_rev ) - 1
-			
+
 		if not cycleE and not cycleS:
 			if curr_year != temp_year :
 				break

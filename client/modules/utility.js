@@ -1,7 +1,7 @@
 const axios = require('axios')
 const url = require('../config/config').url
 module.exports = {
-    validateUser : (opt)=>{        
+    validateUser : (opt)=>{
 
         let currOpt = {
             failedRedirect: 'http://127.0.0.1:3000/login',
@@ -18,8 +18,8 @@ module.exports = {
             currOpt['next'] = opt['next'];
         }
         return function( req, res, next ){
-            
-            
+
+
             if( currOpt['next'] ){
                 next();
             }
@@ -45,7 +45,6 @@ module.exports = {
                 }else{
                     res.clearCookie('user')
                 }
-
             }).catch(err=>res.clearCookie('user'))
 
         }

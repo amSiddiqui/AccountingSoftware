@@ -93,29 +93,29 @@ router.post('/signup', (req, res) => {
                 email: email
             };
             axios.post(config.url + '/auth/accountant/exists/', payload)
-                .then(response => {
-                    var data = response.data;
-                    if (data.exists) {
-                        res.render('signup', {
-                            userExists: true
-                        });
-                    } else {
-                        // Proceed forward to signup
-                        tempProfile = {
-                            headAcc: {
-                                email: email,
-                                password: password
-                            }
-                        };
-                        res.redirect('/company/create');
-                    }
-                })
-                .catch(error => {
-                    console.error(error);
-                    res.render('error', {
-                        message: dbErrorMsg
+            .then(response => {
+                var data = response.data;
+                if (data.exists) {
+                    res.render('signup', {
+                        userExists: true
                     });
+                } else {
+                    // Proceed forward to signup
+                    tempProfile = {
+                        headAcc: {
+                            email: email,
+                            password: password
+                        }
+                    };
+                    res.redirect('/company/create');
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                res.render('error', {
+                    message: dbErrorMsg
                 });
+            });
         }
     });
 });
@@ -134,7 +134,7 @@ async function loadReports(token, load) {
 
     console.log('OutRevenue Response: ', rev_response);
     utilData.totalOutRevenue = rev_response.revenue;
-    
+
     const overdue_response = (await axios.post(config.url + '/report/overdue/', {
         token,
         accessToken,
@@ -143,7 +143,7 @@ async function loadReports(token, load) {
     })).data;
     console.log('Overdue Response: ', overdue_response);
     utilData.overdue = overdue_response.overdue;
-    
+
     const profit_reponse = (await axios.post(config.url + '/report/profit/', {
         accessToken,
         token,
@@ -157,7 +157,7 @@ async function loadReports(token, load) {
         totalProfit += parseFloat(p);
     });
     utilData.totalProfit = totalProfit;
-    
+
     const revStream_response = (await axios.post(config.url + '/report/revenue/', {
         token,
         accessToken,
@@ -166,10 +166,10 @@ async function loadReports(token, load) {
         quantity: 5
     })).data;
     console.log('Rev Stream Response: ', revStream_response);
-    
+
     utilData.revenueStream = revStream_response.revenue;
     utilData.totalRevenue = revStream_response.totalRevenue;
-    
+
     const spending_response = (await axios.post(config.url + '/report/expense/', {
         token,
         accessToken,
@@ -199,19 +199,19 @@ router.get('/dashboard', (req, res) => {
                     rev_clients.push(rev.client);
                     revenue.push(rev.revenue);
                 });
-    
+
                 utilData.expenses.forEach(data => {
                     exp_vendor.push(data.vendor);
                     expenditure.push(data.spent);
                 });
-    
+
                 var totalRev = inKNotation(utilData.totalRevenue);
-    
-    
+
+
                 var totalExp = inKNotation(utilData.totalSpending);
-    
+
                 var overdue = inKNotation(utilData.overdue);
-    
+
                 var unb_clients = [];
                 var unb_days = [];
                 var unb_dues = [];
@@ -220,10 +220,12 @@ router.get('/dashboard', (req, res) => {
                     unb_days.push(unb.time);
                     unb_dues.push(unb.due);
                 });
-                
+
                 const quoteLen = utilData.quotes.quote.length
-                const random_idx = Math.floor( quoteLen * Math.random() )
-                const rawQuote = {...utilData.quotes}
+                const random_idx = Math.floor(quoteLen * Math.random())
+                const rawQuote = {
+                    ...utilData.quotes
+                }
                 const quote = {
                     quote: rawQuote['quote'][random_idx],
                     author: `${rawQuote['fName'][random_idx]} ${rawQuote['lName'][random_idx]}`
