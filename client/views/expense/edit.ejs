@@ -1,7 +1,7 @@
 <% include ../partials/header %>
 
 <h1 class="is-size-2 form-heading">Edit Expense: </h1>
-<form action="<%= expense.id %>?_method=PUT" method="post">
+<form action="/expense/<%= expense.id %>?_method=PUT" method="post">
     <label for="category-selection" class="label">Catergory</label>
     <div class="columns is-vcentered">
         <div class="column is-4">
@@ -64,7 +64,7 @@
                         <select name="vendor">
                             <option value=""></option>
                             <% vendors.forEach(function(vendor) { %>
-                            <% if (vendor == expense.vendor ) { %>
+                            <% if (vendor == expense.vendor.Vendor_Name ) { %>
                                 <option value="<%=vendor%>" selected><%=vendor%></option>
                             <% } else { %>
                                 <option value="<%=vendor%>"><%=vendor%></option>
@@ -82,32 +82,13 @@
             </a>
         </div>
     </div>
-    <label class="label">Phone: </label>
-    <div class="field has-addons">
-        <p class="control">
-            <span class="select">
-                <select name="countryCode" id="countryCode">
-                    <% countryCode.forEach((code) => { %>
-                        <% if (code == expense.countryCode) { %>
-                            <option value="<%= code %>" selected><%= code %></option>
-                        <% }else{ %>
-                            <option value="<%= code %>"><%= code %></option>
-                        <% } %>
-                    <% }) %>
-                </select>
-            </span>
-        </p>
-        <p class="control">
-            <input type="text" class="input" name="phone" value="<%=expense.phone%>" maxlength="10">
-        </p>
-    </div>
     <label class="label">Description: </label>
     <div class="field">
         <textarea class="textarea" name="description" placeholder="description"><%=expense.description%></textarea>
     </div>
     <label class="label">Subtotal: </label>
     <div class="field">
-        <input type="number" class="input" name="subtotal" value="<%=expense.subtotal%>">
+        <input type="number" class="input" name="amount" value="<%=expense.amount%>">
     </div>
     <div class="columns is-vcentered form-submit-buttons">
         <div class="column is-1">
