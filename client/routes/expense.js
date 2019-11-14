@@ -198,7 +198,6 @@ router.put('/:id', (req, res) => {
           res.render('error', {
             message: dbErrorMsg,
           });
-        });
 
 
         // for(var i in seeds.pseudoExpense){
