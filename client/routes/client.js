@@ -24,8 +24,7 @@ router.get('/', (req, res, next) => {
       var overdue = 0;
       var draft = 0;
       var clients = [];
-      //TODO: fetch total ,outstanding,overdue,draft
-      // TODO: Use axios
+
       axios.post(config.url + '/client/latest/', {
         token: user.token,
         accessToken: accessToken,
@@ -34,7 +33,9 @@ router.get('/', (req, res, next) => {
         clients = response.data.clients;
         var smallClient = [];
         var i = 0;
+        console.log('Clients fetched: ', clients.length);
         clients.forEach(function (client) {
+          console.log(client.stats);
           if (i++ < 3) {
             smallClient.push(client);
           }

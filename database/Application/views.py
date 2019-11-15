@@ -76,7 +76,7 @@ def get(func):
 	return inner
 
 def get_iso_date(date_format, date_data):
-	d = [ x for x in date_data.strip().split() if len( x.strip() ) != 0 ]
+	d = [ int(x) for x in date_data.strip().split('/') if len( x.strip() ) != 0 ]
 	if len(d) != 3:
 		raise Exception('Invalid date data')
 	if DATE_FORMAT['big_endian'] == date_format.strip(): # yyyy/mm/dd
@@ -557,13 +557,13 @@ def fetch_vendor(request):
 @post('accessToken','token','vendors')
 def fetch_vendor_Id(request):
 	res = []
-	vendors = Vendor.objects.all().values();
+	vendors = Vendor.objects.all().values()
 	if vendors is None or len(vendors) <= 0:
 		return HttpResponse('Invalid Payload',status=400)
 	for name in request.POST['vendors']:
 		res_pat = {
 			'name':name,
-			'id': 1
+			'id':-1
 		}
 		for ven in vendors:
 			if name == ven['Vendor_Name']:
@@ -608,7 +608,7 @@ def category_fetch(request):
 @post('accessToken', 'token', 'client')
 def expense_create(request):
 	exp = request.POST['expense']
-	expense = Expense(Category_Id=Category.objects.filter(Type=exp['category'])[0]['Type'], Date=get_iso_date(request.POST['datefmt'], exp['date']), Vendor_Id=Vendor.objects.filter(Vendor_Name=exp['vendor'])[0].Vendor_Id,Description=exp['description'], Amount=float(exp['amount']))
+	expense = Expense(Category_Id=Category.objects.filter(Type=exp['category']).values()[0]['Category_Id'], Date=get_iso_date(request.POST['datefmt'], exp['date']), Vendor_Id=Vendor.objects.filter(Vendor_Name=exp['vendor'])[0].Vendor_Id,Description=exp['description'], Amount=float(exp['amount']))
 	expense.save()
 	return HttpResponse('Created Successfully')
 
@@ -661,13 +661,15 @@ def expense_update(request, expense_id):
 	exp = Expense.objects.get(pk=expense_id)
 	if (exp is not None):
 		new_exp = request.POST['expense']
+
 		datefmt = request.POST['datefmt']
-		exp.Category_Id = new_exp['category']
+		print(datefmt)
+		exp.Category_Id = Category.objects.get(Type=new_exp['category'])
 		exp.Date = get_iso_date(datefmt, new_exp['date'])
 		vendors = Vendor.objects.filter(Vendor_Name=new_exp['vendor']).values()
 		if (not (vendors is not None and len(vendors) > 0)):
 			return HttpResponse('Vendor does not exists', status=400)
-		exp.Vendor_Id = Vendor.objects.filter(Vendor_Name=new_exp['vendor']).values()[0]['Vendor_Id']
+		exp.Vendor_Id = Vendor.objects.get(Vendor_Name=new_exp['vendor'])
 		exp.Description = new_exp['description']
 		exp.Amount = new_exp['amount']
 		exp.save()
@@ -743,6 +745,7 @@ def _get_client( client ):
 def client_latest(request):
 	qty = request.POST['quantity']
 	all_client = Client.objects.all().order_by("-Client_Id").values()
+	print('Fetched Clients: ', len(all_client))
 	if all_client is not None and len(all_client) > 0:
 		res = {'clients': []}
 		for client in all_client:
@@ -770,12 +773,9 @@ def client_fetch(request, client_id):
 	invoices = []
 	for inv in invs:
 		item_invo = Item_Invoice.objects.filter(Invoice_Id_id=inv['Invoice_Id']).values()
-		print('Invoice with invoice id: ', inv['Invoice_Id'])
-		print('Items: ', item_invo)
 		items = []
 		for itm in item_invo:
-			item = Item.obejcts.filter(Item_Id=itm['Item_Id_id']).values()[0]
-			print('Item corresponding: ', item)
+			item = Item.objects.filter(Item_Id=itm['Item_Id_id']).values()[0]
 			item['quantity'] = itm['Quantity']
 			item['price'] = itm['Price']
 			items.append(item)
@@ -983,28 +983,45 @@ def report_profit(request):
 		'profit': []
 	}
 
+	temp_prof = []
+
 	for i in range( 0, len(invs)):
-		rev = 0
+		prof_pat = {
+			'id': '',
+			'prof': 0
+		}
 		inv = invs[i]
 		temp_date = inv['Date']
 		temp_month = temp_date.month
 		temp_year = temp_date.year
+		temp_key = f"{temp_month}/{temp_year}"
+
+		idx = -1
+		for j in range(0, len(temp_prof)):
+			if temp_prof[j]['id'] == temp_key:
+				idx = j
+				break
+		if idx == -1:
+			prof_pat['id'] = temp_key
+			temp_prof.append(prof_pat)
+			idx = len(temp_prof) - 1
 
 		if not cycleE and not cycleS:
 			if curr_year != temp_year :
 				break
 			if sMonth <= temp_month and eMonth >= temp_month:
-				rev += inv['Balance_Due']
+				temp_prof[idx]['prof'] += inv['Balance_Due']
 		elif cycleE and not cycleS:
 			if eMonth >= temp_month and curr_year == temp_year:
-				rev += inv['Balance_Due']
+				temp_prof[idx]['prof'] += inv['Balance_Due']
 			elif sMonth <= temp_month and curr_year != temp_year:
-				rev += inv['Balance_Due']
+				temp_prof[idx]['prof'] += inv['Balance_Due']
 		elif cycleS and cycleE:
 			if sMonth <= temp_month and curr_year != temp_year and eMonth >= temp_month:
-				rev += inv['Balance_Due']
-		res['profit'].append( total_sum - rev )
+				temp_prof[idx]['prof'] += inv['Balance_Due']
 
+	for prof in temp_prof:
+		res['profit'].append( total_sum - prof['prof'])
 	return JsonResponse(res,safe=True)
 
 @csrf_exempt
@@ -1261,6 +1278,7 @@ def report_unbilled(request):
 	check_limit = lambda d, limit: ( date.today() - d ).days > limit
 	get_limit = lambda d, limit: ( date.today() - d ).days - limit
 	totalOver = 0
+	temp_rev = []
 	for i in range( 0, len(invs)):
 		if qty == 0:
 			break
@@ -1270,7 +1288,7 @@ def report_unbilled(request):
 		temp_date = inv['Date']
 		temp_month = temp_date.month
 		temp_year = temp_date.year
-		clients = Client.objects.filter(Client_Id=inv['Client_Id_id'])
+		clients = Client.objects.filter(Client_Id=inv['Client_Id_id']).values()
 
 		if clients is None or len(clients) <= 0:
 			return HttpResponse('Database is correpted', status=500)
@@ -1278,7 +1296,7 @@ def report_unbilled(request):
 		client = clients[0]
 		name = f"{client['Fname']} {client['Lname']}"
 		totalOver += inv['Balance_Due']
-		if check_limit(temp_date, client['Day_Limit']):
+		if not check_limit(temp_date, client['Day_Limit']):
 			continue
 		rev_pat = {
 			'client': name,
@@ -1305,7 +1323,7 @@ def report_unbilled(request):
 				break
 
 			if sMonth <= inv['Date'].month and eMonth >= inv['Date'].month:
-				res['due'] += inv['Balance_Due']
+				temp_rev[idx]['due'] += inv['Balance_Due']
 
 		elif cycleE and not cycleS:
 
@@ -1313,9 +1331,9 @@ def report_unbilled(request):
 				break
 
 			if eMonth >= inv['Date'].month and curr_year == inv['Date'].year:
-				res['due'] += inv['Balance_Due']
+				temp_rev[idx]['due'] += inv['Balance_Due']
 			elif sMonth <= inv['Date'].month and curr_year != inv['Date'].year:
-				res['due'] += inv['Balance_Due']
+				temp_rev[idx]['due'] += inv['Balance_Due']
 
 		elif cycleS and cycleE:
 
@@ -1323,7 +1341,7 @@ def report_unbilled(request):
 				break
 
 			if sMonth <= inv['Date'].month and curr_year != inv['Date'].year and eMonth >= inv['Date'].month:
-				res['due'] += inv['Balance_Due']
+				temp_rev[idx]['due'] += inv['Balance_Due']
 
 	res['totalOverdue'] = totalOver
 	for r in temp_rev:

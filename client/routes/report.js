@@ -23,20 +23,19 @@ router.get('/:type', (req , res, next) => {
   util.authCheck(req , user =>{
     if(user){
 
-
-      let inv = axios.post(config.url, + 'invoice/latest/',{
+      let inv = axios.post(config.url + '/invoice/latest/',{
         accessToken:accessToken,
         token: user.token,
         quantity: 5,
       });
 
-      let expen = axios.post(config.url, + 'expense/latest/',{
+      let expen = axios.post(config.url + '/expense/latest/',{
         accessToken:accessToken,
         token: user.token,
         quantity: 5,
       });
 
-      let clnt = axios.post(config.url, + 'client/latest/',{
+      let clnt = axios.post(config.url + '/client/latest/',{
         accessToken:accessToken,
         token: user.token,
         quantity: 5,
@@ -52,12 +51,13 @@ router.get('/:type', (req , res, next) => {
         const resexpen = res[1].data.expenses;
         const resclnt = res[2].data.clients;
         console.log(resinv);
+        var totalInvoiced =0;
+        var totalPaid =0;
+        var totalDue = 0;
+        var total = 0;
+        var i;
         if(type == 'INVOICE DETAIL'){
-
-          var totalInvoiced =0;
-          var totalPaid =0;
-          var totalDue = 0;
-          for(var i in resinv){
+          for(i in resinv){
             totalInvoiced += resinv[i].total;
             totalPaid += resinv[i].amountPaid;
             totalDue += resinv[i].balanceDue;
@@ -71,15 +71,15 @@ router.get('/:type', (req , res, next) => {
           });
         }
         else if(type == "CLIENT REPORT"){
-          var total =0;
-          for(var i in resclnt){
+          total =0;
+          for(i in resclnt){
             total += resclnt[i].stats.total;
           }
           res.render('report/show', {type: type, client: resclnt,total:total,currency: user.company.currency,});
         }
         else if(type == "PAYMENT PENDING"){
-          var totalDue = 0;
-          for(var i in resinv){
+          totalDue = 0;
+          for(i in resinv){
             totalDue += resinv[i].balanceDue;
           }
           res.render('report/show',{
@@ -91,8 +91,8 @@ router.get('/:type', (req , res, next) => {
         }
 
         else if(type == "PAYMENT RECEIVED"){
-          var totalPaid = 0;
-          for(var i in resinv){
+          totalPaid = 0;
+          for(i in resinv){
             totalPaid += resinv[i].amountPaid;
           }
           res.render('report/show',{
@@ -109,9 +109,9 @@ router.get('/:type', (req , res, next) => {
           // }
 
           else if(type == 'EXPENSE REPORT'){
-            var total =0;
-            for(var i in resexpen){
-              total += resexpen[i].subtotal
+            total =0;
+            for(i in resexpen){
+              total += resexpen[i].subtotal;
             }
             res.render('report/show', {
               type: type,
@@ -124,10 +124,10 @@ router.get('/:type', (req , res, next) => {
             var expenseTotal =0;
             var salesTotal =0;
 
-            for(var i in resexpen){
-              expenseTotal += resexpen[i].amount
+            for(i in resexpen){
+              expenseTotal += resexpen[i].amount;
             }
-            for(var i in resinv){
+            for(i in resinv){
               salesTotal += resinv[i].total;
             }
             var profit = salesTotal-expenseTotal;
@@ -155,9 +155,9 @@ router.get('/:type', (req , res, next) => {
 
     }
     else{
-      res.redirect('/dashboard')
+      res.redirect('/dashboard');
     }
-  })
+  });
 
 });
 

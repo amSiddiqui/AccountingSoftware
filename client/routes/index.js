@@ -61,9 +61,15 @@ router.post('/login', (req, res, next) => {
                 res.redirect('/dashboard');
             }).catch(err => {
                 console.error(err);
-                res.render('login', {
-                    error: true
-                });
+                if (err.response == undefined) {
+                    res.render('error', {
+                        message: dbErrorMsg
+                    });
+                }else{
+                    res.render('login', {
+                        error: true
+                    });
+                }
             });
         }
     });
@@ -132,7 +138,6 @@ async function loadReports(token, load) {
         endMonth: 0
     })).data;
 
-    console.log('OutRevenue Response: ', rev_response);
     utilData.totalOutRevenue = rev_response.revenue;
 
     const overdue_response = (await axios.post(config.url + '/report/overdue/', {
@@ -141,7 +146,6 @@ async function loadReports(token, load) {
         startMonth: 6,
         endMonth: 0
     })).data;
-    console.log('Overdue Response: ', overdue_response);
     utilData.overdue = overdue_response.overdue;
 
     const profit_reponse = (await axios.post(config.url + '/report/profit/', {
@@ -150,7 +154,6 @@ async function loadReports(token, load) {
         startMonth: 6,
         endMonth: 0
     })).data;
-    console.log('Profit Response: ', profit_reponse);
     utilData.profit = profit_reponse.profit;
     var totalProfit = 0.0;
     utilData.profit.forEach(p => {
@@ -163,9 +166,8 @@ async function loadReports(token, load) {
         accessToken,
         startMonth: 6,
         endMonth: 0,
-        quantity: 5
+        quantity: 6
     })).data;
-    console.log('Rev Stream Response: ', revStream_response);
 
     utilData.revenueStream = revStream_response.revenue;
     utilData.totalRevenue = revStream_response.totalRevenue;
@@ -175,11 +177,21 @@ async function loadReports(token, load) {
         accessToken,
         startMonth: 6,
         endMonth: 0,
-        quantity: 5
+        quantity: 6
     })).data;
-    console.log('Speding Response: ', spending_response);
     utilData.expenses = spending_response.expense;
     utilData.totalSpending = spending_response.totalExpense;
+
+    const unbilled_respone = (await axios.post(config.url + '/report/unbilled/', {
+        token,
+        accessToken,
+        startMonth: 6,
+        endMonth: 0,
+        quantity: 6
+    })).data;
+
+    utilData.unbilled = unbilled_respone;
+    console.log(utilData.unbilled);
 }
 
 
@@ -200,13 +212,14 @@ router.get('/dashboard', (req, res) => {
                     revenue.push(rev.revenue);
                 });
 
-                utilData.expenses.forEach(data => {
-                    exp_vendor.push(data.vendor);
-                    expenditure.push(data.spent);
+                utilData.expenses.forEach(da => {
+                    exp_vendor.push(da.vendor);
+                    expenditure.push(da.expense);
                 });
 
                 var totalRev = inKNotation(utilData.totalRevenue);
 
+                var totalProfit = inKNotation(utilData.totalProfit);
 
                 var totalExp = inKNotation(utilData.totalSpending);
 
@@ -215,9 +228,9 @@ router.get('/dashboard', (req, res) => {
                 var unb_clients = [];
                 var unb_days = [];
                 var unb_dues = [];
-                utilData.unbilledTimes.forEach(unb => {
+                utilData.unbilled.expense.forEach(unb => {
                     unb_clients.push(unb.client);
-                    unb_days.push(unb.time);
+                    unb_days.push(unb.days);
                     unb_dues.push(unb.due);
                 });
 
@@ -236,7 +249,7 @@ router.get('/dashboard', (req, res) => {
                     outstandingRevenue: new Intl.NumberFormat().format(outstandingRevenue),
                     currency: currency.substring(0, 1),
                     profit: utilData.profit,
-                    totalProfit: utilData.totalProfit,
+                    totalProfit: totalProfit,
                     revStream: {
                         clients: rev_clients,
                         revenue: revenue,
@@ -251,7 +264,7 @@ router.get('/dashboard', (req, res) => {
                         clients: unb_clients,
                         days: unb_days,
                         dues: unb_dues,
-                        total: overdue
+                        total: utilData.unbilled.totalOverdue
                     }
                 });
             }).catch(error => {
@@ -272,7 +285,7 @@ function inKNotation(val) {
     if (totalExp > 1000) {
         totalExp = parseFloat(totalExp / 1000.0).toFixed(2);
         if (parseInt(totalExp) == totalExp) {
-            totalExp = parseInt(totalExp);
+            totalExp = parseFloat(totalExp);
         }
         totalExpStr = `${totalExp}k`;
     }
