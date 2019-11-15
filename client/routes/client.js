@@ -33,9 +33,7 @@ router.get('/', (req, res, next) => {
         clients = response.data.clients;
         var smallClient = [];
         var i = 0;
-        console.log('Clients fetched: ', clients.length);
         clients.forEach(function (client) {
-          console.log(client.stats);
           if (i++ < 3) {
             smallClient.push(client);
           }
@@ -97,7 +95,7 @@ router.post('/', (req, res) => {
         },
         lateFeeRate: req.body.lateFeeRate,
         dayLimit: req.body.dayLimit,
-      }
+      };
       // TODO: Push data into database using axios
       axios.post(config.url + '/client/create/', {
         token: user.token,
@@ -238,8 +236,10 @@ router.get('/:id/edit/', (req, res, next) => {
 router.delete('/delete', (req, res, next) => {
   util.authCheck(req, (user) => {
     if (user) {
-      var ids = [];
-      ids = req.body.row;
+      var ids = req.body.row;
+      if (!(ids instanceof Array)) {
+        ids = [ids];
+      }
       axios.post(config.url + "/client/delete/", {
           token: user.token,
           accessToken: accessToken,
@@ -247,11 +247,11 @@ router.delete('/delete', (req, res, next) => {
         })
         .then(response => {
           console.log(response);
+          res.redirect('/client');
         })
         .catch(err => {
           console.log(err);
         });
-      res.redirect('/client');
     } else {
       res.redirect('/dashboard');
     }

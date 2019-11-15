@@ -49,9 +49,9 @@
 					<%var i = 0%>
 					<% invoice.items.forEach(function(item) { %>
 						<tr>
-							<td><a class="cut">-</a><span contenteditable id="item<%=i%>"><%=item.item%></span></td>
-							<td><span contenteditable id="description<%=i%>"><%=item.description%></span></td>
-							<td><span data-prefix><%=currency%></span><span contenteditable id="rate<%=i%>"><%=item.rate%></span></td>
+							<td><a class="cut">-</a><span contenteditable id="item<%=i%>"><%=item.Name%></span></td>
+							<td><span contenteditable id="description<%=i%>"><%=item.Description%></span></td>
+							<td><span data-prefix><%=currency%></span><span contenteditable id="rate<%=i%>"><%=item.Rate%></span></td>
 							<td><span contenteditable id="quantity<%=i%>"><%=item.quantity%></span></td>
 							<td><span data-prefix><%=currency%></span><span id="price<%=i++%>"><%=item.price%></span></td>
 						</tr>
