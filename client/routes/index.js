@@ -191,7 +191,6 @@ async function loadReports(token, load) {
     })).data;
 
     utilData.unbilled = unbilled_respone;
-    console.log(utilData.unbilled);
 }
 
 

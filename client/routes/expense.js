@@ -139,7 +139,6 @@ router.get('/:id/edit', (req, res, next) => {
             token: user.token
           }).then(response2 => {
             categories = response2.data.categories;
-            console.log('Expense recieved: ', expense);
             res.render('expense/edit', {
               categories: categories,
               vendors: vendor,
@@ -208,7 +207,7 @@ router.delete('/delete', (req, res, next) => {
     if (user) {
       var ids = req.body.row;
       console.log('Expense delete row: ', ids);
-      if (typeof ids != Array) {
+      if (!(ids instanceof Array)) {
         ids = [ids];
       }
       axios.post(config.url + '/expense/delete/', {

@@ -33,9 +33,7 @@ router.get('/', (req, res, next) => {
         clients = response.data.clients;
         var smallClient = [];
         var i = 0;
-        console.log('Clients fetched: ', clients.length);
         clients.forEach(function (client) {
-          console.log(client.stats);
           if (i++ < 3) {
             smallClient.push(client);
           }
@@ -239,7 +237,7 @@ router.delete('/delete', (req, res, next) => {
   util.authCheck(req, (user) => {
     if (user) {
       var ids = req.body.row;
-      if (typeof ids != Array) {
+      if (!(ids instanceof Array)) {
         ids = [ids];
       }
       axios.post(config.url + "/client/delete/", {

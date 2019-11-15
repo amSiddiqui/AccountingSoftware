@@ -164,7 +164,7 @@ class Invoice(models.Model):
 	Total = models.FloatField()
 	Balance_Due = models.FloatField()
 	Notes = models.TextField()
-	Date_Fomat = models.CharField(max_length=10)
+	Date_Format = models.CharField(max_length=10)
 
 	def __str__(self):
 		return f"{self.Invoice_Id}, {self.Date}, {self.Amount_Due}, {self.Amount_Paid}, {self.Total}, {self.Balance_Due}, ( {self.Notes} )"
@@ -174,13 +174,12 @@ class Item(models.Model):
 	Name = models.TextField()
 	Description = models.TextField()
 	Rate = models.FloatField()
-	Invoice_Id = models.ForeignKey(Invoice,on_delete=models.DO_NOTHING)
 
 class Item_Invoice(models.Model):
 	Item_Id = models.ForeignKey(Item, on_delete=models.DO_NOTHING)
 	Invoice_Id = models.ForeignKey(Invoice, on_delete=models.DO_NOTHING)
 	Quantity = models.IntegerField(default=1)
-	Price = models.IntegerField()
+	Price = models.FloatField()
 
 	def __str__(self):
 		return f"{self.Item_Id}, ( {self.Name} ), ( {self.Description} ), {self.Rate}, {self.Quantity}, {self.Price}"
