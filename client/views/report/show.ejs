@@ -23,8 +23,8 @@
   <div class="tile is-parent is-15">
       <div class="tile is-child box">
         <h1 class = "is-size-1 has-text-success"><%= type%></h1>
-        <h2 class = "is-size-4 has-text-grey-light">Company name</h2>
-        <h2 class = "is-size-4 has-text-grey-light">From Date to Date</h2>
+        <h2 class = "is-size-4 has-text-grey-light"><%= company%></h2>
+        <!-- <h2 class = "is-size-4 has-text-grey-light">From Date to Date</h2> -->
         <hr>
 
         <div class="table-container">
@@ -33,45 +33,64 @@
   <!-- ---------------------------------------ITEM SOLD--------------------------------------------------- -->
             <% if(type === "ITEM SOLD"){ %>
               <thead>
-                <th class = "report-header has-text-white">Summary</th>
+                <th class = "report-header has-text-white is-size-4">Summary</th>
               </thead>
-              <tbody class = "report-body">
+              <thead class = "">
                 <tr>
-                  <th>Total Units</th>
-                  <td><span class = "is-pulled-right">1</span></td>
+                  <th class ="is-size-5">Total Units:</th>
+                  <td><span class = "is-pulled-right is-size-5"><%= totalUnits%></span></td>
                 </tr>
                 <tr>
-                  <th>Total Sales Amount</th>
-                  <td><span class = "is-pulled-right">$250000.00</span></td>
-                </tr>
-              </tbody>
-              <thead>
-                <th class="report-header has-text-white"><%= pseudoItem.itemType %></th>
-              </thead>
-              <thead>
-                <tr>
-                  <th>Client Name</th>
-                  <th>InvoiceID</th>
-                  <th>Invoice Date</th>
-                  <th>Per Unit Cost</th>
-                  <th>Quantity</th>
-                  <th>Discount</th>
-                  <th>Total</th>
+                  <th class ="is-size-5">Total Sales Amount:</th>
+                  <td><span class = "is-pulled-right is-size-5"><%= currency.substring(0,1) + ' ' +totalAmount%></span></td>
                 </tr>
               </thead>
-              <tbody>
-                <td><%= pseudoItem.clientName%></td>
-                <td><%= pseudoItem.invoiceID%></td>
-                <td><%= pseudoItem.invoiceDate%></td>
-                <td><%= pseudoItem.unitCost%></td>
-                <td><%= pseudoItem.quantity%></td>
-                <td><%= pseudoItem.discount%></td>
-                <td><%= pseudoItem.total%></td>
-              </tbody>
-              <tfoot>
-              </tfoot>
+              <% pseudoItems.forEach( pseudoItem => {%> 
+                <thead>
+                  <th class="report-header has-text-white is-size-5"><%= pseudoItem.Name %></th>
+                </thead>
+                <thead>
+                  <tr>
+                    <th class ="is-size-5">Total Units:</th>
+                    <td><span class = "is-pulled-right is-size-5"><%= pseudoItem.totalQuantity %></span></td>
+                  </tr>
+                  <tr>
+                    <th class ="is-size-5">Total Amount:</th>
+                    <td><span class = "is-pulled-right is-size-5"><%= currency.substring(0,1) + ' ' + pseudoItem.totalPrice%></span></td>
+                  </tr>
+                </thead>
+                <thead>
+                  <tr>
+                    <th>Client Name</th>
+                    <th>InvoiceID</th>
+                    <th>Invoice Date</th>
+                    <th>Per Unit Cost</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody class ="report-body is-size-5">
+                  <% pseudoItem.details.forEach( detail =>{ %> 
+                    <tr>
+                      <td>
+                        <a href="/client/<%=detail.clientID%>">
+                          <p class ="has-text-black"><%= detail.clientName.firstName.substring(0,1) + '. ' + detail.clientName.lastName%></p>
+                        </a> 
+                      </td>
+                      <td><a class="has-text-black" href="/invoice/<%= detail.invoiceID%>"><b><%= detail.invoiceID%></b></a></td>
+                      <td><%= detail.invoiceDate%></td>
+                      <td><%= currency.substring(0,1) + ' ' + pseudoItem.Rate%></td>
+                      <td><%= detail.quantity%></td>
+                      <td><%= currency.substring(0,1) + ' '+ detail.price%></td>
+                    </tr>
+                  <%});%>
+                </tbody>
+                <tfoot>
+                </tfoot>
+
+              <%});%>
             <%}%>
-<%# --------------------------------------------------INVOICE DETAILS-------------------------------------------- %>
+ <!-- --------------------------------------------------INVOICE DETAILS--------------------------------------------  -->
 
             <% if(type === "INVOICE DETAIL"){ %>
               <thead>
@@ -80,21 +99,21 @@
               <thead>
                 <th>Summary</th>
               </thead>
-              <tbody class = "report-body">
+              <thead>
                 <tr>
-                  <td>Total Invoiced</td>
-                  <td><span class ="is-pulled-right"><%= currency.substring(0,1) + ' ' + totalInvoiced%></span></td>
+                  <td class ="is-size-3">Total Invoiced</td>
+                  <td class ="is-size-3"><span class ="is-pulled-right"><%= currency.substring(0,1) + ' ' + totalInvoiced%></span></td>
                 </tr>
 
                 <tr>
-                  <td>Total Paid</td>
-                  <td><span class ="is-pulled-right"><%= currency.substring(0,1) + ' ' + totalPaid%></span></td>
+                  <td class ="is-size-3">Total Paid</td>
+                  <td class ="is-size-3"><span class ="is-pulled-right"><%= currency.substring(0,1) + ' ' + totalPaid%></span></td>
                 </tr>
-              </tbody>
+              </thead>
               <tfoot>
                 <tr>
-                  <th>Amount Due</th>
-                  <td ><span class ="is-pulled-right"><%= currency.substring(0,1) + ' ' + totalDue%></span></td>
+                  <th class ="is-size-3">Amount Due</th>
+                  <td class ="is-size-3"><span class ="is-pulled-right"><%= currency.substring(0,1) + ' ' + totalDue%></span></td>
                 </tr>
               </tfoot>
               <% invoice.forEach((invoice) =>{ %>
@@ -105,21 +124,21 @@
                 <thead>
                   <th>Summary</th>
                 </thead>
-                <tbody class = "report-body">
+                <thead>
                   <tr>
-                    <td>Total Invoiced</td>
-                    <td ><span class ="is-pulled-right"><%= currency.substring(0,1) + ' ' + invoice.total%></span></td>
+                    <td class ="is-size-5">Total Invoiced</td>
+                    <td class ="is-size-5"><span class ="is-pulled-right"><%= currency.substring(0,1) + ' ' + invoice.total%></span></td>
                   </tr>
 
                   <tr>
-                    <td>Total Paid</td>
-                    <td ><span class ="is-pulled-right"> <%= currency.substring(0,1) + ' ' + invoice.amountPaid%></span></td>
+                    <td class ="is-size-5">Total Paid</td>
+                    <td class ="is-size-5"><span class ="is-pulled-right"> <%= currency.substring(0,1) + ' ' + invoice.amountPaid%></span></td>
                   </tr>
-                </tbody>
+                </thead>
                 <tfoot>
                   <tr>
-                    <th>Amount Due</th>
-                    <td ><span class ="is-pulled-right"> <%= currency.substring(0,1) + ' ' + invoice.balanceDue%></span></td>
+                    <th class ="is-size-5">Amount Due</th>
+                    <td class ="is-size-5"><span class ="is-pulled-right"> <%= currency.substring(0,1) + ' ' + invoice.balanceDue%></span></td>
                   </tr>
                 </tfoot>
 
@@ -137,16 +156,16 @@
                     <th><span class = "is-pulled-right">Line Total</span></th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody class = "report-body">
                   <% invoice.items.forEach(function(items){ %>
                     <tr>
                       <td>
-                        <p class = "is-size-4"><%= items.item%></p>
-                        <p class = "is-size-7"><%= items.description%></p>
+                        <p class = "is-size-5"><%= items.Name%></p>
+                        <p class = "is-size-6 has-text-grey-light"><%= items.Description%></p>
                       </td>
-                      <td><%= currency.substring(0,1) + ' ' + items.rate%></td>
-                      <td><%= currency.substring(0,1) + ' ' + items.quantity%></td>
-                      <td><span class = "is-pulled-right"><%= currency.substring(0,1) + ' ' + items.price%></span></td>
+                      <td class = "is-size-5"><%= currency.substring(0,1) + ' ' + items.Rate%></td>
+                      <td class = "is-size-5"><%= items.quantity%></td>
+                      <td class = "is-size-5"><span class = "is-pulled-right"><%= currency.substring(0,1) + ' ' + items.price%></span></td>
                     </tr>
                   <%})%>
                 </tbody>
@@ -158,8 +177,8 @@
                     <td></td>
                     <td></td>
                     <td></td>
-                    <th class = "is-size-6"><b>Total Amount:</b></th>
-                    <td><span class = "is-pulled-right"><%= currency.substring(0,1) + ' ' + invoice.total%></span></td>
+                    <th class = "is-size-5"><b>Total Amount:</b></th>
+                    <td class = "is-size-5"><span class = "is-pulled-right"><%= currency.substring(0,1) + ' ' + invoice.total%></span></td>
                   </tr>
                   <tr>
                     <td></td>
@@ -168,8 +187,8 @@
                     <td></td>
                     <td></td>
                     <td></td>
-                    <th class = "is-size-6"><b>Total Paid:</b></th>
-                    <td><span class = "is-pulled-right"><%= currency.substring(0,1) + ' ' + invoice.amountPaid%></span></td>
+                    <th class = "is-size-5"><b>Total Paid:</b></th>
+                    <td><span class = "is-pulled-right is-size-5"><%= currency.substring(0,1) + ' ' + invoice.amountPaid%></span></td>
                   </tr>
 
                   <tr>
@@ -179,58 +198,65 @@
                     <td></td>
                     <td></td>
                     <td></td>
-                    <th class = "is-size-6"><b>Amount Due:</b></th>
-                    <td><span class = "is-pulled-right"><%= currency.substring(0,1) + ' ' + invoice.balanceDue%></span></td>
+                    <th class = "is-size-5"><b>Amount Due:</b></th>
+                    <td><span class = "is-pulled-right is-size-5"><%= currency.substring(0,1) + ' ' + invoice.balanceDue%></span></td>
                   </tr>
                 </tfoot>
               <% })%>
             <%}%>
 
-<%# --------------------------------------------EXPENSE REPORT----------------------------------------------- %>
+<!-- <%# --------------------------------------------EXPENSE REPORT----------------------------------------------- %> -->
 
             <% if(type === "EXPENSE REPORT"){ %>
               <thead>
                 <th class="report-header has-text-white">Summary</th>
               </thead>
-              <tbody class="report-body">
-                <th>Total Expense:</th>
-                <td class = "is-pulled-right"><%= currency.substring(0,1) + ' '+total%></td>
-              </tbody>
+              <thead class="report-body">
+                <th class = "is-size-4">Total Expense:</th>
+                <td ><span class ="is-pulled-right is-size-4"><%= currency.substring(0,1) + ' '+total%></span></td>
+              </thead>
+            <% expense.forEach((expense) =>{ %>  
               <thead>
                 <th class="report-header has-text-white"><%= expense.category%></th>
               </thead>
               <thead>
-                <th>Vendor</th>
+                <th>Vendor/ID</th>
                 <th>Date</th>
                 <th>Description</th>
                 <th><span class="is-pulled-right">Total</span></th>
               </thead>
-              <tbody>
-                <% expense.forEach((expense) =>{ %>
-
+              <tbody class ="report-body">
                   <tr>
-                    <td><%= expense.vendor%></td>
+                    <td>
+                      <p class ="has-text-grey-light is-size-7"><%= expense.vendor.Vendor_Name%></p>
+                      <p class ="has-text-black is-size-5"><b><%= expense.vendor.Vendor_Id%></b></p>  
+                    </td>
                     <td><%= expense.date%></td>
                     <td><%= expense.description%></td>
-                    <td><span class="is-pulled-right"><%= currency.substring(0,1) + ' ' + expense.subtotal%></span></td>
+                    <td><span class="is-pulled-right"><%= currency.substring(0,1) + ' ' + expense.amount%></span></td>
                   </tr>
-                  <%});%>
-              </tbody>
+                  </tbody>
+              <%});%>
               <tfoot>
                 <td><span  class="is-pulled-right is-size-4"><b>Total :  <%= ' ' + currency.substring(0,1) + ' ' + total%></b></span></td>
               </tfoot>
             <%}%>
-<%# -------------------------------------------CLIENT REPORT------------------------------------------------------ %>
+<!-- <%# -------------------------------------------CLIENT REPORT------------------------------------------------------ %> -->
             <% if(type === "CLIENT REPORT"){ %>
               <thead class = "">
-                <th class= "report-header has-text-white">Client</th>
-                <th class="report-header has-text-white"><span class ="is-pulled-right">Total</span></th>
+                <th class= "report-header has-text-white is-size-5">Client/ID</th>
+                <th class="report-header has-text-white is-size-5"><span class ="is-pulled-right">Total</span></th>
               </thead>
               <tbody>
                 <% client.forEach((client) =>{ %>
                   <tr>
-                    <td> <%= client.firstName.substring(0.1) + '.' + client.lastName%></td>
-                    <td><span class="is-pulled-right"><%= currency.substring(0,1) + ' ' + client.stats.total%></span></td>
+                    <td class = "is-size-5">
+                      <a class ="has-text-black" href="/client/<%=client.id%>">
+                        <p class = "is-size-7"><%= client.firstName.substring(0.1) + '.' + client.lastName%></p>
+                        <p><b><%= client.id%></b></p>
+                      </a>
+                    </td>
+                    <td><span class="is-pulled-right is-size-5"><%= currency.substring(0,1) + ' ' + client.stats.total%></span></td>
                   </tr>
                 <% })%>
               </tbody>
@@ -239,7 +265,7 @@
                   <td><span class="is-pulled-right is-size-3"><%= currency.substring(0,1) + ' ' + total%></span></td>
               </tfoot>
             <%}%>
-<%# --------------------------------------------PAYMENT PENDING----------------------------------------------- %>
+<!-- <%# --------------------------------------------PAYMENT PENDING----------------------------------------------- %> -->
             <% if(type === "PAYMENT PENDING"){ %>
               <thead>
                 <tr>
@@ -258,9 +284,9 @@
               </thead>
               <thead>
                 <th>Date</th>
-                <th>Client</th>
+                <th>Client/Email</th>
                 <th>Description</th>
-                <th>Invoice</th>
+                <th>Invoice #</th>
                 <th>Amount</th>
               </thead>
               <tbody>
@@ -268,7 +294,12 @@
                   <%if(invoice.balanceDue > 0){ %>
                     <tr>
                       <td><%= invoice.date%></td>
-                      <td><a href="/client/<%=invoice.client.id%>"><%= invoice.client.firstName.substring(0,1) + '. ' + invoice.client.lastName%></a></td>
+                      <td>
+                        <p class ="is-size-5">
+                          <a href="/client/<%=invoice.client.id%>"><%= invoice.client.firstName.substring(0,1) + '. ' + invoice.client.lastName%></a>
+                        </p>
+                        <p class ="is-size-6 has-text-grey"><b><%= invoice.client.email%></b></p>
+                      </td>  
                       <td><%= invoice.notes%></td>
                       <td><a href="/invoice/<%= invoice.id%>"><%= invoice.id%></a></td>
                       <td><%= currency.substring(0,1) + ' ' + invoice.balanceDue%></td>
@@ -278,7 +309,7 @@
               </tbody>
 
             <%}%>
-<%# ---------------------------------------------PAYMENT RECEIVED------------------------------------------------------ %>
+<!-- <%# ---------------------------------------------PAYMENT RECEIVED------------------------------------------------------ %> -->
             <% if(type === "PAYMENT RECEIVED"){ %>
               <thead>
                 <tr>
@@ -299,7 +330,7 @@
                 <th>Date</th>
                 <th>Client</th>
                 <th>Description</th>
-                <th>Invoice</th>
+                <th>Invoice #</th>
                 <th>Amount</th>
               </thead>
               <tbody>
@@ -307,7 +338,12 @@
                   <%if(invoice.amountPaid>0){%>
                     <tr>
                       <td><%= invoice.date%></td>
-                      <td><a href="/client/<%=invoice.client.id%>"><%= invoice.client.firstName.substring(0,1) + '. ' + invoice.client.lastName%></a></td>
+                      <td>
+                        <p class ="is-size-5">
+                          <a href="/client/<%=invoice.client.id%>"><%= invoice.client.firstName.substring(0,1) + '. ' + invoice.client.lastName%></a>
+                        </p>
+                        <p class ="is-size-6 has-text-grey"><b><%= invoice.client.email%></b></p>
+                      </td>  
                       <td><%= invoice.notes%></td>
                       <td><a href="/invoice/<%= invoice.id%>"><%= invoice.id%></a></td>
                       <td><%=currency.substring(0,1)+ ' ' +  invoice.amountPaid%></td>
@@ -317,16 +353,34 @@
               </tbody>
 
             <%}%>
-<%# --------------------------------------------------PROFIT AND LOSS----------------------------------------------------- %>
+<!-- <%# --------------------------------------------------PROFIT AND LOSS----------------------------------------------------- %> -->
             <% if(type === "PROFIT LOSS"){ %>
               <thead>
                 <th  class="report-header has-text-white">Billed Income</th>
               </thead>
-              <tbody class="report-body">
+              <thead class="report-body">
                 <tr>
-                  <th>Sales</th>
-                  <td><span class="is-pulled-right"><%= currency.substring(0,1)+ ' ' + salesTotal%></span></td>
+                  <th class ="is-size-4">Sales</th>
+                  <td></td>
+                  <td><span class="is-pulled-right is-size-4"><%= currency.substring(0,1)+ ' ' + salesTotal%></span></td>
                 </tr>
+                <tr>
+                  <th>Invoice_ID</th>
+                  <th>Client/ID</th>
+                  <th><span class="is-pulled-right">Total</span></th>
+                </tr>
+              </thead>
+              <tbody class = "report-body">
+                  <% invoice.forEach((invoice) => {%> 
+                      <tr>
+                        <td><a href="/invoice/<%= invoice.id%>"><%= invoice.id%></a></td>
+                        <td>
+                          <p class = "is-size-7"><a href="/client/<%= invoice.client.id%>"><%=invoice.client.firstName.substring(0,1) + '. ' + invoice.client.lastName %></a></p>
+                          <p class = "is-size-5"><b><%= invoice.client.id%></b></p>
+                          </td>
+                        <td><span class="is-pulled-right"><%= currency.substring(0,1)+ ' ' + invoice.total%></span></td>
+                      </tr>
+                    <%})%>                
               </tbody>
               <thead>
                 <th class="report-header has-text-white">Expenses</th>
@@ -334,22 +388,25 @@
               <tbody class="report-body">
                 <% expense.forEach((expense) =>{%>
                   <tr>
-                    <th><%= expense.category%></th>
+                    <th>
+                      <p><%= expense.category%></p>
+                      <p class = "has-text-grey-light is-size-7"><%= expense.vendor.Vendor_Name%></p>  
+                    </th>
                     <td><span class="is-pulled-right"><%= currency.substring(0,1)+ ' ' + expense.amount%></span></td>
                   </tr>
                 <%})%>
               </tbody>
               <tfoot>
-                <th>Total Expense:</th>
-                <td><span class="is-pulled-right"><b><%= currency.substring(0,1)+ ' ' + expenseTotal%></b></span></td>
+                <th class ="is-size-4">Total Expense:</th>
+                <td><span class="is-pulled-right is-size-4"><%= currency.substring(0,1)+ ' ' + expenseTotal%></span></td>
               </tfoot>
               <tfoot>
-                <th>Net Profit/Loss</th>
-                <td><span class="is-pulled-right"><%= currency.substring(0,1)+ ' ' + profit%></span></td>
+                <th class ="is-size-4">Net Profit/Loss:</th>
+                <td><span class="is-pulled-right is-size-4"><%= currency.substring(0,1)+ ' ' + profit%></span></td>
               </tfoot>
             <%}%>
 
-<%# -----------------------------------------------TRIAL BALANCE-------------------------------------------------- %>
+<!-- <%# -----------------------------------------------TRIAL BALANCE-------------------------------------------------- %> -->
 
             <% if(type === "TRIAL BALANCE"){ %>
               <thead>
@@ -409,7 +466,7 @@
               </tfoot>
             <%}%>
 
-<%# ----------------------------------BALANCE SHEET------------------------------------------------------------ %>
+<!-- <%# ----------------------------------BALANCE SHEET------------------------------------------------------------ %> -->
 
             <% if(type === "BALANCE SHEET"){ %>
               <thead>
@@ -459,7 +516,7 @@
 
 
             <%}%>
-<%# ----------------------------------GENERAL LEDGER------------------------------------------------------------ %>
+<!-- <%# ----------------------------------GENERAL LEDGER------------------------------------------------------------ %> -->
             <% if(type === "GENERAL LEDGER"){ %>
               <thead>
                 <th class = "report-header has-text-white">Cash</th>
