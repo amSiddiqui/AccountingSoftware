@@ -42,8 +42,7 @@ router.post('/accountant/create', (req, res, next) => {
     util.authCheck(req, user => {
         if (user) {
             res.redirect('/dashboard');
-        }
-        else {
+        } else {
 
             var accountant = {
                 firstName: req.body.firstName,
@@ -60,12 +59,12 @@ router.post('/accountant/create', (req, res, next) => {
                     pincode: req.body.pincode,
                 },
             };
-        
+
             var payload = {
                 email: accountant.email,
                 accessToken: accessToken
             };
-        
+
             axios.post(config.url + '/auth/accountant/exists/', payload)
                 .then(response => {
                     var data = response.data;
@@ -84,7 +83,7 @@ router.post('/accountant/create', (req, res, next) => {
                             case "General":
                                 tempProfile.generalAcc = accountant;
                         }
-        
+
                         if (tempProfile.company.profilesCreated == tempProfile.company.accountants.length) {
                             // Everything completed
                             // make axios request to save everything
@@ -92,18 +91,18 @@ router.post('/accountant/create', (req, res, next) => {
                                 company: tempProfile,
                                 accessToken: accessToken
                             };
-                            axios.post(config.url+'/auth/signup/', payload)
+                            axios.post(config.url + '/auth/signup/', payload)
                                 .then(response => {
                                     var data = response.data;
                                     const user = {
-                                        name: tempProfile.headAcc.firstName.substring(0, 1)+'. '+tempProfile.headAcc.lastName,
+                                        name: tempProfile.headAcc.firstName.substring(0, 1) + '. ' + tempProfile.headAcc.lastName,
                                         email: tempProfile.headAcc.email,
                                         company: tempProfile.company,
                                         token: data.token
                                     };
                                     console.log('User created: ');
                                     console.log('user token: ', user.token);
-                                    res.cookie('user',user,cookieOpt);
+                                    res.cookie('user', user, cookieOpt);
                                     tempProfile = null;
                                     res.redirect('/dashboard');
                                 })
@@ -113,11 +112,11 @@ router.post('/accountant/create', (req, res, next) => {
                                         message: dbErrorMsg
                                     });
                                 });
-        
+
                         } else {
                             res.redirect('/company/accountant/create');
                         }
-        
+
                     } else {
                         accountantType = tempProfile.company.accountants[tempProfile.company.profilesCreated - 1];
                         res.render('company/accountant/create', {
@@ -141,22 +140,64 @@ router.post('/accountant/create', (req, res, next) => {
 
 router.get('/accountant/edit', (req, res) => {
     util.authCheck(req, user => {
-        if (user) 
-        {
-
-        }
-        else
-        {
+        if (user) {
+            axios.post(config.url + '/auth/accountant/fetch/', {
+                accessToken,
+                token: user.token
+            }).then(response => {
+                const data = response.data;
+                res.render('company/accountant/edit', {
+                    accountant: data.accountant,
+                    countryCode: utilData.phone_code.ISD,
+                });
+            }).catch(err => {
+                console.log(err);
+                res.render('error', {
+                    message: dbErrorMsg
+                });
+            });
+        } else {
             res.redirect('/dashboard');
         }
     });
-    res.render('company/accountant/edit', {
-        accountant: seeds.psuedoAccountant,
-        countryCode: seeds.countryCode,
+});
+
+
+router.post('/acountant/edit', (req, res, next) => {
+    util.authCheck(req, user => {
+        if (user) {
+            var accountant = {
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                countryCode: req.body.countryCode,
+                phone: req.body.phone,
+                address: {
+                    address1: req.body.address1,
+                    city: req.body.city,
+                    state: req.body.state,
+                    country: req.body.country,
+                    pincode: req.body.pincode,
+                },
+            };
+            axios.post(config.url + '/auth/accountant/update/', {
+                accessToken,
+                token: user.token,
+                accountant
+            }).then(responese => {
+                console.log('Accountant Updated');
+                res.redirect('./dashboard');
+            }).catch(err => {
+                console.error(err);
+                res.render('error', {
+                    message: dbErrorMsg
+                });
+            });
+        } else {
+            res.redirect('/dashboard');
+        }
     });
 });
 
-// TODO: add edit router to accountant
 
 router.get('/create', (req, res, next) => {
     if (tempProfile == null) {
@@ -245,22 +286,51 @@ router.post('/create', (req, res, next) => {
 
 router.get('/edit', (req, res, next) => {
     util.authCheck(req, user => {
-        if (user)
-        {
-            
-        }
-        else
-        {
+        if (user) {
             res.render('company/edit', {
-                company: seeds.pseudoCompany,
-                countryCode: seeds.countryCode,
-                currency: seeds.currency,
-                dateFormat: seeds.dateFormat
+                company: user.company,
+                countryCode: utilData.phone_code.ISD
             });
+        } else {
+            res.redirect('/dashboard');
         }
     });
 });
 
-// TODO: create edit route for company create
+router.post('/edit', (req, res, next) => {
+    util.authCheck(req, user => {
+        if (user) {
+            company = {
+                countryCode: req.body.countryCode,
+                phone: req.body.phone,
+                address: {
+                    address1: req.body.address1,
+                    city: req.body.city,
+                    state: req.body.state,
+                    country: req.body.country,
+                    pincode: req.body.pincode,
+
+                },
+                currency: req.body.currency.substring(0, 1),
+                datefmt: req.body.datefmt,
+                taxrate: req.body.taxrate,
+            };
+            axios.post(config.url+'/auth/company/update/', {
+                accessToken,
+                token: user.token,
+                company
+            }).then(response => {
+                console.log('Company create');
+                res.redirect('/dashboard');
+            }).catch(err => {
+                console.log(err);
+                res.redirect('/dashboard');
+            }); 
+        } else {
+            res.redirect('/dashboard');
+        }
+    });
+});
+
 
 module.exports = router;

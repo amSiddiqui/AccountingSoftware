@@ -2,10 +2,10 @@
 
 
 <h1 class="is-size-2 form-heading">Company Profile: </h1>
-<form action="" method="POST">
+<form action="/company/edit" method="POST">
     <label class="label">Company Name: </label>
     <div class="field">
-        <input type="text" class="input" name="name" value="<%=company.name%>" placeholder="Company Name">
+        <input type="text" class="input" name="name" value="<%=company.name%>" disabled placeholder="Company Name">
     </div>
     <label class="label">Company Phone: </label>
     <div class="field has-addons">
@@ -25,10 +25,6 @@
         <p class="control">
             <input type="text" class="input" name="phone" value="<%=company.phone%>" maxlength="10">
         </p>
-    </div>
-    <label class="label">Company Email: </label>
-    <div class="field">
-        <input type="email" class="input" name="email" value="<%=company.email%>" placeholder="Company email">
     </div>
     <label class="label">Address: </label>
     <div class="field">
