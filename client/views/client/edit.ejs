@@ -7,13 +7,13 @@
         <div class="field-body">
             <div class="field">
                 <p class="control is-expanded">
-                    <input type="text" class="input" name="firstName" value="<%=client.firstName%>"
+                    <input required = "required" type="text" class="input" name="firstName" value="<%=client.firstName%>"
                         placeholder="First Name">
                 </p>
             </div>
             <div class="field">
                 <p class="control is-expanded">
-                    <input type="text" class="input" name="lastName" value="<%=client.lastName%>"
+                    <input required = "required" type="text" class="input" name="lastName" value="<%=client.lastName%>"
                         placeholder="Last Name">
                 </p>
             </div>
@@ -36,34 +36,34 @@
             </span>
         </p>
         <p class="control">
-            <input type="text" class="input" name="phone" value="<%=client.phone%>" maxlength="10">
+            <input required = "required" type="text" class="input" name="phone" value="<%=client.phone%>" maxlength="10">
         </p>
     </div>
     <label class="label">Email: </label>
     <div class="field">
-        <input type="email" class="input" name="email" value="<%=client.email%>" placeholder="email">
+        <input required = "required" type="email" class="input" name="email" value="<%=client.email%>" placeholder="email">
     </div>
     <label class="label">Address: </label>
     <div class="field">
-        <input type="text" class="input" name="address1" value="<%= client.address.address1 %>" placeholder="Address Line 1">
+        <input required = "required" type="text" class="input" name="address1" value="<%= client.address.address1 %>" placeholder="Address Line 1">
     </div>
     <div class="field is-horizontal">
         <div class="field-body">
             <div class="field">
-                <input type="text" class="input" name="city" value="<%= client.address.city %>" placeholder="City">
+                <input required = "required" type="text" class="input" name="city" value="<%= client.address.city %>" placeholder="City">
             </div>
             <div class="field">
-                <input type="text" class="input" name="state" value="<%= client.address.state %>" placeholder="State">
+                <input required = "required" type="text" class="input" name="state" value="<%= client.address.state %>" placeholder="State">
             </div>
         </div>
     </div>
     <div class="field is-horizontal">
         <div class="field-body">
             <div class="field">
-                <input type="text" class="input" name="country" value="<%= client.address.country %>" placeholder="Country">
+                <input required = "required" type="text" class="input" name="country" value="<%= client.address.country %>" placeholder="Country">
             </div>
             <div class="field">
-                <input type="number" class="input" name="pincode" value="<%= client.address.pincode %>" placeholder="Pin Code">
+                <input required = "required" type="number" class="input" name="pincode" value="<%= client.address.pincode %>" placeholder="Pin Code">
             </div>
         </div>
     </div>
@@ -71,13 +71,13 @@
         <div class="column">
             <label class="label">Late Fee Rate: </label>
             <div class="field">
-                <input type="number" class="input" name="lateFeeRate" value="<%= client.lateFeeRate%>" placeholder="Rate per day">
+                <input required = "required" type="number" class="input" name="lateFeeRate" value="<%= client.lateFeeRate%>" placeholder="Rate per day">
             </div>
         </div>
         <div class="column">
             <label class="label">Due Day Limit (in days): </label>
             <div class="field">
-                <input type="number" class="input" name="dayLimit" value="<%= client.dayLimit%>" placeholder="In days">
+                <input required = "required" type="number" class="input" name="dayLimit" value="<%= client.dayLimit%>" placeholder="In days">
             </div>
         </div>
     </div>

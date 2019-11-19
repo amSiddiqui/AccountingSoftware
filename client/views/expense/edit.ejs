@@ -34,7 +34,7 @@
                         <div class="column" id="add-category-modal-content">
                             <label class="label">Add Category</label>
                             <div class="field">
-                                <input type="text" class="input">
+                                <input required = "required" type="text" class="input">
                             </div>
                             <div class="columns is-vcentered">
                                 <div class="column is-2">
@@ -53,7 +53,7 @@
     </div>
     <label class="label">Date: </label>
     <div class="field">
-        <input type="date" name="date" id="datepicker-expense" value="<%=expense.date%>">
+        <input required = "required" type="date" name="date" id="datepicker-expense" value="<%=expense.date%>">
     </div>
     <label class="label">Vendor</label>
     <div class="columns is-vcentered">
@@ -88,7 +88,7 @@
     </div>
     <label class="label">Subtotal: </label>
     <div class="field">
-        <input type="number" class="input" name="amount" value="<%=expense.amount%>">
+        <input required = "required" type="number" class="input" name="amount" value="<%=expense.amount%>">
     </div>
     <div class="columns is-vcentered form-submit-buttons">
         <div class="column is-1">

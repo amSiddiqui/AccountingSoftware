@@ -104,7 +104,6 @@ router.get('/:type', (req , res, next) => {
         }
         // TODO: fetch all clients from database associated with a particular item
         else if(type == "ITEM SOLD"){
-          console.log(user.company)
           var pseudoItem = [];
           var invID;
           var invDate;

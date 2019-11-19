@@ -152,13 +152,13 @@ router.put('/:id', (req, res) => {
         }).catch(error => {
           console.log(error);
           res.render('error', {
-            message: dbErrorMsg
-          })
+            message: dbErrorMsg,
+          });
         });
       });
     }
     else {
-      res.redirect('/dashboard')
+      res.redirect('/dashboard');
     }
   });
 });
@@ -227,7 +227,7 @@ router.get('/:id/edit/', (req, res, next) => {
       });
 
     } else {
-      res.redirect('/dashboard')
+      res.redirect('/dashboard');
     }
 
   });
