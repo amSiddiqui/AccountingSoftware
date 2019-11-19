@@ -163,7 +163,7 @@ router.get('/accountant/edit', (req, res) => {
 });
 
 
-router.post('/acountant/edit', (req, res, next) => {
+router.post('/accountant/edit', (req, res, next) => {
     util.authCheck(req, user => {
         if (user) {
             var accountant = {
@@ -185,7 +185,7 @@ router.post('/acountant/edit', (req, res, next) => {
                 accountant
             }).then(responese => {
                 console.log('Accountant Updated');
-                res.redirect('./dashboard');
+                res.redirect('/dashboard');
             }).catch(err => {
                 console.error(err);
                 res.render('error', {
@@ -289,7 +289,9 @@ router.get('/edit', (req, res, next) => {
         if (user) {
             res.render('company/edit', {
                 company: user.company,
-                countryCode: utilData.phone_code.ISD
+                countryCode: utilData.phone_code.ISD,
+                currency: utilData.currency.symbol,
+                dateFormat: utilData.datefmt.dateFormat
             });
         } else {
             res.redirect('/dashboard');
@@ -309,7 +311,6 @@ router.post('/edit', (req, res, next) => {
                     state: req.body.state,
                     country: req.body.country,
                     pincode: req.body.pincode,
-
                 },
                 currency: req.body.currency.substring(0, 1),
                 datefmt: req.body.datefmt,

@@ -1424,8 +1424,8 @@ def report_unbilled(request):
 
 def _get_accountant(user_data):
 	return {
-		"firstName": user_data['FName'],
-		"lastName": user_data['LName'],
+		"firstName": user_data['Fname'],
+		"lastName": user_data['Lname'],
 		"countryCode": user_data['Country_Code'],
 		"phone": user_data['Phone'],
 		"email": user_data['Email'],
@@ -1445,7 +1445,7 @@ def accountant_fetch(request):
 	user = User.objects.filter(Email=email).values()
 	if user is None and len(user) <= 0:
 		return HttpResponse('Accountant does not exist',status=400)
-	return JsonResponse({'accountant': _get_accountant(user)},safe=True)
+	return JsonResponse({'accountant': _get_accountant(user[0])},safe=True)
 
 
 @csrf_exempt
@@ -1455,8 +1455,8 @@ def accountant_update(request):
 	acc = request.POST['accountant']
 	add = acc['address']
 	User.objects.filter(Email=email).update(
-		FName=acc['firstName'], LName=acc['lastName'], Country_Code=acc['countryCode'], Phone=['phone'],
-		Address_Line=add['address1'], City=add['city'], State=add['state'], Country_Name=['country'], Pin_Code=['pincode']
+		Fname=acc['firstName'], Lname=acc['lastName'], Country_Code=acc['countryCode'], Phone=acc['phone'],
+		Address_Line=add['address1'], City=add['city'], State=add['state'], Country_Name=add['country'], Pin_Code=add['pincode']
 	)
 	return HttpResponse('Updated successfully')
 
@@ -1464,10 +1464,9 @@ def accountant_update(request):
 @post('accessToken','token','company')
 def company_update(request):
 	cmpy = request.POST['company']
-	email = cmpy['email']
 	name = cmpy['name']
 	add = cmpy['address']
-	Company.objects.filter(Email=email, Company_Name=name).update(
+	Company.objects.filter(Company_Name=name).update(
 		Address_Line=add['address1'], Pin_Code=add['pincode'], Country_Code=cmpy['countryCode'], Country_Name=add['country'],
 		State=add['state'], Tax_Rate=cmpy['taxrate'], Date_Format=cmpy['datefmt'], Base_Currency=cmpy['currency'],
 		City=add['city']

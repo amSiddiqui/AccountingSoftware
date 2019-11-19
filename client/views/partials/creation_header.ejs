@@ -36,11 +36,11 @@
         <div id="navbarBasicExample" class="navbar-menu">
             
             <div class="navbar-end">
-                <% if (user){ %>
+                <% if (typeof(user) == 'object'){ %>
                 <div class="navbar-item has-dropdown is-hoverable">
                     <a class="navbar-link is-arrowless">
-                        <span class="has-text-weight-bold is-size-4" id="username"><%= user.username %></span>
-                        <span class="subtitle has-text-black">(<%=user.company%>)</span>
+                        <span class="has-text-weight-bold is-size-4" id="username"><%= user.name %></span>
+                        <span class="subtitle has-text-black">(<%=user.company.name%>)</span>
                     </a>
 
                     <div class="navbar-dropdown">

@@ -28,25 +28,25 @@
     </div>
     <label class="label">Address: </label>
     <div class="field">
-        <input required = "required" type="text" class="input" name="address1" value="<%=company.address1%>" placeholder="Address Line 1">
+        <input type="text" class="input" name="address1" required value="<%=company.address.address1%>" placeholder="Address Line 1">
     </div>
     <div class="field is-horizontal">
         <div class="field-body">
             <div class="field">
-                <input required = "required" type="text" class="input" name="city" value="<%=company.city%>" placeholder="City">
+                <input type="text" class="input" name="city" required value="<%=company.address.city%>" placeholder="City">
             </div>
             <div class="field">
-                <input required = "required" type="text" class="input" name="state" value="<%=company.state%>" placeholder="State">
+                <input type="text" class="input" name="state" required value="<%=company.address.state%>" placeholder="State">
             </div>
         </div>
     </div>
     <div class="field is-horizontal">
         <div class="field-body">
             <div class="field">
-                <input required = "required" type="text" class="input" name="country" value="<%=company.country%>" placeholder="Country">
+                <input type="text" class="input" name="country" required value="<%=company.address.country%>" placeholder="Country">
             </div>
             <div class="field">
-                <input required = "required" type="number" class="input" name="pincode" value="<%=company.pincode%>" placeholder="Pin Code">
+                <input type="number" class="input" name="pincode" required value="<%=company.address.pincode%>" placeholder="Pin Code">
             </div>
         </div>
     </div>
