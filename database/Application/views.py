@@ -546,7 +546,7 @@ def delete_invoice(request):
 @post('accessToken','token','vendor')
 def create_vendor(request):
 	ven = request.POST['vendor']
-	add = ven['addresss']
+	add = ven['address']
 	vendor = Vendor(Vendor_Name=ven['name'],Email=ven['email'],Phone=ven['phone'],Address_Line=add['address1'],City=add['city'],State=ven['state'],
 				Pin_Code=ven['pincode'], Country_Name=add['country'], Country_Code=ven['countryCode'])
 	vendor.save()
