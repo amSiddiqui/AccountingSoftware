@@ -4,7 +4,7 @@
 <form action="/company/create" method="POST">
     <label class="label">Company Name: </label>
     <div class="field">
-        <input type="text" class="input <%=error.nameExists?'is-danger-input':''%>" name="name" placeholder="Company Name">
+        <input required = "required" type="text" class="input <%=error.nameExists?'is-danger-input':''%>" name="name" placeholder="Company Name">
     </div>
     <% if (error.nameExists) { %>
         <p class="is-danger help">Company name already exists</p>
@@ -21,7 +21,7 @@
             </span>
         </p>
         <p class="control">
-            <input type="text" class="input <%=error.phoneExists?'is-danger-input':''%>" name="phone" maxlength="10">
+            <input required = "required" type="text" class="input <%=error.phoneExists?'is-danger-input':''%>" name="phone" maxlength="10">
         </p>
     </div>
     <% if (error.phoneExists) { %>
@@ -29,32 +29,32 @@
     <%}%>
     <label class="label">Company Email: </label>
     <div class="field">
-        <input type="email" class="input <%=error.emailExists?'is-danger-input':''%>" name="email" placeholder="Company email">
+        <input required = "required" type="email" class="input <%=error.emailExists?'is-danger-input':''%>" name="email" placeholder="Company email">
     </div>
     <% if (error.emailExists) { %>
         <p class="is-danger help">Email already exists</p>
     <%}%>
     <label class="label">Address: </label>
     <div class="field">
-        <input type="text" class="input" name="address1" placeholder="Address Line 1">
+        <input required = "required" type="text" class="input" name="address1" placeholder="Address Line 1">
     </div>
     <div class="field is-horizontal">
         <div class="field-body">
             <div class="field">
-                <input type="text" class="input" name="city" placeholder="City">
+                <input required = "required" type="text" class="input" name="city" placeholder="City">
             </div>
             <div class="field">
-                <input type="text" class="input" name="state" placeholder="State">
+                <input required = "required" type="text" class="input" name="state" placeholder="State">
             </div>
         </div>
     </div>
     <div class="field is-horizontal">
         <div class="field-body">
             <div class="field">
-                <input type="text" class="input" name="country" placeholder="Country">
+                <input required = "required" type="text" class="input" name="country" placeholder="Country">
             </div>
             <div class="field">
-                <input type="number" class="input" name="pincode" placeholder="Pin Code">
+                <input required = "required" type="number" class="input" name="pincode" placeholder="Pin Code">
             </div>
         </div>
     </div>
@@ -90,7 +90,7 @@
         <div class="column">
             <label class="label">Tax Rate: </label>
             <div class="field">
-                <input type="number" class="input" placeholder="rate" name="taxrate">
+                <input required = "required" type="number" class="input" placeholder="rate" name="taxrate">
             </div>
         </div>
     </div>
@@ -98,7 +98,7 @@
         <div class="column">
             <label class="label">Team: </label>
             <div class="pretty is-block p-smooth p-curve p-svg">
-                <input type="checkbox" name="headAcc" checked disabled>
+                <input required = "required" type="checkbox" name="headAcc" checked disabled>
                 <div class="state p-success">
                     <svg class="svg svg-icon" viewBox="0 0 20 20">
                         <path
@@ -109,7 +109,7 @@
                 </div>
             </div>
             <div class="pretty is-block p-smooth p-curve p-svg">
-                <input type="checkbox" name="clientAcc">
+                <input required = "required" type="checkbox" name="clientAcc">
                 <div class="state p-success">
                     <svg class="svg svg-icon" viewBox="0 0 20 20">
                         <path
@@ -120,7 +120,7 @@
                 </div>
             </div>
             <div class="pretty is-block p-smooth p-curve p-svg">
-                <input type="checkbox" name="expenseAcc">
+                <input required = "required" type="checkbox" name="expenseAcc">
                 <div class="state p-success">
                     <svg class="svg svg-icon" viewBox="0 0 20 20">
                         <path
@@ -131,7 +131,7 @@
                 </div>
             </div>
             <div class="pretty is-block p-smooth p-curve p-svg">
-                <input type="checkbox" name="generalAcc">
+                <input required = "required" type="checkbox" name="generalAcc">
                 <div class="state p-success">
                     <svg class="svg svg-icon" viewBox="0 0 20 20">
                         <path

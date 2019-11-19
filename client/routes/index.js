@@ -233,8 +233,8 @@ router.get('/dashboard', (req, res) => {
                     unb_dues.push(unb.due);
                 });
 
-                const quoteLen = utilData.quotes.quote.length
-                const random_idx = Math.floor(quoteLen * Math.random())
+                const quoteLen = utilData.quotes.quote.length;
+                const random_idx = Math.floor(quoteLen * Math.random());
                 const rawQuote = {
                     ...utilData.quotes
                 }

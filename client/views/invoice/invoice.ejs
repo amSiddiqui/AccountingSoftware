@@ -114,7 +114,7 @@
       <div class="level-item">
         <div class="field has-addons">
           <div class="control">
-            <input class="search input is-large is-rounded" type="text" placeholder="Find Invoice">
+            <input required = "required" class="search input is-large is-rounded" type="text" placeholder="Find Invoice">
 
           </div>
           <div class="control">
@@ -135,7 +135,7 @@
         <tr>
           <th>
             <div class="pretty p-svg p-curve">
-              <input type="checkbox" name="allInvoice" id="selectAll" />
+              <input required = "required" type="checkbox" name="allInvoice" id="selectAll" />
               <div class="state p-success">
                 <!-- svg path -->
                 <svg class="svg svg-icon" viewBox="0 0 20 20">
@@ -159,7 +159,7 @@
         <tr>
           <td>
             <div class="pretty p-svg p-curve">
-              <input type="checkbox" name="row" id="select-checkbox" value = "<%= invoice.id%>"/>
+              <input required = "required" type="checkbox" name="row" id="select-checkbox" value = "<%= invoice.id%>"/>
               <div class="state p-success">
                 <!-- svg path -->
                 <svg class="svg svg-icon" viewBox="0 0 20 20">

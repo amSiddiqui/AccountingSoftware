@@ -14,7 +14,7 @@
 				<p><%=invoice.client.address.address1%> <%=invoice.client.address.city%><br><%=invoice.client.address.state%>, <%=invoice.client.address.country%> <%=invoice.client.address.pincode%></p>
 				<p><%=invoice.client.countryCode%> <%=invoice.client.phone%></p>
 			</address>
-			<span><img alt="" src="/company_logo.png"><input type="file" accept="image/*"></span>
+			<span><img alt="" src="/company_logo.png"><input required ="required" type="file" accept="image/*"></span>
 		</header>
 		<article>
 			<h1>Recipient</h1>
@@ -88,22 +88,22 @@
 		
 		<div class="hidden">
 			<form action="/invoice/create" method="post" id="hiddenForm">
-				<input type="text" name="numRows" value="1">
-				<input type="text" name="clientId" value="<%=invoice.client.id%>">
-				<input type="text" name="invoiceNumber">
-				<input type="text" name="date">
-				<input type="text" name="amountDue">
-				<input type="text" name="total">
-				<input type="text" name="amountPaid">
-				<input type="text" name="balanceDue">
-				<input type="text" name="notes">
+				<input required ="required" type="text" name="numRows" value="1">
+				<input required ="required" type="text" name="clientId" value="<%=invoice.client.id%>">
+				<input required ="required" type="text" name="invoiceNumber">
+				<input required ="required" type="text" name="date">
+				<input required ="required" type="text" name="amountDue">
+				<input required ="required" type="text" name="total">
+				<input required ="required" type="text" name="amountPaid">
+				<input required ="required" type="text" name="balanceDue">
+				<input required ="required" type="text" name="notes">
 				<div id="inventoryItems">
 					<div>
-						<input type="text" name="item1">
-						<input type="text" name="description1">
-						<input type="text" name="rate1">
-						<input type="text" name="quantity1">
-						<input type="text" name="price1">
+						<input required ="required" type="text" name="item1">
+						<input required ="required" type="text" name="description1">
+						<input required ="required" type="text" name="rate1">
+						<input required ="required" type="text" name="quantity1">
+						<input required ="required" type="text" name="price1">
 					</div>
 				</div>
 			</form>
