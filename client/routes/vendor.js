@@ -4,58 +4,51 @@ const router = express.Router();
 const util = require('../modules/utility');
 const config = require('../config/config');
 const seeds = require('../seeds');
-const axois = require('axios');
+const axios = require('axios');
 
 router.get('/create', (req, res, next) => {
-    util.authCheck(req, user => {
-        if (user)
-        {
-            res.render('vendor/create', {
-                countryCode: utilData.phone_code.ISD,
-            });
-        }
-        else
-        {
-            res.redirect('/dashboard');
-        }
-    });
+  util.authCheck(req, user => {
+    if (user) {
+      res.render('vendor/create', {
+        countryCode: utilData.phone_code.ISD,
+      });
+    } else {
+      res.redirect('/dashboard');
+    }
+  });
 });
 
-router.post('/',(req , res,next) =>{
-  util.authCheck(req, user =>{
-    if(user){
+router.post('/', (req, res, next) => {
+  util.authCheck(req, user => {
+    if (user) {
       vendor = {
         name: req.body.name,
         phone: req.body.phone,
         email: req.body.email,
         countryCode: req.body.countryCode,
         address: {
-          address1:req.body.name,
+          address1: req.body.name,
           city: req.body.city,
           state: req.body.state,
           country: req.body.country,
-          pincode:req.body.pincode
+          pincode: req.body.pincode
         }
-      }
-      // seeds.vendor.push(vendor);
-
-      // TODO: Push data into database using axios
-      axios.post(config.url+'/client/create/',{
-          token: user.token,
-          accessToken: accessToken,
-          vendor: vendor
+      };
+      axios.post(config.url + '/vendor/create/', {
+        token: user.token,
+        accessToken: accessToken,
+        vendor: vendor
       }).then(response => {
-          res.render('vendor');
-          }).catch(err => {
-          // console.error(err);
-          res.render('error', {
-              message: err.response.data
-          });
+        console.log('Vendor created');
+        res.redirect('/expense/create');
+      }).catch(err => {
+        console.error(err);
+        res.render('error', {
+          message: dbErrorMsg
+        });
       });
-      // res.render('back');
-    }
-    else {
-      res.redirect('/dashboard')
+    } else {
+      res.redirect('/dashboard');
     }
   });
 });
