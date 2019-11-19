@@ -191,7 +191,8 @@ router.get('/:id', (req, res, next) => {
             var id = parseInt(req.params.id);
             axios.post(config.url + '/invoice/' + req.params.id+'/', {
                 token: user.token,
-                accessToken: accessToken
+                accessToken: accessToken,
+                datefmt: user.company.datefmt
             }).then(response => {
                 var invoice = response.data;
                 res.render('invoice/edit', {

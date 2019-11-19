@@ -479,7 +479,7 @@ def create_invoice(request):
 
 #Fetch invoice
 @csrf_exempt
-@post('accessToken','token')
+@post('accessToken','token', 'datefmt')
 def fetch_invoice(request,invoice_id):
 
 	invoices = Invoice.objects.filter(Invoice_Id=invoice_id).values()
@@ -497,7 +497,7 @@ def fetch_invoice(request,invoice_id):
 		if items is None or len(items) <= 0 or clients is None or len(clients) <= 0:
 			return HttpResponse('Client or Items does not exits in database', status=400)
 
-		invoice['datefmt'] = invoice['Date_Format']
+		invoice['datefmt'] = request.POST['datefmt']
 		return JsonResponse(get_invoice(clients[0],items,invoice),safe=True)
 	else:
 		return HttpResponse('Invalid invoice Id',status=400)
