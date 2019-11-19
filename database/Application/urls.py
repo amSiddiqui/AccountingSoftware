@@ -25,6 +25,7 @@ urlpatterns = [
     path('invoice/create/', views.create_invoice ),
     path('invoice/latest/', views.latest_invoice ),
     path('invoice/delete/', views.delete_invoice ),
+    # path('invoice/mail', views.invoice_mail),
 
     # Vendor routes
     path('vendor/create/', views.create_vendor ),
@@ -58,5 +59,7 @@ urlpatterns = [
     path('report/revenue/',views.report_revenue),
     path('report/expense/',views.report_expense),
     path('report/unbilled/',views.report_unbilled),
+    
     path('userToken/',views.check_token),
+
 ]

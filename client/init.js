@@ -52,6 +52,10 @@ app.use('/report', reportRouter);
 app.use('/expense', expenseRouter);
 app.use('/invoice', invoiceRouter);
 
+app.get('/*',(req,res)=>{
+    return res.render('error',{message:'404 Page Not Found'})
+})
+
 app.listen(PORT, IP, () => {
     console.log("Application listening at port "+ PORT);
     console.log(`http://${IP}:${PORT}`);
