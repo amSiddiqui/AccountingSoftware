@@ -1430,10 +1430,10 @@ def _get_accountant(user_data):
 		"phone": user_data['Phone'],
 		"email": user_data['Email'],
 		"address": {
-			"address1": user_data['Address'],
+			"address1": user_data['Address_Line'],
 			"city": user_data['City'],
 			"state": user_data['State'],
-			"country": user_data['Country'],
+			"country": user_data['Country_Name'],
 			"pincode": user_data['Pin_Code'],
 		}
 	}
@@ -1445,5 +1445,31 @@ def accountant_fetch(request):
 	user = User.objects.filter(Email=email).values()
 	if user is None and len(user) <= 0:
 		return HttpResponse('Accountant does not exist',status=400)
-	return JsonResponse(_get_accountant(user),safe=True)
+	return JsonResponse({'accountant': _get_accountant(user)},safe=True)
 
+
+@csrf_exempt
+@post('accessToken','token','accountant')
+def accountant_update(request):
+	email = check_user(request.POST['token'])
+	acc = request.POST['accountant']
+	add = acc['address']
+	User.objects.filter(Email=email).update(
+		FName=acc['firstName'], LName=acc['lastName'], Country_Code=acc['countryCode'], Phone=['phone'],
+		Address_Line=add['address1'], City=add['city'], State=add['state'], Country_Name=['country'], Pin_Code=['pincode']
+	)
+	return HttpResponse('Updated successfully')
+
+@csrf_exempt
+@post('accessToken','token','company')
+def company_update(request):
+	cmpy = request.POST['company']
+	email = cmpy['email']
+	name = cmpy['name']
+	add = cmpy['address']
+	Company.objects.filter(Email=email, Company_Name=name).update(
+		Address_Line=add['address1'], Pin_Code=add['pincode'], Country_Code=cmpy['countryCode'], Country_Name=add['country'],
+		State=add['state'], Tax_Rate=cmpy['taxrate'], Date_Format=cmpy['datefmt'], Base_Currency=cmpy['currency'],
+		City=add['city']
+	)
+	return HttpResponse('Updated successfully')
