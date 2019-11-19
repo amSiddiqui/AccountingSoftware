@@ -1,11 +1,13 @@
 #from django.shortcuts import render
 from Application.models import *
-from django.http import JsonResponse,HttpResponse
+from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.hashers import make_password,check_password
 from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
 from datetime import date, timedelta
 from django.db.models import Sum
+# from mailjet_rest import Client
+# from .form import Pdf
 import json
 
 '''
@@ -52,7 +54,10 @@ def post(*oargs, **okwargs):
 	def inner1(func):
 		def inner2(*args, **kwargs):
 			if args[0].method == 'POST' :
-				args[0].POST = json.loads(args[0].body)
+				try:
+					args[0].POST = json.loads(args[0].body)
+				except ValueError:
+					pass
 				for k in oargs:
 					if k not in args[0].POST.keys():
 						return HttpResponse('Invalid Payload',status=400)
@@ -163,7 +168,7 @@ def init(request):
 			token=clientId+str(datetime.now())
 			value['accessToken']=make_password(token)
 		else:
-			return HttpResponse("Invalid Authorisation", status=status[2])
+			return HttpResponse("Invalid Authorization", status=status[2])
 
 	lastClientId = Client.objects.all().order_by('-Client_Id')
 	lastExpenseId = Expense.objects.all().order_by('-Expense_Id')
@@ -598,9 +603,12 @@ def accountant_exists(request):
 @post('accessToken', 'token', 'category')
 def category_create(request):
 	category = request.POST['category']
-	cat = Category(Type=category)
-	cat.save()
-	return HttpResponse('Created successfully')
+	if len( Category.objects.filter(Type=category).values() ) <= 0:
+		cat = Category(Type=category)
+		cat.save()
+		return HttpResponse('Created successfully')
+	else:
+		return HttpResponse('Category already exist',status=400)
 
 @csrf_exempt
 @post('accessToken', 'token')
@@ -708,8 +716,7 @@ def client_create(request):
 
 
 def _get_client_stats(client):
-	invoices = Invoice.objects.filter(Client_Id_id = client['Client_Id']).values();
-	res = {}
+	invoices = Invoice.objects.filter(Client_Id_id = client['Client_Id']).values()
 	overdue = 0
 	outstanding = 0
 	total = 0
@@ -1331,11 +1338,11 @@ def report_unbilled(request):
 
 		if not cycleE and not cycleS:
 			if clients is None or len(clients) <= 0:
-				break
-			if curr_year != inv['Date'].year :
+				break 
+			if curr_year != temp_year :
 				break
 
-			if sMonth <= inv['Date'].month and eMonth >= inv['Date'].month:
+			if sMonth <= temp_month and eMonth >= temp_month:
 				temp_rev[idx]['due'] += inv['Balance_Due']
 
 		elif cycleE and not cycleS:
@@ -1343,9 +1350,9 @@ def report_unbilled(request):
 			if clients is None or len(clients) <= 0:
 				break
 
-			if eMonth >= inv['Date'].month and curr_year == inv['Date'].year:
+			if eMonth >= temp_month and curr_year == temp_year:
 				temp_rev[idx]['due'] += inv['Balance_Due']
-			elif sMonth <= inv['Date'].month and curr_year != inv['Date'].year:
+			elif sMonth <= temp_month and curr_year != temp_year:
 				temp_rev[idx]['due'] += inv['Balance_Due']
 
 		elif cycleS and cycleE:
@@ -1353,7 +1360,7 @@ def report_unbilled(request):
 			if clients is None or len(clients) <= 0:
 				break
 
-			if sMonth <= inv['Date'].month and curr_year != inv['Date'].year and eMonth >= inv['Date'].month:
+			if sMonth <= temp_month and curr_year != temp_year and eMonth >= temp_month:
 				temp_rev[idx]['due'] += inv['Balance_Due']
 
 	res['totalOverdue'] = totalOver
@@ -1365,4 +1372,104 @@ def report_unbilled(request):
 		}
 		res['expense'].append(rev_pat)
 
-	return JsonResponse(res,safe=True)
+	return JsonResponse(res,safe=True) 
+
+# @csrf_exempt
+# @post('accessToken','token','sender','invoice')
+# def invoice_mail(request):
+# 	sender_add = request.POST['sender']
+# 	invoice = request.POST['invoice']
+# 	pdf_filename = 'invoice.pdf'
+# 	api_setting = {
+# 		'api_key': '',
+# 		'api_secret' : '',
+# 	}
+# 	with open('api_key') as f :
+# 		key = [ l.strip().strip("'") for l in f.readline().split("=")]
+# 		secret = [ l.strip().strip("'") for l in f.readline().split("=")]
+# 		api_setting[key[0]] = key[1]
+# 		api_setting[secret[0]] = secret[1]
+
+# 	mailjet = Client(auth=(api_setting['api_key'], api_setting['api_secret']), version='v3.1')
+# 	data = {
+# 		'Messages': [
+# 			{
+# 			"From": {
+# 				"Email": "amitsingh19975@gmail.com",
+# 				"Name": "Accounting Software"
+# 			},
+# 			"To": [
+# 				{
+# 				"Email": "amitsingh19975@gmail.com",
+# 				"Name": "Amit"
+# 				}
+# 			],
+# 			"Subject": "Greetings from Mailjet.",
+# 			"TextPart": "My first Mailjet email",
+# 			"HTMLPart": "<h3>Dear passenger 1, welcome to <a href='https://www.mailjet.com/'>Mailjet</a>!</h3><br />May the delivery force be with you!",
+# 			"CustomID": "AppGettingStartedTest"
+# 			}
+# 		]
+# 		}
+# 		result = mailjet.send.create(data=data)
+
+# 	try:
+# 		form = Pdf(request.POST, request.FILES)
+# 		if form.is_valid():
+# 			pdf_file = request.FILES[pdf_filename]
+
+# 			return HttpResponse('Sent the mail')
+# 	except:
+# 		return HttpResponse('Invalid Payload',status=400)
+
+def _get_accountant(user_data):
+	return {
+		"firstName": user_data['FName'],
+		"lastName": user_data['LName'],
+		"countryCode": user_data['Country_Code'],
+		"phone": user_data['Phone'],
+		"email": user_data['Email'],
+		"address": {
+			"address1": user_data['Address_Line'],
+			"city": user_data['City'],
+			"state": user_data['State'],
+			"country": user_data['Country_Name'],
+			"pincode": user_data['Pin_Code'],
+		}
+	}
+
+@csrf_exempt
+@post('accessToken','token')
+def accountant_fetch(request):
+	email = check_user(request.POST['token'])
+	user = User.objects.filter(Email=email).values()
+	if user is None and len(user) <= 0:
+		return HttpResponse('Accountant does not exist',status=400)
+	return JsonResponse({'accountant': _get_accountant(user)},safe=True)
+
+
+@csrf_exempt
+@post('accessToken','token','accountant')
+def accountant_update(request):
+	email = check_user(request.POST['token'])
+	acc = request.POST['accountant']
+	add = acc['address']
+	User.objects.filter(Email=email).update(
+		FName=acc['firstName'], LName=acc['lastName'], Country_Code=acc['countryCode'], Phone=['phone'],
+		Address_Line=add['address1'], City=add['city'], State=add['state'], Country_Name=['country'], Pin_Code=['pincode']
+	)
+	return HttpResponse('Updated successfully')
+
+@csrf_exempt
+@post('accessToken','token','company')
+def company_update(request):
+	cmpy = request.POST['company']
+	email = cmpy['email']
+	name = cmpy['name']
+	add = cmpy['address']
+	Company.objects.filter(Email=email, Company_Name=name).update(
+		Address_Line=add['address1'], Pin_Code=add['pincode'], Country_Code=cmpy['countryCode'], Country_Name=add['country'],
+		State=add['state'], Tax_Rate=cmpy['taxrate'], Date_Format=cmpy['datefmt'], Base_Currency=cmpy['currency'],
+		City=add['city']
+	)
+	return HttpResponse('Updated successfully')

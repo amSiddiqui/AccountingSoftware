@@ -1,4 +1,3 @@
-
 const getWordsForSearch = ( ptag, ctag ) =>{
 	let words = [];
 	let wordsMap = {};
@@ -115,11 +114,38 @@ $('.modal-background').click(function (event) {
 // Add Category script
 
 function addCategory() {
-  var value = $('#add-category-modal-content .field input:text').val();
-  closeModal();
-  $('#category-selection .control .select select').append(`<option value="${value}">
-  ${value}
-</option>`);
+	var value = $('#add-category-modal-content .field input:text').val();
+	const catIn = $('#category-add-input').val().trim();
+	const url = window.location.origin + '/expense/category/';
+	fetch(url,{
+		method: 'POST',
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'application/json'
+		  },
+		body:JSON.stringify({category : catIn})
+	}).then(res=>{
+		if( res.ok ) {
+			closeModal();
+			$('#category-selection .control .select select').append(`<option value="${value}">
+			${value}
+			</option>`);
+			$.toast({
+				heading: 'Success',
+				text: `Category ${catIn} is added`,
+				icon:'success'
+			});
+		}else{
+			res.text().then(txt=>{
+				$.toast({
+					heading: 'Error',
+					text: `${txt} ${catIn}`,
+					icon:'error'
+				});
+			})
+		}
+	})
+
 }
 
 // Initialize all input of type date

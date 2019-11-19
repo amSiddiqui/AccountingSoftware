@@ -231,4 +231,22 @@ router.get('/:id', (req, res, next) => {
   res.redirect('/expense/' + req.params.id + '/edit');
 });
 
+<<<<<<< HEAD
+router.post('/category',(req,res)=>{
+	util.authCheck(req,user=>{
+		const category = req.body.category;
+		axios.post(config.url + '/category/create/',{
+			category,
+			accessToken,
+			token: user.token
+		}).then(resp=>{
+			res.status(200).send('Added successfully')
+		}).catch(err=>{
+			res.status(400).send(err.response.data);
+		});
+	})
+});
 module.exports = router;
+=======
+module.exports = router;
+>>>>>>> 3d35b816988a94de39eaaafb75a8664102c88ea0

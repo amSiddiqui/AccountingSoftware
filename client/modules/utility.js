@@ -85,4 +85,18 @@ module.exports = {
             }
         }).catch(err=>callback(null))
     },
+    getToday : ( datefmt ) => {
+        const date = new Date();
+        const y = date.getFullYear();
+        const m = date.getMonth();
+        const d = date.getDate();
+        if( typeof( datefmt) == 'string' ){
+            if ('yyyy/mm/dd' == datefmt.trim() ) return `${y}/${m}/${d}`;
+            else if ('dd/mm/yyyy' == datefmt.trim() ) return `${d}/${m}/${y}`;
+            else if ('mm/dd/yyyy' == datefmt.trim() ) return `${m}/${d}/${y}`;
+            else return new Error('getToday: Invalid datefmt');
+        }else{
+            return new Error('getToday: Invalid datefmt type, it should be string');
+        }
+    }, 
 };
