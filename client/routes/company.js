@@ -139,7 +139,17 @@ router.post('/accountant/create', (req, res, next) => {
     });
 });
 
-router.get('/accountant/edit', util.validateUser({}), (req, res) => {
+router.get('/accountant/edit', (req, res) => {
+    util.authCheck(req, user => {
+        if (user) 
+        {
+
+        }
+        else
+        {
+            res.redirect('/dashboard');
+        }
+    });
     res.render('company/accountant/edit', {
         accountant: seeds.psuedoAccountant,
         countryCode: seeds.countryCode,
@@ -233,12 +243,21 @@ router.post('/create', (req, res, next) => {
         });
 });
 
-router.get('/edit', util.validateUser({}), (req, res, next) => {
-    res.render('company/edit', {
-        company: seeds.pseudoCompany,
-        countryCode: seeds.countryCode,
-        currency: seeds.currency,
-        dateFormat: seeds.dateFormat
+router.get('/edit', (req, res, next) => {
+    util.authCheck(req, user => {
+        if (user)
+        {
+            
+        }
+        else
+        {
+            res.render('company/edit', {
+                company: seeds.pseudoCompany,
+                countryCode: seeds.countryCode,
+                currency: seeds.currency,
+                dateFormat: seeds.dateFormat
+            });
+        }
     });
 });
 

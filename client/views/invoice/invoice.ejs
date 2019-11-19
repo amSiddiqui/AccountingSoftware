@@ -89,7 +89,7 @@
                     Amount Due:
                   </div>
                   <div class="column">
-                    <strong><%=currency%> <%=invoice.amountDue%></strong>
+                    <strong><%=currency%> <%=invoice.balanceDue%></strong>
                   </div>
               </p>
             </div>
@@ -179,7 +179,7 @@
             <td>
               <p><%=invoice.date%></p>
             </td>
-            <td><%=currency%> <%=invoice.amountDue%></td>
+            <td><%=currency%> <%=invoice.balanceDue%></td>
             <td>
               <%=currency%> <span class="invoiceAmount"><%=invoice.total%></span>
               <span class="is-pulled-right">

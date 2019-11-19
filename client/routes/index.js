@@ -61,9 +61,15 @@ router.post('/login', (req, res, next) => {
                 res.redirect('/dashboard');
             }).catch(err => {
                 console.error(err);
-                res.render('login', {
-                    error: true
-                });
+                if (err.response == undefined) {
+                    res.render('error', {
+                        message: dbErrorMsg
+                    });
+                }else{
+                    res.render('login', {
+                        error: true
+                    });
+                }
             });
         }
     });
@@ -185,7 +191,6 @@ async function loadReports(token, load) {
     })).data;
 
     utilData.unbilled = unbilled_respone;
-    console.log(utilData.unbilled);
 }
 
 

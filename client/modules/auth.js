@@ -25,7 +25,10 @@ class Authentication{
             let res = await axios.post(`${this.serverConfig.domain}/init/`, payload);
             this.accessToken = res.data.accessToken;
 
-            return this.accessToken;
+            return {
+                accessToken: this.accessToken,
+                ...res.data.data,
+            };
         }catch(err){
             throw new Error(err);
         }

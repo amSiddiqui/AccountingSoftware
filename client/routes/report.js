@@ -1,13 +1,20 @@
 const express = require('express');
-
 const router = express.Router();
-
+const util = require('../modules/utility');
 const seeds = require('../seeds');
 const config = require('../config/config');
-const util = require('../modules/utility')
+const axios = require('axios');
 
 router.get('/', (req,res,next) => {
-  res.render('report/report');
+  util.authCheck(req , user =>{
+    if(user){
+      res.render('report/report');
+    }
+    else{
+      res.redirect('/dashboard');
+    }
+
+  });
 });
 
 router.get('/:type', (req , res, next) => {
@@ -15,140 +22,210 @@ router.get('/:type', (req , res, next) => {
   type = type.replace('-', ' ');
   util.authCheck(req , user =>{
     if(user){
-
-      let oR = axios.post(config.url, + '/report/outstandingRevenue/',{
-
+      var currency = user.company.currency;      
+      let inv = axios.post(config.url + '/invoice/latest/',{
         accessToken:accessToken,
         token: user.token,
+        quantity: 15,
+        datefmt: user.company.datefmt,
       });
-
-
-      let oD = axios.post(config.url, + '/report/overdue/',{
+      
+      let expen = axios.post(config.url + '/expense/latest/',{
         accessToken:accessToken,
         token: user.token,
+        quantity: 15,
+        datefmt: user.company.datefmt,
       });
-
-
-      let prof = axios.post(config.url, + '/report/profit/',{
+      
+      let clnt = axios.post(config.url + '/client/latest/',{
         accessToken:accessToken,
         token: user.token,
+        quantity: 15,
+        datefmt: user.company.datefmt,
       });
+      axios.all([inv,expen,clnt]).then(axios.spread((...response) => { 
 
-
-      let rev = axios.post(config.url, + '/report/revenue/',{
-        accessToken:accessToken,
-        token: user.token,
-      });
-
-
-      let exp = axios.post(config.url, + '/report/expense/',{
-        accessToken:accessToken,
-        token: user.token,
-      });
-      let inv = axios.post(config.url, + '/invoice/',{
-        accessToken:accessToken,
-        token: user.token,
-        quantity: 4
-      });
-
-      let expen = axios.post(config.url, + '/expense/',{
-        accessToken:accessToken,
-        token: user.token,
-      });
-
-      let clnt = axios.post(config.url, + '/client/',{
-        accessToken:accessToken,
-        token: user.token,
-      });
-
-
-      var currency = utilData.country.currency;
-      axios.all([oR, oD, prof,rev,exp,inv,expen,clnt]).then(axios.spread((...res) => {
-        const resoR = res[0];
-        const resoD = res[1];
-        const resprof = res[2];
-        const resrev = res[3];
-        const resexp = res[4];
-        const resinv = res[5];
-        const resexpen = res[6];
-        const resclnt = res[7];
-
+        const resinv = response[0].data.invoices;
+        const resexpen = response[1].data.expenses;
+        const resclnt = response[2].data.clients;
+        var totalInvoiced =0;
+        var totalPaid =0;
+        var totalDue = 0;
+        var total = 0;
+        var i;
         if(type == 'INVOICE DETAIL'){
-
-          var totalInvoiced =0;
-          var totalPaid =0;
-          var totalDue = 0;
-          for(var i in resinv){
-            totalInvoiced += resinv.total;
-            totalPaid += resinv.amountPaid;
-            totalDue += resinv.balanceDue;
+          for(i in resinv){
+            totalInvoiced += resinv[i].total;
+            totalPaid += resinv[i].amountPaid;
+            totalDue += resinv[i].balanceDue;
           }
           res.render('report/show',{
             invoice : resinv,
-            currency: currency,
+            currency: user.company.currency,
             totalInvoiced: totalInvoiced,
             totalPaid: totalPaid,
             totalDue: totalDue,
+            company: user.company.name,
           });
         }
         else if(type == "CLIENT REPORT"){
-          var total =0;
-          for(var i in resclnt){
-            total += resclnt[i].total;
+          total =0;
+          for(i in resclnt){
+            total += resclnt[i].stats.total;
           }
-          res.render('report/show', {type: type, client: resclnt,total:total,currency: utilData.company.currency,});
+          res.render('report/show', {type: type, client: resclnt,total:total,currency: user.company.currency,company: user.company.name,});
         }
         else if(type == "PAYMENT PENDING"){
-          var totalDue = 0;
-          for(var i in resinv){
+          totalDue = 0;
+          for(i in resinv){
             totalDue += resinv[i].balanceDue;
           }
           res.render('report/show',{
             type: type,
             invoice: resinv,
-            currency: utilData.company.currency,
+            currency: user.company.currency,
             total: totalDue,
+            company: user.company.name,
           });
         }
 
         else if(type == "PAYMENT RECEIVED"){
-          var totalPaid = 0;
-          for(var i in resinv){
+          totalPaid = 0;
+          for(i in resinv){
             totalPaid += resinv[i].amountPaid;
           }
           res.render('report/show',{
             type: type,
             invoice: resinv,
-            currency: utilData.company.currency,
+            currency: user.company.currency,
             total: totalPaid,
+            company: user.company.name,
           });
         }
         // TODO: fetch all clients from database associated with a particular item
-        // else if(type == "ITEM SOLD"){
-          //
-          //   res.render('report/show', {type: type, pseudoItem: seeds.pseudoItem});
-          // }
+        else if(type == "ITEM SOLD"){
+          console.log(user.company)
+          var pseudoItem = [];
+          var invID;
+          var invDate;
+          var fname;
+          var lname;
+          var c_ID;
+          var temp= {};
+          var detailsTemp = {};
+          let itId = -1;
+          var totalUnits =0;
+          var totalAmount=0;
+          resinv.forEach( inv =>{
+            invID = inv.id;
+            invDate = inv.date;
+            fname = inv.client.firstName;
+            lname = inv.client.lastName;
+            c_ID = inv.client.id;
+            inv.items.forEach(items=>{
+              totalUnits += items.quantity;
+              totalAmount += items.price;
+              if(pseudoItem.length == 0){
+                temp = {
+                  Item_Id: items.Item_Id,
+                  Name: items.Name,
+                  Description: items.Description,
+                  Rate: items.Rate,
+                  details: [],
+                  totalQuantity: 0,
+                  totalPrice:0,
+                };
+                detailsTemp = {
+                  quantity: items.quantity,
+                  price: items.price,
+                  invoiceID: invID,
+                  invoiceDate:invDate,
+                  clientID : c_ID,
+                  clientName: {firstName:fname,lastName:lname},
+
+                };
+                temp.totalQuantity = detailsTemp.quantity;
+                temp.totalPrice = detailsTemp.price;
+                temp.details.push(detailsTemp);
+                pseudoItem.push(temp);
+                }
+                else{
+                  if(pseudoItem.some(itm => itm.Item_Id === items.Item_Id)){
+                    detailsTemp = {
+                      quantity: items.quantity,
+                      price: items.price,
+                      invoiceID: invID,
+                      invoiceDate:invDate,
+                      clientID : c_ID,
+                      clientName: {firstName:fname,lastName:lname},
+                    };
+                    for(var i in pseudoItem){
+                      if(pseudoItem[i].Item_Id === items.Item_Id){
+                        pseudoItem[i].details.push(detailsTemp);
+                        pseudoItem[i].totalQuantity += detailsTemp.quantity;
+                        pseudoItem[i].totalPrice += detailsTemp.price;
+                        break;
+                      }
+                    }
+                  }
+                  else{
+                    temp = {
+                      Item_Id: items.Item_Id,
+                      Name: items.Name,
+                      Description: items.Description,
+                      Rate: items.Rate,
+                      details: [],
+                      totalQuantity: 0,
+                      totalPrice:0,
+                    };
+                    detailsTemp = {
+                      quantity: items.quantity,
+                      price: items.price,
+                      invoiceID: invID,
+                      invoiceDate:invDate,
+                      clientID : c_ID,
+                      clientName: {firstName:fname,lastName:lname},
+                    };
+                    temp.totalQuantity = detailsTemp.quantity;
+                    temp.totalPrice = detailsTemp.price;
+                    temp.details.push(detailsTemp);
+                    pseudoItem.push(temp); 
+                  }
+                }
+              });
+            });
+            res.render('report/show', {
+              type: type, 
+              pseudoItems: pseudoItem, 
+              currency: user.company.currency,
+              totalUnits: totalUnits,
+              totalAmount:totalAmount,
+              company: user.company.name, 
+            });
+        }
 
           else if(type == 'EXPENSE REPORT'){
-            var total =0;
-            for(var i in resexpen){
-              total += resexpen[i].subtotal
+            total =0;
+            
+            for(i in resexpen){
+              total += resexpen[i].amount;
             }
             res.render('report/show', {
               type: type,
               expense: resexpen,
               currency: currency,
               total:total,
+              company: user.company.name,
             });
           }
           else if(type == 'PROFIT LOSS'){
             var expenseTotal =0;
             var salesTotal =0;
 
-            for(var i in resexpen){
-              expenseTotal += resexpen[i].subtotal
+            for(i in resexpen){
+              expenseTotal += resexpen[i].amount;
             }
-            for(var i in resinv){
+            for(i in resinv){
               salesTotal += resinv[i].total;
             }
             var profit = salesTotal-expenseTotal;
@@ -156,10 +233,12 @@ router.get('/:type', (req , res, next) => {
             res.render('report/show',{
               type: type,
               expense: resexpen,
+              invoice: resinv,
               salesTotal:salesTotal,
               expenseTotal:expenseTotal,
               profit:profit,
-              currency: utilData.company.currency,
+              currency: user.company.currency,
+              company: user.company.name,
             });
           }
           // else if(type === 'GENERAL LEDGER'|| type === 'BALANCE SHEET'|| type === 'TRIAL BALANCE'){
@@ -169,18 +248,16 @@ router.get('/:type', (req , res, next) => {
               res.send('ERROR:PAGE NOT FOUND');
             }
         // use/access the results
-      })).catch(errors => {
+      })).catch(err => {
         console.log(err);
-        res.render('error',{message:err.response.data})
-      })
-
-
+        res.render('error',{message:dbErrorMsg});
+      });
 
     }
     else{
-      res.redirect('/dashboard')
+      res.redirect('/dashboard');
     }
-  })
+  });
 
 });
 

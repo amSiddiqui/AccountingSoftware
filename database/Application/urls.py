@@ -19,6 +19,10 @@ urlpatterns = [
     url(r'^auth/exists/$', views.user_exists, name='user_exists'),
     url(r'^auth/company/exists/$', views.company_exists, name='company_exists'),
     url(r'^auth/accountant/exists/$', views.accountant_exists, name='accountant_exists'),
+    url(r'^auth/accountant/fetch/$', views.accountant_fetch, name='accountant_fetch'),
+    url(r'^auth/accountant/update/$', views.accountant_update, name='accountant_update'),
+    url(r'^auth/company/update/$', views.company_update, name='company_update'),
+
 
     # Invoice routes
     path('invoice/<int:invoice_id>/', views.fetch_invoice ),

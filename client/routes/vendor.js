@@ -4,14 +4,14 @@ const router = express.Router();
 const util = require('../modules/utility');
 const config = require('../config/config');
 const seeds = require('../seeds');
+const axois = require('axios');
 
 router.get('/create', (req, res, next) => {
     util.authCheck(req, user => {
         if (user)
         {
-
             res.render('vendor/create', {
-                countryCode: utilData.country.countryCode,
+                countryCode: utilData.phone_code.ISD,
             });
         }
         else
